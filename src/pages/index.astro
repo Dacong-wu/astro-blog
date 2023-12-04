@@ -1,0 +1,50 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Note from '~/components/widgets/Note.astro';
+import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import { SITE } from '~/utils/config';
+const metadata = {
+  title: '首页',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <Hero image={{ src: '~/assets/images/home.webp', alt: 'home picture' }}>
+    <Fragment slot="title">
+      <span class="hidden xl:inline">欢迎来到</span>
+      <span>{SITE?.name}<br /></span>
+      <span>一个充满</span>
+      <span class="text-accent dark:text-white highlight">乐趣的</span><span>🐙网站</span>
+    </Fragment>
+    <Fragment slot="subtitle">
+      <span class="block sm:inline text-blue-600 sm:text-page">专注于技术&生活分享</span>
+       传播并创造快乐。
+    </Fragment>
+  </Hero>
+
+  <Note />
+
+  <BlogLatestPosts
+    title="博客分享"
+    information={`在这里，我主要会分享一些自己掌握的知识，还有一些工作中遇到问题的解决方案`}
+  />
+
+  <CallToAction
+    actions={[
+      {
+        variant: 'primary',
+        text: '联系',
+        icon: 'tabler:mail',
+        title: 'Email Share',
+        'data-aw-social-share': 'contact-mail',
+        'data-aw-text': '我有一些疑惑，请帮我解答🐙',
+      },
+    ]}
+  >
+    <Fragment slot="title">与我联系</Fragment>
+    <Fragment slot="subtitle">🐙有疑惑可以给我发邮件</Fragment>
+  </CallToAction>
+</Layout>

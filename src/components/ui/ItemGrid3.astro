@@ -1,0 +1,67 @@
+---
+import { twMerge } from 'tailwind-merge';
+import type { ItemGrid } from '~/types';
+import Button from './Button.astro';
+import Image from '~/components/common/Image.astro';
+
+const { items = [], columns, defaultIcon = '', classes = {} } = Astro.props as ItemGrid;
+
+const {
+  container: containerClass = '',
+  // container: containerClass = "sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
+  panel: panelClass = '',
+  title: titleClass = '',
+  description: descriptionClass = '',
+  icon: defaultIconClass = 'text-primary',
+} = classes;
+---
+
+{
+  items && (
+    <div
+      class={twMerge(
+        `grid gap-8 gap-x-12 sm:gap-y-8 ${
+          columns === 4
+            ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'
+            : columns === 3
+              ? 'lg:grid-cols-3 sm:grid-cols-2'
+              : columns === 2
+                ? 'sm:grid-cols-2 '
+                : ''
+        }`,
+        containerClass
+      )}
+    >
+      {items.map(({ title, description, icon, callToAction, classes: itemClasses = {} }) => (
+        <div class={twMerge('relative flex flex-col', panelClass, itemClasses?.panel)}>
+          {(icon || defaultIcon) && (
+            // <Icon
+            //   name={icon || defaultIcon}
+            //   class={twMerge(
+            //     "mb-2 w-10 h-10",
+            //     defaultIconClass,
+            //     itemClasses?.icon
+            //   )}
+            // />
+            <Image
+              class="mx-auto rounded-md w-full dark:opacity-50"
+              widths={[400, 768, 1024, 2040]}
+              sizes="(max-width: 767px) 400px, (max-width: 1023px) 768px, (max-width: 2039px) 1024px, 2040px"
+              loading="eager"
+              width={1024}
+              height={576}
+              src={`~/assets/images/logos/${icon}.png`}
+              alt={`${icon} Logo`}
+            />
+          )}
+
+          {callToAction && (
+            <div class="mt-2">
+              <Button {...callToAction} />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}

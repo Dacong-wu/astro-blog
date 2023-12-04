@@ -1,0 +1,25 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero2 from '~/components/widgets/Hero2.astro';
+const metadata = {
+  title: '喵芯人',
+};
+---
+
+<Layout metadata={metadata}>
+  <Hero2
+    image={{
+      src: '~/assets/images/wechat.png',
+      alt: 'wechat logo',
+    }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent dark:text-white highlight">喵芯人</span><br />
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      是微信号，又不止于微信号。<br>
+      个性化定制功能，便于创建群组并提供指导，历史数据漫游服务，可灵活分配支持工程师，我们的服务远不止于此。
+    </Fragment>
+  </Hero2>
+</Layout>

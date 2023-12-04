@@ -1,0 +1,81 @@
+---
+import Hero from '~/components/widgets/Hero.astro';
+import Steps2 from '~/components/widgets/Steps2.astro';
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'About us',
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero Widget ******************* -->
+
+  <Hero
+    image={{
+      src: '~/assets/images/qc310.png',
+      alt: 'NuMicro-MA35-Series',
+    }}
+    autoHeight={true}
+  >
+    <Fragment slot="title">
+      QC310<br />
+      <span class="text-accent dark:text-white highlight">高效能蓝牙模块</span>
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      QCA310蓝牙模块，内置完整的蓝牙协议栈，支持蓝牙5.1。无线工作频段2.4GHz，
+      GFSK调制方式。最大发射功率2.2dBm，接收灵敏度-93dBm，板载PCB天线，可实现近距离无线通信。
+    </Fragment>
+  </Hero>
+
+  <!-- Steps2 Widget ****************** -->
+
+  <Steps2
+    title="产品简介"
+    items={[
+      {
+        title: '目标应用',
+        icon: 'tabler:apps',
+        description: `- 数据无线透传<br>
+        - 无线传感器节点<br>
+        - 消费类产品应用<br>
+        - 工业控制`,
+      },
+      {
+        title: '设置信息',
+        icon: 'tabler:info-circle',
+        description: `- 工作频段 2.4GHz<br>
+        - 发射功率 ≤2.2dBm<br>
+        - 接收灵敏度 ≥-93dBm @1Mbps<br>
+        - 天线类型 50Ohm PCB 板载天线<br>
+        - 工作电压 1.8V~3.3V<br>
+        - 通信接口 UART<br>
+        - SMT 焊接温度 ≤250℃<br>
+        - 低功耗电流 1.8μA @Sleep Mode|0.6μA @OFF Mode<br>
+        - 峰值电流TX：4mA @3V@0dBm TX Power|RX：2mA @3V<br>
+        - NuMaker-IoT-MA35D1-A1`,
+      },
+      {
+        title: '封装',
+        icon: 'tabler:package',
+        description: `- 14.5*12.5*2.8mm (LWH)`,
+      },
+      {
+        title: '工作温度',
+        icon: 'tabler:temperature-celsius',
+        description: '-40°C ~ +85°C',
+      },
+    ]}
+  >
+    <Fragment slot="subtitle">
+      <div class="flex gap-y-3 flex-col">
+        <p>
+          模块封装采用半孔工艺，方便用户嵌入应用系统之中。其搭载的业界领先的蓝牙芯片，集成ARM®Cortex™-M0+32位处理器，同时具有丰富的外设资源。用户可以使用QCA310模块作为独立系统运行，也可以作为从机搭载于其他主机MCU运行，通过
+          UART接口提供蓝牙功能，使用高效灵活。
+        </p>
+        <p>模块具有尺寸小、性价比高、功耗低等优点，以出色的性能表现和较低的成本提供灵活的无线蓝牙连接应用。</p>
+      </div>
+    </Fragment>
+  </Steps2>
+</Layout>
