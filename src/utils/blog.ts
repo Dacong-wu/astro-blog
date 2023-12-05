@@ -92,7 +92,6 @@ const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> =
 const load = async function (): Promise<Array<Post>> {
   const posts = await getCollection('post');
   const normalizedPosts = posts.map(async (post) => await getNormalizedPost(post));
-
   const results = (await Promise.all(normalizedPosts))
     .sort((a, b) => b.publishDate.valueOf() - a.publishDate.valueOf())
     .filter((post) => !post.draft);
@@ -121,7 +120,6 @@ export const fetchPosts = async (): Promise<Array<Post>> => {
   if (!_posts) {
     _posts = await load();
   }
-
   return _posts;
 };
 
@@ -130,7 +128,6 @@ export const findPostsBySlugs = async (slugs: Array<string>): Promise<Array<Post
   if (!Array.isArray(slugs)) return [];
 
   const posts = await fetchPosts();
-
   return slugs.reduce(function (r: Array<Post>, slug: string) {
     posts.some(function (post: Post) {
       return slug === post.slug && r.push(post);

@@ -49,6 +49,7 @@ export interface MetaData {
   ignoreTitleTemplate?: boolean;
 
   canonical?: string;
+  link?: string;
 
   robots?: MetaDataRobots;
 
@@ -56,6 +57,7 @@ export interface MetaData {
 
   openGraph?: MetaDataOpenGraph;
   twitter?: MetaDataTwitter;
+  image_author?: MeteDataImageAuthor;
 }
 
 export interface MetaDataRobots {
@@ -81,6 +83,11 @@ export interface MetaDataTwitter {
   handle?: string;
   site?: string;
   cardType?: string;
+}
+
+export interface MeteDataImageAuthor {
+  name?: string;
+  link?: string;
 }
 
 export interface Image {

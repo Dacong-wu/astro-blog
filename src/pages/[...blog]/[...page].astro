@@ -3,46 +3,41 @@ import Layout from '~/layouts/PageLayout.astro';
 import BlogList from '~/components/blog/List.astro';
 import Headline from '~/components/blog/Headline.astro';
 import Pagination from '~/components/blog/Pagination.astro';
-// import PostTags from "~/components/blog/Tags.astro";
 
 import { blogListRobots, getStaticPathsBlogList } from '~/utils/blog';
 
 export const prerender = true;
 
-export async function getStaticPaths ({ paginate }) {
+export async function getStaticPaths({ paginate }) {
   return await getStaticPathsBlogList({ paginate });
 }
-
-const { page } = Astro.props;
+interface Page {
+  currentPage: number;
+  data: any;
+  url: {
+    current: string;
+    next: string;
+    prev: string;
+  };
+}
+const { page }: { page: Page } = Astro.props;
 const currentPage = page.currentPage ?? 1;
 
-// const allCategories = await findCategories();
-// const allTags = await findTags();
-
 const metadata = {
-  title: `Blog${currentPage > 1 ? ` — Page ${currentPage}` : ''}`,
+  title: `知识分享${currentPage > 1 ? ` - 第${currentPage}页` : ''}`,
   robots: {
     index: blogListRobots?.index && currentPage === 1,
     follow: blogListRobots?.follow,
-  },
-  openGraph: {
-    type: 'blog',
   },
 };
 ---
 
 <Layout metadata={metadata}>
   <section class="px-6 sm:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
-    <Headline
-      subtitle="智能硬件相关的新闻"
-    >
-      行业新闻
+    <Headline subtitle="文章中所设计的技术方案，仅适用于文章发表期间。后续技术迭代可能存在变动，请谨慎参考">
+      知识分享
     </Headline>
     <BlogList posts={page.data} />
     <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
-    <!--
-      <PostTags tags={allCategories} class="mb-2" title="Search by Categories:" isCategory />
-      <PostTags tags={allTags}  title="Search by Tags:" />
-    -->
   </section>
 </Layout>

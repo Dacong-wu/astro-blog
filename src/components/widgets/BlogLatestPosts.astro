@@ -19,11 +19,10 @@ export interface Props extends Widget {
 
 const {
   title = await Astro.slots.render("title"),
-  linkText = "查看所有博客",
+  linkText = "查看所有文章",
   linkUrl = getBlogPermalink(),
   information = await Astro.slots.render("information"),
   count = 4,
-
   id,
   isDark = false,
   classes = {},

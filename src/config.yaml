@@ -10,13 +10,13 @@ site:
 metadata:
   title:
     default: spanBlog
-    template: '%s — spanBlog'
+    template: '%s - spanBlog'
   description: "\U0001F680 skysoon技术合作伙伴, 南京量子猫, MA35, UWB, 语言模块, 喵星人, 技术支持"
   robots:
     index: true
     follow: true
   openGraph:
-    site_name: 量子猫
+    site_name: spanBlog
     images:
       - url: '~/assets/images/default.png'
         width: 1200
@@ -44,7 +44,7 @@ apps:
 
     list:
       isEnabled: true
-      pathname: 'blog' # Blog main path, you can change this to "articles" (/articles)
+      pathname: 'knowledge' # Blog main path, you can change this to "articles" (/articles)
       robots:
         index: true
 
