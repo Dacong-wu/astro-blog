@@ -43,8 +43,5 @@ export const footerData = {
     },
   ],
   socialLinks: [{ ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/Dacong-wu' }],
-  footNote: `
-    <span class="w-5 h-5 md:w-6 md:h-6 md:-mt-0.5 bg-cover mr-1.5 rtl:mr-0 rtl:ml-1.5 float-left rtl:float-right rounded-sm bg-[url(~/assets/images/logo.svg)]"></span>
-    Made by spanBlog · 2023 - <a class="hover:underline" href="https://onwidget.com/">苏ICP备2021045936号-2</a>
-  `,
+  footNote: `<span class="ml-1.5">Made by spanBlog · 2023 - <a class="hover:underline" href="https://onwidget.com/">苏ICP备2021045936号-2</a></span>`,
 };
