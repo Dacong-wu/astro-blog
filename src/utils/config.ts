@@ -57,6 +57,26 @@ export interface AppBlogConfig {
     };
   };
 }
+export interface AppPhotographyConfig {
+  isEnabled: boolean;
+  postsPerPage: number;
+  post: {
+    isEnabled: boolean;
+    permalink: string;
+    robots: {
+      index: boolean;
+      follow: boolean;
+    };
+  };
+  list: {
+    isEnabled: boolean;
+    pathname: string;
+    robots: {
+      index: boolean;
+      follow: boolean;
+    };
+  };
+}
 export interface AnalyticsConfig {
   vendors: {
     googleAnalytics: {
@@ -72,6 +92,7 @@ const config = yaml.load(fs.readFileSync('src/config.yaml', 'utf8')) as {
   i18n?: I18NConfig;
   apps?: {
     blog?: AppBlogConfig;
+    photography?: AppPhotographyConfig;
   };
   ui?: unknown;
   analytics?: unknown;
@@ -168,8 +189,30 @@ const getAppBlog = () => {
       },
     },
   };
-
   return merge({}, _default, config?.apps?.blog ?? {}) as AppBlogConfig;
+};
+
+const getAppPhotography = () => {
+  const _default = {
+    postsPerPage: 6,
+    post: {
+      isEnabled: true,
+      permalink: '/blog/%slug%',
+      robots: {
+        index: true,
+        follow: true,
+      },
+    },
+    list: {
+      isEnabled: true,
+      pathname: 'blog',
+      robots: {
+        index: true,
+        follow: true,
+      },
+    },
+  };
+  return merge({}, _default, config?.apps?.photography ?? {}) as AppPhotographyConfig;
 };
 
 const getUI = () => {
@@ -199,5 +242,6 @@ export const SITE = getSite();
 export const I18N = getI18N();
 export const METADATA = getMetadata();
 export const APP_BLOG = getAppBlog();
+export const APP_PHTOTGRAPHY = getAppPhotography();
 export const UI = getUI();
 export const ANALYTICS = getAnalytics();

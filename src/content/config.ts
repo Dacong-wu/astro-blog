@@ -65,7 +65,16 @@ const postCollection = defineCollection({
     metadata: metadataDefinition(),
   }),
 });
+const photographyCollection = defineCollection({
+  schema: z.object({
+    publishDate: z.date().optional(),
+    title: z.string(),
+    excerpt: z.string().optional(),
+    images: z.array(z.string()).optional(),
+  }),
+});
 
 export const collections = {
   post: postCollection,
+  photography: photographyCollection,
 };

@@ -44,6 +44,27 @@ export interface Post {
   readingTime?: number;
 }
 
+export interface Photography {
+  /** A unique ID number that identifies a post. */
+  id: string;
+
+  /** A post’s unique slug – part of the post’s URL based on its name, i.e. a post called “My Sample Page” has a slug “my-sample-page”. */
+  slug: string;
+
+  /**  */
+  permalink: string;
+
+  /**  */
+  publishDate: Date;
+
+  /**  */
+  title: string;
+  /** Optional summary of post content. */
+  excerpt?: string;
+  /**  */
+  images: Array<string>;
+}
+
 export interface MetaData {
   title?: string;
   ignoreTitleTemplate?: boolean;

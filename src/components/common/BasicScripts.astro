@@ -103,6 +103,9 @@ import { UI } from '~/utils/config';
         ticking = true;
       }
     });
+    attachEvent('img', 'click', function () {
+      console.log('123');
+    });
   };
 
   window.onpageshow = function () {

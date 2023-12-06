@@ -1,0 +1,67 @@
+---
+import { Icon } from 'astro-icon/components';
+
+import Image from '~/components/common/Image.astro';
+import PostTags from '~/components/blog/Tags.astro';
+import SocialShare from '~/components/common/SocialShare.astro';
+
+import { getPermalink } from '~/utils/permalinks';
+import { getFormattedDate } from '~/utils/utils';
+
+import type { Photography } from '~/types';
+
+export interface Props {
+  photography: Photography;
+  url: string | URL;
+}
+
+const { photography, url } = Astro.props;
+---
+
+<section class="py-8 sm:py-16 lg:py-20 mx-auto">
+  <article>
+    <header class={photography.images[0] ? '' : ''}>
+      <div class="flex justify-between flex-col sm:flex-row max-w-5xl mx-auto mt-0 mb-2 px-4 sm:px-6 sm:items-center">
+        <p>
+          <Icon name="tabler:clock" class="w-4 h-4 inline-block -mt-0.5 dark:text-gray-400" />
+          <time datetime={String(photography.publishDate)} class="inline-block"
+            >{getFormattedDate(photography.publishDate)}</time
+          >
+        </p>
+      </div>
+      <h1
+        class="px-4 sm:px-6 max-w-5xl mx-auto text-4xl md:text-5xl font-bold leading-tighter tracking-tighter font-heading"
+      >
+        {photography.title}
+      </h1>
+      <p
+        class="max-w-5xl mx-auto mt-4 mb-8 px-4 sm:px-6 text-md md:text-xl text-muted dark:text-slate-400 text-justify"
+      >
+        {photography.excerpt}
+      </p>
+      <div class="gap-3 columns-1 sm:columns-2 lg:columns-3 max-w-5xl px-4 sm:px-6 mx-auto sm:rounded-md">
+        {
+          photography.images.map((image) => (
+            <Image
+              src={image}
+              class="max-w-full lg:max-w-[900px] mx-auto mb-3 sm:rounded-md bg-gray-200 dark:bg-slate-700"
+              widths={[400, 900]}
+              sizes="(max-width: 900px) 400px, 900px"
+              alt={photography?.excerpt || ''}
+              width={900}
+              loading="eager"
+              decoding="async"
+            />
+          ))
+        }
+      </div>
+    </header>
+  </article>
+  <div class="mx-auto px-6 sm:px-6 max-w-5xl mt-8 flex justify-end flex-col sm:flex-row">
+    <SocialShare
+      url={url}
+      text={photography.title}
+      class="mt-5 sm:mt-1 align-middle text-gray-500 dark:text-slate-600"
+    />
+  </div>
+</section>

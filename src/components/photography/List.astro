@@ -1,0 +1,20 @@
+---
+import Item from '~/components/photography/ListItem.astro';
+import type { Photography } from '~/types';
+
+export interface Props {
+  photographys: Array<Photography>;
+}
+
+const { photographys } = Astro.props;
+---
+
+<ul>
+  {
+    photographys.map((photography) => (
+      <li class="mb-12 md:mb-20">
+        <Item photography={photography} />
+      </li>
+    ))
+  }
+</ul>

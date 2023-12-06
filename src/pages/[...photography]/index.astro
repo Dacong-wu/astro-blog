@@ -1,0 +1,27 @@
+---
+import merge from 'lodash.merge';
+import Layout from '~/layouts/PageLayout.astro';
+import SinglePost from '~/components/photography/SinglePost.astro';
+import ToBlogLink from '~/components/photography/ToBlogLink.astro';
+
+import { getCanonical, getPermalink } from '~/utils/permalinks';
+import { getStaticPathsPhotographyPost } from '~/utils/photography';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return await getStaticPathsPhotographyPost();
+}
+
+const { photography } = Astro.props;
+const url = getCanonical(getPermalink(photography.permalink, 'photography'));
+const metadata = merge({
+  title: photography.title,
+  description: photography.excerpt,
+});
+---
+
+<Layout metadata={metadata}>
+  <SinglePost photography={{ ...photography }} url={url} />
+  <ToBlogLink />
+</Layout>
