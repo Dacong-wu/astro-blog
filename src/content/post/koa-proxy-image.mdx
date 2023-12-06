@@ -67,9 +67,7 @@ module.exports = async (ctx, next) => {
 var proxy = require('koa-better-http-proxy')
 var Koa = require('koa')
 const router = require('koa-router')()
-
 var app = new Koa()
-
 router.get(
   '/test',
   proxy('localhost:4189', {
@@ -82,7 +80,6 @@ router.get(
     }
   })
 )
-
 app.use(router.routes())
 app.use(router.allowedMethods())
 app.listen('3000')

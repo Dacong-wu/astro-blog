@@ -39,6 +39,7 @@ export const footerData = {
     },
     {
       title: '关于我',
+      href: '/about',
       links: [{ text: '技术栈', href: '/about#technology-stack' }],
     },
   ],

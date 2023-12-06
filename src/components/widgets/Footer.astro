@@ -12,6 +12,7 @@ interface Link {
 
 interface Links {
   title?: string;
+  href: string;
   links: Array<Link>;
 }
 
@@ -47,9 +48,14 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
         </div>
       </div>
       {
-        links.map(({ title, links }) => (
+        links.map(({ title, href, links }) => (
           <div class="col-span-6 md:col-span-3 lg:col-span-2">
-            <div class="dark:text-gray-300 font-medium mb-2">{title}</div>
+            <a
+              class="text-muted hover:text-gray-700 hover:underline dark:text-gray-300 font-medium mb-2 transition duration-150 ease-in-out"
+              href={href}
+            >
+              <Fragment set:html={title} />
+            </a>
             {links && Array.isArray(links) && links.length > 0 && (
               <ul class="text-sm">
                 {links.map(({ text, href, ariaLabel }) => (
@@ -78,6 +84,7 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
                 <a
                   class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
                   aria-label={ariaLabel}
+                  target="_blank"
                   href={href}
                 >
                   {icon && <Icon name={icon} class="w-5 h-5" />}

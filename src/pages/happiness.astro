@@ -1,0 +1,29 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero2 from '~/components/widgets/Hero2.astro';
+
+const metadata = {
+  title: 'SaaS Landing Page',
+};
+---
+
+<Layout metadata={metadata}>
+  <Hero2
+    tagline="记录点"
+    actions={[
+      { variant: 'primary', target: '_blank', text: '去见证', href: 'https://2018-0215.cn/1999' },
+    ]}
+    image={{
+      src: '~/assets/images/1999.png',
+      alt: 'AstroWind Hero Image',
+    }}
+  >
+    <Fragment slot="title">
+      我们在一起的第<span class="text-accent dark:text-white highlight">1999</span>天
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      时间过的真快，转眼间我们一起走过了1999天，每一天都是我们共同故事的一部分，今天💍
+    </Fragment>
+  </Hero2>
+</Layout>
