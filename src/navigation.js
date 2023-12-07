@@ -1,24 +1,25 @@
+import { getPermalink } from './utils/permalinks';
 export const headerData = {
   links: [
     {
       text: '首页',
-      href: '/',
+      href: getPermalink('/'),
     },
     {
       text: '知识分享',
-      href: '/knowledge',
+      href: getPermalink('/knowledge'),
     },
     {
       text: '摄影展示',
-      href: '/photography',
+      href: getPermalink('/photography'),
     },
     {
       text: '幸福记录',
-      href: '/happiness',
+      href: getPermalink('/happiness'),
     },
     {
       text: '关于我',
-      href: '/about',
+      href: getPermalink('/about'),
     },
   ],
 };
@@ -27,20 +28,20 @@ export const footerData = {
   links: [
     {
       title: '知识分享',
-      href: '/knowledge',
+      href: getPermalink('/knowledge'),
     },
     {
       title: '摄影展示',
-      href: '/photography',
+      href: getPermalink('/photography'),
     },
     {
       title: '幸福记录',
-      href: '/happiness',
+      href: getPermalink('/happiness'),
     },
     {
       title: '关于我',
-      href: '/about',
-      links: [{ text: '技术栈', href: '/about#technology-stack' }],
+      href: getPermalink('/about'),
+      links: [{ text: '技术栈', href: getPermalink('/about#technology-stack') }],
     },
   ],
   socialLinks: [{ ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/Dacong-wu' }],
