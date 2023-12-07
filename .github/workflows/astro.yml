@@ -37,3 +37,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
+        with:
+          # 设置正确的基本路径
+          baseDir: '/astro-blog'
