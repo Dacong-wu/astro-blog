@@ -1,6 +1,6 @@
 # 🐙 SpanBlog
 
- 基于**[Astro 3.0](https://astro.build/) + [Tailwind CSS](https://tailwindcss.com/)**
+基于 **[Astro 3.0](https://astro.build/) + [Tailwind CSS](https://tailwindcss.com/)**
 
 <br>
 
@@ -129,14 +129,14 @@ npm run build
   1. 添加 staticwebapp.config.json 文件，并添加以下内容
   
   2. ```json
-      {
-          "responseOverrides": {
-            "404": {
-              "rewrite": "/404",
-              "statusCode": 404
-            }
-          }
-      }
+     {
+       "responseOverrides": {
+         "404": {
+           "rewrite": "/404",
+           "statusCode": 404
+         }
+       }
+     }
       ```
 
 <br>
