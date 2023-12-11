@@ -17,7 +17,7 @@ const { page, tag } = Astro.props;
 const currentPage = page.currentPage ?? 1;
 
 const metadata = {
-  title: `Posts by tag '${tag}'${currentPage > 1 ? ` — Page ${currentPage} ` : ''}`,
+  title: `文章标签 - ${tag}${currentPage > 1 ? ` - 第${currentPage}页` : ''}`,
   robots: {
     index: blogTagRobots?.index,
     follow: blogTagRobots?.follow,

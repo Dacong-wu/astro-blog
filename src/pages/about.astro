@@ -2,9 +2,12 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Content from '~/components/widgets/Content.astro';
+const metadata = {
+  title: '关于我',
+};
 ---
 
-<Layout>
+<Layout metadata={metadata}>
   <Hero
     id="hero"
     title="Dacong.wu"
