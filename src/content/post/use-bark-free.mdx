@@ -31,4 +31,37 @@ App Store 地址：[点击访问](https://apps.apple.com/cn/app/bark-%E7%BB%99%E
    https://github.com/Finb/bark-server
    ```
 
-5. 
+5. 点击 **Continue** 输入表单（没有的表单项，请默认不动）
+
+   - Name - 名称，随便取个名字，例如 bark-server
+
+   - Region - 服务器地区，选择离你近的，中国选新加坡
+
+   - Start Command - 程序执行命令,填`./app -serverless true`
+
+   - Instance Type - 选 Free
+
+   - 点击 Advanced 展开更多选项
+
+   - 点击 Add Environment Variable 添加 Serverless 模式需要的 BARK_KEY 和 BARK_DEVICE_TOKEN 字段
+
+     | 变量名            | 填写要求                                                     |
+     | ----------------- | ------------------------------------------------------------ |
+     | BARK_KEY          | 除了不能填 "push" 外，可以随便填写你喜欢的                   |
+     | BARK_DEVICE_TOKEN | Bark App 设置中显示的 DeviceToken，此 Token 是 APNS 真实设备 Token，请不要泄露 |
+
+6. 点击底部的 Create Web Service 按钮，然后等待状态从 In progress 变成 Live（需要一定时间）
+
+7. 页面顶部找到你的服务器URL，这个就是bark-server服务器URL，在 Bark App 中添加即可（请不要添加/）
+
+   ```
+   https://[your-server-name].onrender.com
+   ```
+
+8. 浏览器中测试，`https://[your-server-name].onrender.com/[BARK_KEY]/[推送内容]`，如果结果此返回内容，则测试成功，手机应该就会推送消息了
+
+   ```
+   {"code":200,"message":"success","timestamp":1702301574}
+   ```
+
+   
