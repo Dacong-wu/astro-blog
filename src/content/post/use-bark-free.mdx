@@ -1,0 +1,67 @@
+---
+publishDate: 2023-12-11
+title: 使用bark推送
+excerpt: 使用 render 免费部署 bark 服务
+image: '~/assets/images/blog/erol-ahmed-d3pTF3r_hwY-unsplash.jpg'
+category: server
+tags:
+- bark
+- render
+metadata:
+  image_author:
+    link: https://unsplash.com/@erol
+    name: erol
+---
+
+简单介绍一下 `Bark` ，它是一个开源的 `IOS` 推送软件，开源地址：[https://github.com/Finb/Bark](https://github.com/Finb/Bark)
+
+App Store 地址：[点击访问](https://apps.apple.com/cn/app/bark-%E7%BB%99%E4%BD%A0%E7%9A%84%E6%89%8B%E6%9C%BA%E5%8F%91%E6%8E%A8%E9%80%81/id1403753865)
+
+以下教程基于 `render` 创建使用，其它方法可以参考官方教程
+
+1. 登录 `render` 官网，[点击访问](https://dashboard.render.com/#)，你可以使用 Github 登录
+
+2. 进入页面后，请创建 `Web Service` 服务
+
+3. 然后选择 `Build and deploy from a Git repository`
+
+4. 在底部选择 `Public Git repository` ，并在输入框内填入以下地址
+
+   ```
+   https://github.com/Finb/bark-server
+   ```
+
+5. 点击 **Continue** 输入表单（没有的表单项，请默认不动）
+
+   - Name - 名称，随便取个名字，例如 bark-server
+
+   - Region - 服务器地区，选择离你近的，中国选新加坡
+
+   - Start Command - 程序执行命令,填`./app -serverless true`
+
+   - Instance Type - 选 Free
+
+   - 点击 Advanced 展开更多选项
+
+   - 点击 Add Environment Variable 添加 Serverless 模式需要的 BARK_KEY 和 BARK_DEVICE_TOKEN 字段
+
+     | 变量名            | 填写要求                                                     |
+     | ----------------- | ------------------------------------------------------------ |
+     | BARK_KEY          | 除了不能填 "push" 外，可以随便填写你喜欢的                   |
+     | BARK_DEVICE_TOKEN | Bark App 设置中显示的 DeviceToken，此 Token 是 APNS 真实设备 Token，请不要泄露 |
+
+6. 点击底部的 Create Web Service 按钮，然后等待状态从 In progress 变成 Live（需要一定时间）
+
+7. 页面顶部找到你的服务器URL，这个就是bark-server服务器URL，在 Bark App 中添加即可（请不要添加/）
+
+   ```
+   https://[your-server-name].onrender.com
+   ```
+
+8. 浏览器中测试，`https://[your-server-name].onrender.com/[BARK_KEY]/[推送内容]`，如果结果此返回内容，则测试成功，手机应该就会推送消息了
+
+   ```
+   {"code":200,"message":"success","timestamp":1702301574}
+   ```
+
+   
