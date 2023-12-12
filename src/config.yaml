@@ -1,17 +1,16 @@
 site:
   name: spanBlog
-  site: 'https://dacong-wu.github.io'
+  site: 'https://blog.ll1025.cn'
   base: '/'
   trailingSlash: false
 
-  googleSiteVerificationId: orcPxI47GSa-cRvY11tUe6iGg2IO_RPvnA1q95iEM3M
-
+  googleSiteVerificationId: W9BTBdddE_jsICqc8dSRNsfGU8dCn14LLLzJSJhGeVQ
 # Default SEO metadata
 metadata:
   title:
     default: spanBlog
     template: '%s - spanBlog'
-  description: "\U0001F680 skysoon技术合作伙伴, 南京量子猫, MA35, UWB, 语言模块, 喵星人, 技术支持"
+  description: "spanBlog，是dacong_wu的一个博客网站，网站使用Astro技术"
   robots:
     index: true
     follow: true
@@ -23,8 +22,8 @@ metadata:
         height: 628
     type: website
   twitter:
-    handle: '@onwidget'
-    site: '@onwidget'
+    handle: '@dacong_wu'
+    site: '@dacong_wu'
     cardType: summary_large_image
 
 i18n:
