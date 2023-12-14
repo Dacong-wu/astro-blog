@@ -3,14 +3,14 @@ site:
   site: 'https://blog.ll1025.cn'
   base: '/'
   trailingSlash: false
-
+  baiduSiteVerificationId: codeva-HMDV7DDARa
   googleSiteVerificationId: W9BTBdddE_jsICqc8dSRNsfGU8dCn14LLLzJSJhGeVQ
 # Default SEO metadata
 metadata:
   title:
     default: spanBlog
     template: '%s - spanBlog'
-  description: "spanBlog，是dacong_wu的一个博客网站，网站使用Astro技术"
+  description: 'spanBlog是dacong_wu的一个博客网站，网站使用Astro技术'
   robots:
     index: true
     follow: true

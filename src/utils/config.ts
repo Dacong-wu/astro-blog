@@ -8,6 +8,7 @@ export interface SiteConfig {
   site?: string;
   base?: string;
   trailingSlash?: boolean;
+  baiduSiteVerificationId?: string;
   googleSiteVerificationId?: string;
 }
 export interface MetaDataConfig extends Omit<MetaData, 'title'> {
@@ -106,7 +107,7 @@ const getSite = () => {
     site: undefined,
     base: '/',
     trailingSlash: false,
-
+    baiduSiteVerificationId: '',
     googleSiteVerificationId: '',
   };
 
