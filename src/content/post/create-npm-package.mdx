@@ -13,4 +13,143 @@ metadata:
     name: sametomorrow
 ---
 
-待更新
+前期准备工作：
+
+1. 创建一个 npm 账号，[npm-signup](https://www.npmjs.com/signup)
+2. 将你的 npm registries 设置为官方的，推荐使用 [nrm](https://www.npmjs.com/package/nrm)
+
+正式开始：
+
+1. 创建目录 `dacong-koa-verifytoken` (假设我需要制作一个用于验证 token 的包)
+
+2. 执行初始化 `npm init -y`
+
+3. 安装依赖，`npm install jsonwebtoken koa-router`
+
+4. 创建 `index.js` 文件，此文件为入口文件
+
+   ```javascript
+   const verifyToken = require('./verifytoken')
+   module.exports = { verifyToken }
+   ```
+
+5. 创建 `verifytoken.js` 文件，此文件为主要功能文件
+
+   ```javascript
+   const jwt = require('jsonwebtoken')
+   function setRouterOpts(opts) {
+     opts = opts || {} 
+     /*
+     opts 是引用包时，传入的信息
+     secret 为签名秘钥
+     excludedPaths 为需要排除的路径
+     NODE_ENV 为程序运行环境值
+     */
+     let { secret = 'secret', excludedPaths = [], NODE_ENV = 'production' } = opts
+     return async (ctx, next) => {
+       if (!excludedPaths.includes(ctx.path) && NODE_ENV === 'production') {
+         const token = ctx.request.headers.token
+         // 检查请求头中是否包含令牌
+         if (!token) {
+           ctx.status = 401 // 缺失令牌，返回未经授权状态码
+           return
+         }
+         try {
+           const info = jwt.verify(token, secret)
+           ctx.user_data = info.data // 此为用户信息，是创建 token 时设置的
+         } catch (err) {
+           if (err?.message === 'jwt expired') {
+             console.error(`Title:Token验证错误-token过期`)
+           } else {
+             console.error(`Title:Token验证错误\nErr_stack:${err.stack}\n`)
+           }
+           ctx.status = 401
+         }
+       }
+       await next()
+     }
+   }
+   module.exports = setRouterOpts
+   ```
+
+6. 添加 `.gitignore` 文件，添加需要忽略提交的文件
+
+   ```
+   node_modules
+   .gitignore
+   *.DS_Store
+   logs
+   *.log
+   package-lock.json
+   ```
+
+7. 修改 `package.json` 文件，加入关键词，描述等信息
+
+   ```json
+   {
+     "name": "koa-verifytoken",
+     "version": "1.0.0",
+     "description": "",
+     "main": "index.js",
+     "scripts": {
+       "test": "echo \"Error: no test specified\" && exit 1"
+     },
+     "keywords": [
+       "token",
+       "verifytoken",
+       "koa-token",
+       "verify-jwt"
+     ],
+     "author": "",
+     "license": "ISC",
+     "dependencies": {
+       "jsonwebtoken": "^9.0.2",
+       "koa-router": "^12.0.0",
+     }
+   }
+   ```
+
+8. 创建 `README.md` 文件，对此包做一个使用说明
+
+   ````markdown
+   ### 安装
+   
+   ```shell
+   npm install koa-verifytoken@latest
+   ```
+   
+   ### 使用
+   
+   ```javascript
+   /* 🌰 /router.js
+   secret:token秘钥 default:'secret'
+   excludedPaths:需要排除验证的路由host完整地址 🌰 https://test.cn/api/8888 default:[]
+   NODE_ENV:Node的环境，production环境才会执行验证，方便本地开发 default:'production'
+   */
+   const router = require('koa-router')()
+   const { verifyToken } = require('koa-verifytoken')
+   
+   router.use(verifytoken({secret, excludedPaths, NODE_ENV}))
+   router.use('/other') // 其它需要验证的路由
+   module.exports = router
+   ```
+   
+   ### 注意事项
+   
+   1. 这是 `Koa` 的插件
+   2. `NODE_ENV` 为 `production` 时，才会生效
+   3. `excludedPaths` 为一个 `host` 路径数组
+   ````
+
+9. 确认无误就可以提交了，默认的包名，为 `package.json` 里面 `name` 的值，不可重复
+
+10. 执行 `npm publish` 提交，根据控制台提示完成登录即可
+
+11. 这个时候，在 npm 中就可以搜索到此包了
+
+注意：
+
+1. 实际我已经发布的包名为 `dacong-koa-verifytoken` `koa-verifytoken` 只是一个用于教程的名字
+2. 这只是一个非常简单的示例，并没有打包
+3. 请注意教程中依赖包的版本信息，如果依赖包版本有大的变动，可能会不适用
+
