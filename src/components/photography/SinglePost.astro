@@ -43,6 +43,7 @@ const { photography, url } = Astro.props;
         {
           photography.images.map((image) => (
             <Image
+              img-can-preview
               src={image}
               class="max-w-full lg:max-w-[900px] mx-auto mb-3 sm:rounded-md bg-gray-200 dark:bg-slate-700"
               widths={[400, 900]}

@@ -103,8 +103,22 @@ import { UI } from '~/utils/config';
         ticking = true;
       }
     });
-    attachEvent('img', 'click', function () {
-      console.log('123');
+    attachEvent('[img-can-preview]', 'click', function (ele) {
+      var myHtml = document.querySelector('html');
+      myHtml.classList.toggle('overflow-hidden');
+      var divElement = document.createElement('div');
+      divElement.setAttribute('id', 'img-preview-body');
+      divElement.addEventListener('click', function () {
+        var imgPreviewBody = document.getElementById('img-preview-body');
+        document.body.removeChild(imgPreviewBody);
+        myHtml.classList.toggle('overflow-hidden');
+      });
+      var imgElement = document.createElement('img');
+      imgElement.setAttribute('src', ele.target.src);
+      imgElement.setAttribute('alt', ele.target.alt);
+      imgElement.classList.add('preview');
+      divElement.appendChild(imgElement);
+      document.body.appendChild(divElement);
     });
   };
 

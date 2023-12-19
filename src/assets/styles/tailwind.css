@@ -92,3 +92,13 @@
 .dd *:first-child {
   margin-top: 0;
 }
+img[img-can-preview] {
+  @apply cursor-zoom-in;
+}
+
+#img-preview-body {
+  @apply flex items-center justify-center top-0 left-0 w-full h-full fixed overflow-y-auto motion-safe:scroll-smooth z-50 bg-zinc-900;
+}
+#img-preview-body .preview {
+  @apply absolute w-full cursor-zoom-out;
+}
