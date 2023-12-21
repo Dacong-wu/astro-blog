@@ -34,3 +34,9 @@
 
    这个大概率是因为 `sharp` 的问题，[官方文档](https://docs.astro.build/zh-cn/guides/images/#%E9%BB%98%E8%AE%A4%E5%9B%BE%E5%83%8F%E6%9C%8D%E5%8A%A1) 中也有部分介绍，推荐使用 [squoosh](https://github.com/GoogleChromeLabs/squoosh) ，在 AstroWind 中的 [Issues](https://github.com/onwidget/astrowind/issues/314) 中也有提到，按我提供的方式，解决了很多人的问题
 
+## 更新介绍
+1. content-23/47-1 为 2023 年第 47 周第一次内容更新，以此类推
+2. bug-23-001 为 2023 年第一次 bug 更新
+3. feature-23-001 为 2023 年第一次功能更新
+4. 网站每周一更新（特殊时间除外，如纪念日等）
+

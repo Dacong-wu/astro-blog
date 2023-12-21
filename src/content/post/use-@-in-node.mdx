@@ -12,4 +12,22 @@ metadata:
     name: caipod
 ---
 
-待更新
+当我们在写 Koa 服务时，我们引入文件的时候会使用以下方式
+
+```javascript
+const router = require('./router')
+```
+
+但我们使用经常使用 Vue 我们就会对 `@/` 很熟悉，如果你也想在 Koa 中使用，你可以参考下面的方法
+
+1. 安装 `module-alias` 包，`npm install module-alias`
+
+2. 在 `package.json` 中加入以下信息
+
+   ```json
+   "_moduleAliases": {
+       "@": "."
+    },
+   ```
+
+3. 在入口文件，比如 `server.js` 顶部中引用 `require('module-alias/register')`

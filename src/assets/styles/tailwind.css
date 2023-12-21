@@ -102,3 +102,8 @@ img[img-can-preview] {
 #img-preview-body .preview {
   @apply absolute w-full cursor-zoom-out;
 }
+
+span.line::before {
+  content: attr(data-index);
+  padding-right: 10px;
+}
