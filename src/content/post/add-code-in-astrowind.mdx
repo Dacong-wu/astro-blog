@@ -1,0 +1,93 @@
+---
+publishDate: 2023-12-21
+title: 实现代码块一键复制
+excerpt: 为 astrowind 代码块添加一键复制功能
+image: '~/assets/images/blog/aletta-d-nagy-zSsBcqTuQ10-unsplash.jpg'
+category: client
+tags:
+- astro
+metadata:
+  image_author:
+    link: https://unsplash.com/@dnagyali
+    name: dnagyali
+---
+
+本教程适用于基于 [Astro](https://astro.build/) 的博客页面，下面测试代码块示例
+```javascript
+let happy = '跟自己和解'
+```
+代码块右上角有一个图标，点击就可以复制这块代码
+
+在 Astro 中，我们需要认识一个通用组件 [`<Content />`](https://docs.astro.build/zh-cn/reference/api-reference/#content-)，它主要用于呈现内容集合中的内容。如果内容集合是有 mdx文件构成的，那 `<Content />` 主要就是呈现 mdx 文档的内容。
+
+如何自定义 pre 的展示，增加一键复制的功能？我们需要使用到 mdx 的特性，创建自定义组件，然后在渲染 mdx 内容的时候，通过 `components` 属性传递自定义组件，下面是示例代码
+
+``` javascript
+import Code from '~/components/blog/Code.astro';
+<Content components={{ pre: Code }} />
+```
+
+以下是自定义组件 `Code.astro`  的内容
+
+```javascript
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<div class="relative">
+  <pre
+    class="shadow-2xl bg-black code"><button aria-label="copy-button" class="copy-button absolute  z-20 top-2 right-2  rounded-md transition-all ease-in max-w-full max-h-fit hover:text-indigo-400"><Icon name="tabler:copy" /></button><span class="check-span absolute z-10 top-2 right-2  rounded-md transition-all ease-in opacity-0 text-green-300 max-w-full max-h-fit "><Icon name="tabler:check" /></span><slot /></pre>
+</div>
+<script>
+  const coppyBlock = () => {
+    const proBlock = document.querySelectorAll('pre');
+    proBlock.forEach((pre) => {
+      const button = pre.querySelector('.copy-button');
+      const check = pre.querySelector('.check-span');
+      const code = pre.querySelector('code');
+      if (code) {
+        const lineSpans = code?.querySelectorAll('span.line');
+        lineSpans.forEach((span, index) => {
+          let indexData = `${index+1}.`;
+          span.setAttribute('data-index', indexData);
+        });
+      }
+
+      button!.addEventListener('click', () => {
+        navigator.clipboard.writeText(pre.textContent?.trim() || '');
+        check?.classList.remove('opacity-0');
+        button?.classList.add('opacity-0');
+        setTimeout(() => {
+          check?.classList.add('opacity-0');
+          button?.classList.remove('opacity-0');
+        }, 2000);
+      });
+    });
+  };
+  coppyBlock(); // initial load
+  document.addEventListener('astro:after-swap', coppyBlock); // re-run after each page change
+</script>
+```
+
+注意事项：
+
+1. 本示例使用了 tailwind css ，你需要在 astro 中安装它
+
+2. 你需要安装 `astro-icon` 以使用组件 `<Icon>`，并且需要安装图标集 `@iconify-json/tabler`，并在 `astro.config.mjs` 中关于 icon 的配置中引用它，下面是示例代码
+
+   ```javascript
+   import { defineConfig } from 'astro/config';
+   import icon from 'astro-icon';
+   export default defineConfig({
+       integrations: [
+           icon({
+               include: {
+                   tabler: ['*'],
+               },
+           }),
+       ]
+   })
+   ```
+
+3. `<pre>` 里面的内容不能换行
+
