@@ -14,9 +14,14 @@ import { Icon } from 'astro-icon/components';
       const check = pre.querySelector('.check-span');
       const code = pre.querySelector('code');
       if (code) {
+        code.classList.add('block', 'w-full', 'overflow-y-auto');
         const lineSpans = code?.querySelectorAll('span.line');
+        let spanLength = String(lineSpans.length).length;
+        console.log(spanLength);
         lineSpans.forEach((span, index) => {
-          let indexData = `${index+1}.`;
+          span.style.setProperty('--aw-code-span-before-w', `${0.8 * spanLength}rem`);
+          span.style.setProperty('--aw-code-span-ml', `${0.8 * spanLength + 0.1}rem`);
+          let indexData = `${index + 1}`;
           span.setAttribute('data-index', indexData);
         });
       }

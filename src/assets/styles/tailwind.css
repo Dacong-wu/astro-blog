@@ -102,8 +102,10 @@ img[img-can-preview] {
 #img-preview-body .preview {
   @apply absolute w-full cursor-zoom-out;
 }
-
+span.line {
+  @apply ml-[var(--aw-code-span-ml)];
+}
 span.line::before {
   content: attr(data-index);
-  padding-right: 10px;
+  @apply bg-black absolute left-[20px] text-right w-[var(--aw-code-span-before-w)] pr-2;
 }
