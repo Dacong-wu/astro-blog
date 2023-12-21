@@ -1,4 +1,4 @@
-import { getPermalink } from './utils/permalinks';
+import { getPermalink, getAsset } from './utils/permalinks';
 export const headerData = {
   links: [
     {
@@ -33,10 +33,12 @@ export const footerData = {
     {
       title: '摄影展示',
       href: getPermalink('/photography'),
+      links: [{ text: '杭州行', href: getPermalink('photography/hangzhou') }],
     },
     {
       title: '幸福记录',
       href: getPermalink('/happiness'),
+      links: [{ text: '1999', href: 'https://2018-0215.cn', target: '_blank' }],
     },
     {
       title: '关于我',
@@ -44,6 +46,14 @@ export const footerData = {
       links: [{ text: '技术栈', href: getPermalink('/about#technology-stack') }],
     },
   ],
-  socialLinks: [{ ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/Dacong-wu/astro-blog' }],
-  footNote: `<span class="ml-1.5">Made by spanBlog · 2023 - <a class="hover:underline" href="https://onwidget.com/">苏ICP备2021045936号-2</a></span>`,
+  socialLinks: [
+    { ariaLabel: 'RSS Feed', icon: 'tabler:rss', href: getAsset('/rss.xml') },
+    {
+      ariaLabel: 'Github',
+      icon: 'tabler:brand-github',
+      target: '_blank',
+      href: 'https://github.com/Dacong-wu/astro-blog',
+    },
+  ],
+  footNote: `<span class="ml-1.5">Made by Span · 2023 - <a class="hover:underline" href="https://onwidget.com/">苏ICP备2021045936号-2</a></span>`,
 };
