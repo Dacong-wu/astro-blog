@@ -1,39 +1,41 @@
 ---
 publishDate: 2024-01-04
 title: 在 Node 中实现定时任务
-excerpt: 为 node 提供定时任务，并可实现持久化
+excerpt: 为 node 提供定时任务，并实现持久化
 image: '~/assets/images/blog/pexels-stein-egil-liland-19434047.jpg'
 category: server
 tags:
-- node
+  - node
 metadata:
   image_author:
     link: https://www.pexels.com/zh-cn/@therato/
     name: therato
 ---
 
-本教程适用于想在 NodeJs 中实现定时任务，比可实现持久化的方案。
+本教程适用于想在 NodeJs 中实现定时任务，并实现持久化的方案。
 
-一般我在 NodeJs 中，我都会使用 `node-schedule` 去执行一些定时任务，比如定时去执行 MongoDb 数据库的备份，但是最近有一个新的需求，给一个信息块，设置一个定时提醒的任务，比如用户设置，3天后，给他发邮件提醒他，这时 `node-schedule` 就显然不能满足要求了。
+一般在 NodeJs 中，我都使用 `node-schedule` 去处理一些定时任务，比如定时执行 MongoDb 数据库的备份。但最近有一个新需求，大概是这样的：给一个信息块设置一个定时提醒的任务，假如用户期望在 3 天后，我能够用邮件去提醒他关于这个信息块的内容 。
 
-1. 它不能动态的去在指定
+这时 `node-schedule` 就不能满足需求，原因为认为有一下俩点。
+
+1. 它不能动态的指定定时任务
 2. 如果项目重启，设置的定时任务可能会丢失
 
-我在 `node-schedule` 的 [README.md](https://github.com/node-schedule/node-schedule#readme) 中了解到 `agenda` 这个库，你可以在它的 [README.md](https://github.com/agenda/agenda) 去具体了解，我以下只介绍他的简单使用，包括创建、查询和取消。
+介于此，我在 `node-schedule` 的 [README.md](https://github.com/node-schedule/node-schedule#readme) 中了解到 `agenda` ，它是一个很优秀的解决方案，你可以在它的 [README.md](https://github.com/agenda/agenda) 去具体了解，我以下只介绍它的简单示例，包括创建、查询和取消等任务。
 
 1. 创建一个 `agenda.js` 来设置处理定时任务的方法
 
    ```javascript
    /*agenda.js*/
-   const Agenda = require('agenda')
-   const agenda = new Agenda()
-   const mongoConnectionString = 'mongodb://127.0.0.1:27017/spanblog' //这是你的 MongoDb 数据库地址，它依赖 MongoDb 数据库实现持久化
+   const Agenda = require('agenda');
+   const agenda = new Agenda();
+   const mongoConnectionString = 'mongodb://127.0.0.1:27017/spanblog'; //这是你的 MongoDb 数据库地址，它依赖 MongoDb 数据库实现持久化
    /*
    spanblog 为数据库的名称
    agendaJobs 为集合的名称
    processEvery 为查询数据库的时间频率
    */
-   agenda.database(mongoConnectionString, 'agendaJobs').processEvery('10 seconds')
+   agenda.database(mongoConnectionString, 'agendaJobs').processEvery('10 seconds');
    ```
 
 2. 定义一个定时处理器
@@ -44,16 +46,16 @@ metadata:
    func 为你实际需要执行的任务
    sendTest 为任务的名称
    */
-   agenda.define('sendTest', async job => {
-     const { to, subject, info } = job.attrs.data
+   agenda.define('sendTest', async (job) => {
+     const { to, subject, info } = job.attrs.data;
      try {
-       await func()
-       await job.remove() // 执行完成，移除这个定时任务，并在数据库中删除
+       await func();
+       await job.remove(); // 执行完成，移除这个定时任务，并在数据库中删除
      } catch (err) {
-       job.fail(err.stack) // 执行失败，记录失败日志，不会在数据库中删除
-       await job.save()
+       job.fail(err.stack); // 执行失败，记录失败日志，不会在数据库中删除
+       await job.save();
      }
-   })
+   });
    ```
 
 3. 监听 `agenda` 状态，并启动 `agenda`
@@ -62,32 +64,35 @@ metadata:
    /*agenda.js 内容接上序*/
    // 这一步很重要，因为不启动 agenda，它就不会执行定时任务
    agenda.on('ready', function () {
-     agenda.start()
-   })
+     agenda.start();
+   });
    ```
 
 4. 具体的实际操作
 
    ```javascript
-   const dayjs = require('dayjs')
-   const mongoose = require('mongoose')
+   const dayjs = require('dayjs');
+   const mongoose = require('mongoose');
    
    // 创建定时任务，data 为任务处理需要的数据
    async function createAgenda(data) {
-     let { time } = data // 为执行定时任务的时间
-     await agenda.schedule(dayjs(time).toDate(), 'sendTest', data)
+     let { time } = data; // 为执行定时任务的时间
+     await agenda.schedule(dayjs(time).toDate(), 'sendTest', data);
    }
    
    // 查询定时任务，你可以查询 data 的 key 为 8 的相关任务
    async function findAgenda() {
-     const jobs = await agenda.jobs({ name: 'sendEmail' ,'data.key': 8 }, { nextRunAt: -1 })
-     return jobs
+     const jobs = await agenda.jobs({ name: 'sendEmail', 'data.key': 8 }, { nextRunAt: -1 });
+     return jobs;
    }
    
    // 删除定位任务，_id 为查询定时任务中获取到的
    async function removeAgenda({ _id }) {
-     const numRemoved = await agenda.cancel({ name: 'sendEmail', _id: mongoose.Types.ObjectId.createFromHexString(_id) }) // 将 String 转为 ObjectId 格式，不然查询会失败
-     return numRemoved
+     const numRemoved = await agenda.cancel({
+       name: 'sendEmail',
+       _id: mongoose.Types.ObjectId.createFromHexString(_id),
+     }); // 将 String 转为 ObjectId 格式，不然查询会失败
+     return numRemoved;
    }
    ```
 

@@ -55,5 +55,5 @@ export const footerData = {
       href: 'https://github.com/Dacong-wu/astro-blog',
     },
   ],
-  footNote: `<span class="ml-1.5">Made by Span · 2023 - <a class="hover:underline" href="https://onwidget.com/">苏ICP备2021045936号-2</a></span>`,
+  footNote: `<span class="ml-1.5">Made By Span · 2023 - <a class="hover:underline" href="https://onwidget.com/">苏ICP备2021045936号-2</a></span>`,
 };
