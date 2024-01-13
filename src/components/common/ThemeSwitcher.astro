@@ -4,7 +4,11 @@ import { Icon } from 'astro-icon/components';
 
 <div class="inline-flex mr-5">
   <input class="absolute opacity-0" id="theme-switcher" data-theme-switcher type="checkbox" />
-  <label class="relative inline-block h-4 cursor-pointer rounded-2xl bg-zinc-300 w-10" for="theme-switcher">
+  <label
+    id="data-theme-switcher-label"
+    class="relative hidden h-4 cursor-pointer rounded-2xl bg-zinc-300 w-10"
+    for="theme-switcher"
+  >
     <span
       id="data-theme-switcher-span"
       class="absolute -top-1 left-0 flex h-6 w-6 items-center justify-center rounded-full bg-black transition-all duration-300 dark:bg-white"
@@ -19,6 +23,7 @@ import { Icon } from 'astro-icon/components';
   const defaultTheme = 'system';
   const matchMedia = window.matchMedia('(prefers-color-scheme: dark)');
   const spanWithAttribute = document.getElementById('data-theme-switcher-span');
+  const labelWithAttribute = document.getElementById('data-theme-switcher-label');
   matchMedia.addEventListener('change', () => toggleTheme(document.querySelectorAll('[data-theme-switcher]')));
   function toggleTheme(themeSwitch: NodeListOf<Element>) {
     const defaulTheme = defaultTheme === 'system' ? (matchMedia.matches ? 'dark' : 'light') : defaultTheme;
@@ -26,8 +31,9 @@ import { Icon } from 'astro-icon/components';
     const isDarkTheme = currentTheme === 'dark';
     themeSwitch.forEach((sw: any) => (sw.checked = isDarkTheme));
     document.documentElement.classList.toggle('dark', isDarkTheme);
-    if (spanWithAttribute) {
+    if (spanWithAttribute && labelWithAttribute) {
       spanWithAttribute.classList.toggle('left-4', isDarkTheme);
+      labelWithAttribute.classList.remove('hidden');
     }
   }
   const setDarkMode = () => {
