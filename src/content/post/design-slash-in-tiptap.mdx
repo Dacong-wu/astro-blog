@@ -1,0 +1,364 @@
+---
+publishDate: 2024-01-18
+title: 在 tiptap 中实现斜杠功能
+excerpt: 通过自定义方法，在 tiptap 中实现斜杠功能
+image: 'https://img.2018-0215.cn/202401202101439.jpg'
+local_image: '~/assets/images/blog/kristaps-ungurs-PNSYRGw6JR4-unsplash.jpg'
+category: client
+tags:
+  - vue
+  - tiptap
+metadata:
+  image_author:
+    link: https://unsplash.com/@kristapsungurs
+    name: kristapsungurs
+---
+
+我觉得 [tiptap](https://tiptap.dev/) 是目前的最佳编辑器，高度可自定义，UI 都由你自己决定，这是基于 react 的一个官方 [demo](https://templates.tiptap.dev/T8rkgbkzwp)，可以去体验一下。
+
+下面进入正题，[官方文档](https://tiptap.dev/docs/editor/experiments/commands)中只是简单实现，但我想实现下面的这种。
+
+![键盘选择](https://img.2018-0215.cn/202401202045669.png)
+
+以下教程基于 `Vue3` + `tailwindcss`
+
+首先创建 4 个自定义文件 
+
+1. `slash.js`
+
+   ```javascript
+   import { Extension } from '@tiptap/core'
+   import suggestion from '@tiptap/suggestion'
+   
+   export default Extension.create({
+     name: 'slash',
+     addOptions() {
+       return {
+         suggestion: {
+           char: '/',
+           command: ({ editor, range, props }) => {
+             props.command({ editor, range })
+           }
+         }
+       }
+     },
+   
+     addProseMirrorPlugins() {
+       return [
+         suggestion({
+           editor: this.editor,
+           ...this.options.suggestion,
+         })
+       ]
+     }
+   })
+   ```
+
+2. `suggestion.js`
+
+   ```javascript
+   import { VueRenderer } from '@tiptap/vue-3'
+   import tippy from 'tippy.js'
+   
+   import CommandsList from './CommandsList.vue'
+   
+   export default function set(items) {
+     return {
+       items: () => {
+         return items
+           ? items
+           : [
+               {
+                 title: '一级标题',
+                 icon: 'mdi:format-header-1',
+                 command: ({ editor, range }) => {
+                   editor.chain().focus().deleteRange(range).setNode('heading', { level: 1 }).run()
+                 }
+               }
+             ]
+       },
+       render: () => {
+         let component
+         let popup
+   
+         return {
+           onStart: props => {
+             component = new VueRenderer(CommandsList, {
+               props,
+               editor: props.editor
+             })
+             const { $cursor } = props.editor.view.state.selection
+             const selection = props.editor.state.selection
+   
+             // 获取选区的上下文
+             const context = selection.$from.depth ? selection.$from.node(selection.$from.depth - 1) : null
+             const listItem = context && context.type.name === 'listItem'
+             const isCursorInParagraph = $cursor && $cursor.parent.type.name === 'paragraph'
+             if (!props.clientRect || !isCursorInParagraph || listItem) {
+               return
+             }
+             popup = tippy('body', {
+               getReferenceClientRect: props.clientRect,
+               appendTo: () => document.body,
+               content: component.element,
+               showOnCreate: true,
+               interactive: true,
+               trigger: 'manual',
+               placement: 'bottom-start'
+             })
+           },
+   
+           onUpdate(props) {
+             component.updateProps(props)
+             if (!props.clientRect || props.text !== '/') {
+               popup[0].hide()
+               return
+             }
+             if (props.text === '/') {
+               popup[0].show()
+             }
+             popup[0].setProps({
+               getReferenceClientRect: props.clientRect
+             })
+           },
+   
+           onKeyDown(props) {
+             if (props.event.key === 'Escape') {
+               popup[0].hide()
+   
+               return true
+             }
+   
+             return component.ref?.onKeyDown(props)
+           },
+   
+           onExit() {
+             popup[0].destroy()
+             component.destroy()
+           }
+         }
+       }
+     }
+   }
+   ```
+
+3. `CommandsList.vue`
+
+   ```vue
+   <template>
+     <div class="w-max flex shadow rounded py-1">
+       <div
+         id="scrollingDiv"
+         class="flex flex-col items-center gap-y-1 max-h-52 h-max overflow-y-auto dark:bg-zinc-900 dark:text-zinc-300"
+       >
+         <button
+           class="tippy-item flex items-center p-1 pr-12 text-xs hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors rounded cursor-pointer w-full group"
+           :class="{ 'bg-zinc-200 dark:bg-zinc-700': index === selectedIndex }"
+           v-for="(item, index) in items"
+           :key="index"
+           @click="selectItem(index)"
+         >
+           <div
+             class="flex p-1 mr-2 bg-zinc-200 dark:bg-zinc-500 group-hover:bg-zinc-50 dark:group-hover:bg-zinc-600 transition-colors rounded-sm"
+             :class="{ 'bg-zinc-50 dark:bg-zinc-600': index === selectedIndex }"
+           >
+             <Icon :icon="item.icon" />
+           </div>
+           {{ item.title }}
+         </button>
+       </div>
+     </div>
+   </template>
+   
+   <script>
+   import Icon from './Icon.vue'
+   export default {
+     components: {
+       Icon
+     },
+     props: {
+       items: {
+         type: Array,
+         required: true
+       },
+   
+       command: {
+         type: Function,
+         required: true
+       }
+     },
+   
+     data() {
+       return {
+         selectedIndex: 0,
+         scrollingDiv: null
+       }
+     },
+     mounted() {
+       this.scrollingDiv = document.getElementById('scrollingDiv')
+     },
+     watch: {
+       items() {
+         this.selectedIndex = 0
+       }
+     },
+   
+     methods: {
+       onKeyDown({ event }) {
+         if (event.key === 'ArrowUp') {
+           this.upHandler()
+           return true
+         }
+   
+         if (event.key === 'ArrowDown') {
+           this.downHandler()
+           return true
+         }
+   
+         if (event.key === 'Enter') {
+           this.enterHandler()
+           return true
+         }
+         return false
+       },
+       upHandler() {
+         this.selectedIndex = (this.selectedIndex + this.items.length - 1) % this.items.length
+         this.scrollDiv()
+       },
+       downHandler() {
+         this.selectedIndex = (this.selectedIndex + 1) % this.items.length
+         this.scrollDiv()
+       },
+       scrollDiv() {
+         let buttons = this.scrollingDiv.querySelectorAll('button')
+         let button = buttons[this.selectedIndex]
+         button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+       },
+       enterHandler() {
+         this.selectItem(this.selectedIndex)
+       },
+       selectItem(index) {
+         const item = this.items[index]
+   
+         if (item) {
+           this.command(item)
+         }
+       }
+     }
+   }
+   </script>
+   ```
+
+4. `Icon.vue`
+
+   ```vue
+   <script setup>
+   import { Icon } from '@iconify/vue'
+   defineProps(['icon', 'height', 'inline', 'color'])
+   </script>
+   <template>
+     <div>
+       <Icon
+         :icon="icon"
+         :height="height ? height : '18'"
+         :inline="inline ? true : false"
+         :color="color ? color : ''"
+       />
+     </div>
+   </template>
+   ```
+
+
+然后我们在主文件 `index.vue` 中引入自定义拓展
+
+```vue
+<script setup>
+import { useEditor, EditorContent } from '@tiptap/vue-3'
+import Slash from './slash.js'
+import suggestion from './suggestion.js'
+const props = defineProps(['content', 'slash'])
+const editor = useEditor({
+  editable: true,
+  content: props.content,
+  extensions: [
+    Slash.configure({
+      suggestion: suggestion(props.slash)
+    })
+  ],
+})
+</script>
+<template>
+	<div class="dark:bg-zinc-800 dark:text-zinc-300 min-h-screen flex flex-col">
+  	<editor-content class="w-full" :editor="editor" />
+	</div>
+</template>
+```
+
+`props.slash` 数据有以下自定义数组组成
+
+```javascript
+const slash = [
+  {
+    title: '普通文本',
+    icon: 'mdi:format-paragraph',
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setNode('paragraph').run()
+    }
+  },
+  {
+    title: '一级标题',
+    icon: 'mdi:format-header-1',
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setNode('heading', { level: 1 }).run()
+    }
+  },
+  {
+    title: '二级标题',
+    icon: 'mdi:format-header-2',
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setNode('heading', { level: 2 }).run()
+    }
+  },
+  {
+    title: '三级标题',
+    icon: 'mdi:format-header-3',
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setNode('heading', { level: 3 }).run()
+    }
+  },
+  {
+    title: '代码块',
+    icon: 'mdi:code-braces-box',
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setNode('codeBlock').run()
+    }
+  },
+  {
+    title: '无序列表',
+    icon: 'mdi:format-list-bulleted',
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).toggleBulletList().run()
+    }
+  },
+  {
+    title: '有序列表',
+    icon: 'mdi:format-list-numbered',
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).toggleOrderedList().run()
+    }
+  }
+]
+```
+
+至此，自定义 `/` 命令就可以正常工作了，注意别忘记安装使用到的依赖
+
+
+
+
+
+
+
+
+
+
+

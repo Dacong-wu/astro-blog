@@ -1,0 +1,35 @@
+---
+publishDate: 2024-01-17
+title: 解决 scrollIntoView 使用问题
+excerpt: 解决 scrollIntoView 滚动时候，body 页面也随之滚动的问题
+image: 'https://img.2018-0215.cn/kitzbuhel-71dUtaVBefY-unsplash.jpg'
+local_image: '~/assets/images/blog/kitzbuhel-71dUtaVBefY-unsplash.jpg'
+category: client
+tags:
+  - html
+metadata:
+  image_author:
+    link: https://unsplash.com/@kitzbuehel
+    name: kitzbuehel
+---
+
+本周在自定义 tiptap `/` 命令时，遇到以下使用场景：
+
+![键盘选择](https://img.2018-0215.cn/202401202045669.png)
+
+使用 `/` 弹出菜单，使用键盘快捷键上下选择，我使用的是 `scrollIntoView` 滚动方案，原因是不需要自己手动去计算滚动距离，特别的方便。
+
+实际使用后，确实能达到目的，但是问题出现了。当我使用键盘选择预选时，body 页面也会随着发生滚动，这是我不想出现的。
+
+最后搜索发现，使用以下方法可以解决：
+
+```javascript
+function scrollDiv() {
+  let buttons = this.scrollingDiv.querySelectorAll('button')
+  let button = buttons[this.selectedIndex]
+  button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+},
+```
+
+重点就是添加 `block: 'nearest'` 属性，`block` 默认为 `start`。
+

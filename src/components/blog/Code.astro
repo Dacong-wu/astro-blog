@@ -17,7 +17,6 @@ import { Icon } from 'astro-icon/components';
         code.classList.add('block', 'w-full', 'overflow-y-auto');
         const lineSpans = code?.querySelectorAll('span.line');
         let spanLength = String(lineSpans.length).length;
-        console.log(spanLength);
         lineSpans.forEach((span, index) => {
           span.style.setProperty('--aw-code-span-before-w', `${0.8 * spanLength}rem`);
           span.style.setProperty('--aw-code-span-ml', `${0.8 * spanLength + 0.1}rem`);

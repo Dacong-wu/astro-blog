@@ -26,6 +26,13 @@ const whenExternalScripts = (items = []) =>
 
 export default defineConfig({
   image: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.2018-0215.cn/',
+        pathname: '/**',
+      },
+    ],
     service: squooshImageService(),
   },
   site: SITE.site,
@@ -54,14 +61,14 @@ export default defineConfig({
     ),
 
     tasks(),
-    compress({
-      CSS: true,
-      HTML: true,
-      Image: true,
-      JavaScript: true,
-      SVG: true,
-      Logger: 1,
-    }),
+    // compress({
+    //   CSS: true,
+    //   HTML: true,
+    //   Image: true,
+    //   JavaScript: true,
+    //   SVG: true,
+    //   Logger: 1,
+    // }),
   ],
 
   markdown: {
