@@ -8,14 +8,27 @@ export const headerData = {
     {
       text: '知识分享',
       href: getPermalink('/knowledge'),
+      links: [
+        {
+          text: '标签列表',
+          href: getPermalink('tags'),
+        },
+      ],
     },
     {
       text: '摄影展示',
       href: getPermalink('/photography'),
+      links: [
+        {
+          text: '杭州行',
+          href: getPermalink('photography/hangzhou'),
+        },
+      ],
     },
     {
       text: '幸福记录',
       href: getPermalink('/happiness'),
+      links: [{ text: '1999', href: 'https://2018-0215.cn', target: '_blank' }],
     },
     {
       text: '关于我',
@@ -29,6 +42,7 @@ export const footerData = {
     {
       title: '知识分享',
       href: getPermalink('/knowledge'),
+      links: [{ text: '标签列表', href: getPermalink('tags') }],
     },
     {
       title: '摄影展示',
@@ -55,5 +69,6 @@ export const footerData = {
       href: 'https://github.com/Dacong-wu/astro-blog',
     },
   ],
-  footNote: `<span class="ml-1.5">Made By Span · 2023 - <a class="hover:underline" href="https://onwidget.com/">苏ICP备2021045936号-2</a></span>`,
+  footNote: `<span class="ml-1.5">Made By Span · 2023 - <a class="hover:underline" href="https://beian.miit.gov.cn/">苏ICP备2021045936号-2</a></span>`,
+  // footNote: `<span class="ml-1.5">Made By Span · 2023 - <a class="hover:underline" href="https://onwidget.com/">苏ICP备2021045936号-2</a></span>`,
 };

@@ -221,3 +221,13 @@ export const getStaticPathsBlogTag = async ({ paginate }) => {
     )
   );
 };
+
+export const getStaticPathsBlogTags = async () => {
+  if (!isBlogEnabled || !isBlogTagRouteEnabled) return [];
+  const posts = await fetchPosts();
+  const tags = new Set();
+  posts.map((post) => {
+    Array.isArray(post.tags) && post.tags.map((tag) => tags.add(tag.toLowerCase()));
+  });
+  return [...tags].sort();
+};

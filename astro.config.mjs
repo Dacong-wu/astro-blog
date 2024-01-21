@@ -7,7 +7,6 @@ import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
 import partytown from '@astrojs/partytown';
-import compress from 'astro-compress';
 import icon from 'astro-icon';
 import tasks from './src/utils/tasks';
 
@@ -25,16 +24,9 @@ const whenExternalScripts = (items = []) =>
     : [];
 
 export default defineConfig({
-  image: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '*.2018-0215.cn/',
-        pathname: '/**',
-      },
-    ],
-    service: squooshImageService(),
-  },
+  // image: {
+  //   service: squooshImageService(),
+  // },
   site: SITE.site,
   base: SITE.base,
   trailingSlash: SITE.trailingSlash ? 'always' : 'never',
@@ -61,14 +53,6 @@ export default defineConfig({
     ),
 
     tasks(),
-    // compress({
-    //   CSS: true,
-    //   HTML: true,
-    //   Image: true,
-    //   JavaScript: true,
-    //   SVG: true,
-    //   Logger: 1,
-    // }),
   ],
 
   markdown: {

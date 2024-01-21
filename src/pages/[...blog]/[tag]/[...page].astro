@@ -5,7 +5,7 @@ import Layout from '~/layouts/PageLayout.astro';
 import BlogList from '~/components/blog/List.astro';
 import Headline from '~/components/blog/Headline.astro';
 import Pagination from '~/components/blog/Pagination.astro';
-
+import ToTagsLink from '~/components/blog/ToTagsLink.astro';
 export const prerender = true;
 
 export async function getStaticPaths ({ paginate }) {
@@ -31,4 +31,5 @@ const metadata = {
     <BlogList posts={page.data} />
     <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
   </section>
+  <ToTagsLink />
 </Layout>

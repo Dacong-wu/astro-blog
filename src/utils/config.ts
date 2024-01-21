@@ -187,7 +187,7 @@ const getAppBlog = () => {
         index: false,
         follow: true,
       },
-    },
+    }
   };
   return merge({}, _default, config?.apps?.blog ?? {}) as AppBlogConfig;
 };
