@@ -1,0 +1,94 @@
+---
+publishDate: 2024-02-02
+title: 学习 BOM-location
+excerpt: 深入学习 BOM 最有用的对象之一的 location
+image: '~/assets/images/blog/kristaps-ungurs-YrVhlo-l1bs-unsplash.jpg'
+category: client
+tags:
+  - html
+  - BOM
+metadata:
+  image_author:
+    link: https://unsplash.com/@kristapsungurs
+    name: kristapsungurs
+
+---
+
+### 最有用的 `BOM` 对象 - `location`
+
+`location` 对象是最有用的 `BOM` 对象之一，它不仅拥有当前窗口中加载的文档信息，还可以实现导航功能。它既是 `window` 的属性，也是 `document` 的属性，这是非常独特的地方。
+
+#### 查询字符串
+
+你可以自己创建一个函数查询
+
+```javascript
+let getQueryStringArgs = function () {
+  // 取得没有开头问号的查询字符串
+  let qs = location.search.length > 0 ? location.search.substring(1) : '',
+    // 保存数据的对象
+    args = {}
+  // 把每个参数添加到 args 对象
+  for (let item of qs.split('&').map(kv => kv.split('='))) {
+    let name = decodeURIComponent(item[0]),
+      value = decodeURIComponent(item[1])
+    if (name.length) {
+      args[name] = value
+    }
+  }
+  return args
+}
+```
+
+或者你可以使用 `URLSearchParams` ，它暴露了 `get()`、`set()` 和 `delete()` 等方法
+
+```javascript
+let qs = '?year=2024&text=hello'
+let searchParams = new URLSearchParams(qs)
+console.log(searchParams.toString()) // "year=2024&text=hello"
+searchParams.has('year') // true
+searchParams.get('year') // 2024
+searchParams.set('page', '3')
+console.log(searchParams.toString()) // "year=2024&text=hello&page=3"
+searchParams.delete('year')
+console.log(searchParams.toString()) // "text=hello&page=3"
+```
+
+大多数支持 `URLSearchParams` 的浏览器，也支持将 `URLSearchParams` 的实例用作可迭代对象
+
+```javascript
+let qs = '?year=2024&text=hello'
+let searchParams = new URLSearchParams(qs)
+for (let param of searchParams) {
+  console.log(param)
+}
+// ['year', '2024']
+// ['text', 'hello']
+```
+
+#### 操作地址
+
+我们可以通过以下三种方式修改浏览器的地址
+
+1. `location.assign("https://blog.ll1025.cn/2024")`
+2. `window.location = "https://blog.ll1025.cn/2024"`
+3. `location.href = "https://blog.ll1025.cn/2024"`
+
+它们会立即启动，导航到新的 `URL`，同时会在浏览器的历史记录中增加一条记录。修改 `location` 对象的属性也会修改当前加载的页面。其中，`hash`、`search`、`hostname`、`pathname` 和 `port` 属性被设置为新值之后都会修改当前的 `URL`。
+
+除了 `hash` 之外，只要修改 `location` 的一个属性，就会导致页面重新加载 `URL`。
+
+> 当修改 `location.hash` 时，不会导致整个页面重新加载，而是只会在浏览器的历史记录中添加一个新的历史记录条目，或者更新当前历史记录中的条目（在某些情况下）。
+>
+> 当您修改 `location.hash` 时，浏览器将解析新的哈希部分并尝试在页面中滚动到相应的锚点位置（如果有），但不会重新加载整个页面。
+
+如果不希望增加**历史记录**，可以使用 `replace()` 方法，调用 `replace()` 之后，用户就不能回到前一页，因为当前页被替换为了新地址。
+
+如果想要重新加载当前页面，其实就是**刷新**，我们可以使用 `reload()` 方法。它会以最有效的方式重新加载页面，但是如果页面自上次请求后没有被修改，那浏览器可能会从缓存中加载页面。如果使用 `reload(true)`，那么就会强制从服务器重新加载。
+
+> 最好把 `reload()` 作为最后一行代码，因为它后面的代码可能会不执行，这取决于网络延迟和系统资源等因素。
+
+
+
+
+
