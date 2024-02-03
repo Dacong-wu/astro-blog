@@ -1,4 +1,4 @@
-# ![logo](https://picture.spans.top/202402031152895.svg)spanBlog
+# <img src="https://picture.spans.top/202402031152895.svg" alt="logo" width="36" /> spanBlog
 ## 项目简介
 这个博客是基于 [AstroWind](https://github.com/onwidget/astrowind) 模板创建而来，在此感谢模板作者 [onWidget](https://onwidget.com/) 创作出如此优秀的产品
 服务部署在 [Microsoft Azure](https://portal.azure.com/#home) 上，在此感谢 [Microsoft](https://www.microsoft.com/zh-cn) 提供的支持
