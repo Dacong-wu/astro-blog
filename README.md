@@ -1,10 +1,10 @@
-# 🐙spanBlog
+# ![logo](https://picture.spans.top/202402031152895.svg)spanBlog
 ## 项目简介
 这个博客是基于 [AstroWind](https://github.com/onwidget/astrowind) 模板创建而来，在此感谢模板作者 [onWidget](https://onwidget.com/) 创作出如此优秀的产品
 服务部署在 [Microsoft Azure](https://portal.azure.com/#home) 上，在此感谢 [Microsoft](https://www.microsoft.com/zh-cn) 提供的支持
 ## 使用方式
 具体信息可以参考 [AstroWind](https://github.com/onwidget/astrowind) 教程，本博客仅在 **AstroWind** 基础上添加了一些常用功能
-1. 添加代码复制公告
+1. 添加代码一键复制功能
 2. 自定义明暗主题切换开关
 3. 为图片添加预览功能
 4. 修复一些我个人觉得有问题的细节
@@ -38,5 +38,5 @@
 1. content-23/47-1 为 2023 年第 47 周第一次内容更新，以此类推
 2. bug-23-001 为 2023 年第一次 bug 更新
 3. feature-23-001 为 2023 年第一次功能更新
-4. 网站每周一更新（特殊时间除外，如纪念日等）
+4. `commit` 中包含 `publish` 为发布到 `azure` 上
 
