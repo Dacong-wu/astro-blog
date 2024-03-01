@@ -1,0 +1,102 @@
+---
+publishDate: 2024-03-01
+title: 常见的 JS 设计模式
+excerpt: 学习常见的 11 种 JS 设计模式
+image: '~/assets/images/blog/irina-iriser-Y9v9_YL23qs-unsplash.jpg'
+category: client
+tags:
+  - JS
+metadata:
+  image_author:
+    link: https://unsplash.com/@iriser
+    name: iriser
+
+---
+
+## 11 种常见的 JS 设计模式
+
+1. 单例模式（Singleton Pattern）
+2. 工厂模式（Factory Pattern）
+3. 构造函数模式（Constructor Pattern）
+4. 模块模式（Module Pattern）
+5. 观察者模式（Observer Pattern）
+6. 代理模式（Proxy Pattern）
+7. 装饰器模式（Decorator Pattern）
+8. 适配器模式（Adapter Pattern）
+9. 命令模式（Command Pattern）
+10. 迭代器模式（Iterator Pattern）
+11. 发布-订阅模式（Publish-Subscribe Pattern）
+
+### 单例模式
+
+用于确保一个类只有一个实例，并提供一个全局访问点。这在许多情况下都是有用的，例如全局状态管理、数据库连接、日志记录器等。
+
+**优点：**
+
+1. **节省内存：**单例模式确保只有一个实例存在，这可以节省内存空间。
+2. **全局访问点：**可以通过单例模式提供的全局访问点来访问实例，简化了对象的访问。
+3. **避免重复实例化：**单例模式确保只有一个实例存在，避免了重复实例化带来的性能损耗。
+
+**缺点：**
+
+1. **全局状态：**单例模式会引入全局状态，可能导致代码的耦合度增加，使得代码难以维护和测试。
+2. **隐藏依赖：**全局访问点可能会隐藏依赖关系，使得代码更难理解和测试。
+3. **并发风险：**如果单例模式没有考虑并发访问的情况，可能会引发并发风险，需要额外的同步机制来解决。
+
+#### 实现方式：
+
+1. 使用字面量方式创建单例：
+
+   ```javascript
+   const signleton = {
+     property1: 'value1',
+     property2: 'value2',
+     method: function () {
+       // do something
+     }
+   }
+   ```
+
+2. 使用函数闭包创建单例：
+
+   ```javascript
+   const Singleton = (function () {
+     let instance
+     function init() {
+       // private methods and variables
+       return {
+         // public methods and variables
+       }
+     }
+     return {
+       getInstance: function () {
+         if (!instance) {
+           instance = init()
+         }
+         return instance
+       }
+     }
+   })()
+   ```
+
+3. 使用类创建单例：
+
+   ```javascript
+   class Singleton {
+     constructor() {
+       if (!Singleton.instance) {
+         // initialization code
+         Singleton.instance = this
+       }
+       return Singleton.instance
+     }
+     // methods
+   }
+   // 使用
+   const singletonInstance = new Singleton()
+   ```
+
+   
+
+
+
