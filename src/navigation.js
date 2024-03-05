@@ -28,7 +28,7 @@ export const headerData = {
     {
       text: '幸福记录',
       href: getPermalink('/happiness'),
-      links: [{ text: '1999', href: 'https://2018-0215.cn', target: '_blank' }],
+      links: [{ text: '1999', href: 'https://2018-0215.cn/1999', target: '_blank' }],
     },
     {
       text: '关于我',
