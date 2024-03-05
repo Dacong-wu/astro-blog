@@ -1,0 +1,370 @@
+---
+publishDate: 2024-03-04
+title: 常见的 JS 设计模式-下
+excerpt: 学习常见的 11 种 JS 设计模式
+image: '~/assets/images/blog/irina-iriser-mg9gBeWR5_4-unsplash.jpg'
+category: client
+tags:
+  - JS
+metadata:
+  image_author:
+    link: https://unsplash.com/@iriser
+    name: iriser
+
+---
+
+## 11 种常见的 JS 设计模式-下
+
+1. 单例模式（Singleton Pattern）
+2. 工厂模式（Factory Pattern）
+3. 构造函数模式（Constructor Pattern）
+4. 模块模式（Module Pattern）
+5. 观察者模式（Observer Pattern）
+6. 代理模式（Proxy Pattern）
+7. 装饰器模式（Decorator Pattern）
+8. 适配器模式（Adapter Pattern）
+9. 命令模式（Command Pattern）
+10. 迭代器模式（Iterator Pattern）
+11. 发布-订阅模式（Publish-Subscribe Pattern）
+
+### 6. 代理模式
+
+一种结构型设计模式，它充当另一个对象的接口，以控制对该对象的访问。代理对象与被代理对象具有相同的接口，客户端通过代理对象间接访问被代理对象，从而可以在访问被代理对象时添加额外的逻辑或控制访问。
+
+**优点：**
+
+1. **控制访问：** 代理模式可以控制对被代理对象的访问，从而实现对对象的访问控制，例如权限验证、安全控制等。
+2. **延迟加载：** 代理模式可以实现延迟加载，即在需要时才真正创建被代理对象，从而提高系统性能。
+3. **简化接口：** 代理模式可以为复杂的对象提供简化的接口，隐藏被代理对象的复杂性，提供更易用的接口给客户端。
+4. **实现对目标对象的拓展：** 代理模式可以在不修改被代理对象的情况下，为其添加额外的功能，例如缓存、日志记录等。
+
+**缺点：**
+
+1. **增肌复杂度：** 代理模式引入了额外的代理对象，增加了系统的复杂度和维护成本。
+2. **性能开销：** 如果代理对象与被代理对象位于不同的进程或网络中，访问代理对象可能会引入性能开销。
+
+#### 实现方式：
+
+1. **虚拟代理**：
+
+   ```javascript
+   class Image {
+     constructor(url) {
+       this.url = url
+     }
+     display() {
+       console.log(`Displaying image from ${this.url}`)
+     }
+   }
+   
+   class ProxyImage {
+     constructor(url) {
+       this.url = url
+       this.Image = null
+     }
+     display() {
+       if (!this.image) {
+         this.image = new this.Image(this.url)
+       }
+       this.image.display()
+     }
+   }
+   
+   // 使用
+   const proxyImage = new ProxyImage('https://unsplash.com/photos/a-field-of-yellow-flowers-with-the-sun-setting-in-the-background-mg9gBeWR5_4')
+   proxyImage.display() // 实际的Image对象在第一次调用display时才被创建并显示
+   ```
+
+2. **缓存代理：**
+
+   ```javascript
+   function fibonacci(n) {
+     if (n <= 1) return n
+     return fibonacci(n - 1) + fibonacci(n - 2)
+   }
+   
+   function createProxy(func) {
+     const cache = {}
+     return function (n) {
+       if (cache[n] === undefined) {
+         cache[n] = func(n)
+       }
+       return cache[n]
+     }
+   }
+   
+   const fibonacciProxy = createProxy(fibonacci)
+   console.log(fibonacciProxy(10)) // 计算结果被缓存
+   console.log(fibonacciProxy(10)) // 直接返回缓存结果
+   ```
+
+### 7. 装饰器模式
+
+一种结构型设计模式，用于动态地给对象添加额外的行为或责任，而不需要修改原始对象的代码。它通过将对象封装在一个装饰器对象中，然后动态地添加一系列装饰器来拓展对象的功能。
+
+**优点：**
+
+1. **灵活性：** 可以动态地给对象添加新的行为或责任，而无需修改原始对象的代码，提供了更大的灵活性。
+2. **可维护性：** 使用装饰器模式可以保持原始对象的稳定性，减少代码的修改，提高了代码的可维护性。
+3. **可重用性：** 装饰器模式可以将一系列功能单独封装成装饰器，然后通过组合这些装饰器来实现不同的功能组合，提高了代码的可重用性。
+4. **遵循开闭原则：** 装饰器模式遵循了开闭原则，允许在不修改现有代码的情况下拓展对象的功能。
+
+**缺点：**
+
+1. **增加复杂性：** 使用装饰器模式会增加代码的复杂性，因为需要引入额外的装饰器对象来实现功能的拓展。
+2. **装饰器顺序：** 装饰器的顺序可能会影响最终的行为，如果装饰器的顺序不正确，可能会导致意外的结果。
+
+#### 实现方式：
+
+```javascript
+// 原始对象
+class Component {
+  operation() {
+    return 'Component operation'
+  }
+}
+
+// 装饰器基类
+class Decorator {
+  constructor(component) {
+    this.component = component
+  }
+  operation() {
+    return this.component.operation()
+  }
+}
+
+// 具体装饰器类
+class ConcreteDecorator extends Decorator {
+  constructor(component) {
+    super(component)
+  }
+  operation() {
+    return `${super.operation()} with extra behavior`
+  }
+}
+
+// 使用
+const component = new Component()
+const decoratedComponent = new ConcreateDecorator(component)
+console.log(decoratedComponent.operation())
+```
+
+### 8. 适配器模式
+
+一种结构型设计模式，它通过创建一个包装器，将一个类的接口转换成客户端所期望的另一个接口。适配器模式通常用于解决接口不兼容的问题，或者将旧的接口适配到新的系统中使用。
+
+**优点：**
+
+1. **解耦性：** 适配器模式可以解耦客户端和被适配者，客户端代码不需要直接依赖于被适配者的接口。
+2. **复用性：** 适配器模式可以重用已有的类，无需修改其原有代码。
+3. **灵活性：** 可以通过适配器模式在不修改现有代码的情况下集成新的功能。
+
+**缺点：**
+
+1. **过多的适配器：** 如果系统中存在大量的不兼容接口，可能会导致适配器类的数量过多，增加代码的复杂性。
+2. **性能损耗：** 适配器模式可能会引入额外的间接调用，导致性能损耗。
+
+#### 实现方式：
+
+```javascript
+// 被适配者（Adaptee）
+class Adaptee {
+  specificRequest() {
+    return "Adaptee's specific request"
+  }
+}
+
+// 适配器（Adapter）
+class Adapter {
+  constructor(adaptee) {
+    this.adaptee = apaptee
+  }
+  request() {
+    return this.adaptee.specificRequest()
+  }
+}
+
+// 客户端代码
+const adaptee = new Adaptee()
+const Adapter = new Adapter(adaptee)
+console.log(adapter.request())
+```
+
+### 9. 命令模式
+
+一种行为设计模式，它允许将请求或操作封装成一个单独的对象，从而使得可以将操作参数化、队列化、记录日志、撤销等。命令模式将请求发起者（调用者）与请求执行者（接受者）解耦，使得请求的发起者不需要知道接受者的具体操作。
+
+**优点：**
+
+1. **解耦性：** 命令模式将命令的发起者和执行者解耦，使得系统更加灵活，可维护性更高。
+2. **可拓展性：** 新的命令可以很容易地被添加到系统中，从不需要修改现有的客户端代码。
+3. **历史记录：** 可以轻松地实现命令的撤销和重做操作，以及日志记录等功能。
+4. **适用于队列和线程池：** 可以将命令对象存放到队列中，实现命令的排队和延迟执行，或者将命令对象放到线程中执行。
+
+**缺点：**
+
+1. **类爆炸：** 如果系统中存在大量的命令类，可能会导致类爆炸，增加系统的复杂性。
+2. **额外对象：** 每个命令都需要创建一个具体的命令对象，可能会增加系统的内存开销。
+3. **处理过程复杂：** 如果命令的执行过程涉及到复杂的逻辑，可能会使得命令对象变的复杂不易维护。
+
+#### 实现方式：
+
+```javascript
+// 命令接口
+class Command {
+  execute() {}
+}
+
+// 具体命令类
+class ConcreteCommand extends Command {
+  constructor(receiver) {
+    super()
+    this.receiver = receiver
+  }
+  execute() {
+    this.receiver.action()
+  }
+}
+
+// 接收者类
+class Receiver {
+  action() {
+    console.log('Receiver action executed')
+  }
+}
+
+// 调用者类
+class Invoker {
+  constructor() {
+    this.command = null
+  }
+  setCommand(command) {
+    this.command = command
+  }
+  executeCommand() {
+    this.command.execute()
+  }
+}
+
+// 使用
+const receiver = new Receiver()
+const command = new ConcreteCommand(receiver)
+const invoker = new Invoker()
+
+invoker.setCommand(command)
+invoker.executeCommand()
+```
+
+### 10. 迭代器模式
+
+一种行为型设计模式，用于提供一种方法顺序访问一个聚合对象中的各个元素，而又不暴露该对象的内部表示。迭代器模式使得可以在不知道集合内部结构的情况下，遍历集合中的所有元素。
+
+**优点：**
+
+1. **分离集合和迭代逻辑：** 迭代器模式将集合对象与遍历逻辑分离，使得可以独立修改集合对象或迭代逻辑而不影响对方。
+2. **简化集合遍历：** 使用迭代器模式可以简化集合的遍历过程，提供了一种统一的遍历接口，使得代码更加清晰简洁。
+3. **支持多种遍历方式：** 可以通过不同的迭代器实现类支持不同的遍历方式，比如正向遍历、反向遍历等。
+
+**缺点：**
+
+1. **增加了类和对象的数量：** 引入迭代器模式会增加类和对象的数量，增加了系统的复杂性。
+2. **遍历速度慢：** 在某些情况下，使用迭代器模式可能会导致遍历速度变慢，特别是在大型集合对象中。
+
+#### 实现方式：
+
+```javascript
+class Iterator {
+  constructor(collection) {
+    this.collection = collection
+    this.index = 0
+  }
+  hasNext() {
+    return this.index < this.collection.length
+  }
+  next() {
+    if (this.hasNext()) {
+      return this.collection[this.index++]
+    }
+    return null
+  }
+}
+
+// 使用示例
+const collection = [1, 2, 3, 4, 5]
+const iterator = new Iterator(collection)
+
+while (iterator.hasNext()) {
+  console.log(iterator.next())
+}
+```
+
+### 11. 发布订阅模式
+
+一种行为型设计模式，也被称为观察者模式。它定义了对象间的一种一对多的依赖关系，当一个对象的状态发生变化时，所有依赖它的对象都会得到通知并自动更新。
+
+**优点：**
+
+1. **松耦合：** 发布者和订阅者之间是解耦的，使得系统中的对象能够相互独立，降低了对象之间的依赖性。
+2. **灵活性：** 可以动态添加或移除订阅者，使系统更加灵活。
+3. **拓展性：** 新的发布者或订阅者可以很容易地被添加到系统中，不会对现有系统产生影响。
+
+**缺点：**
+
+1. **事件流程不明确：** 当存在多个发布者和订阅者时，事件的流程可能变的不明确，导致难以理解和调试。
+2. **性能问题：** 如果发布者 发布的事件过于频繁或者订阅者过多，可能会导致性能问题，需要合理管理事件和订阅者。
+
+#### 实现方式：
+
+```javascript
+// 发布者
+class Publisher {
+  constructor() {
+    this.subscribers = []
+  }
+
+  // 订阅
+  subscribe(subscriber) {
+    this.subscribers.push(subscriber)
+  }
+
+  // 取消订阅
+  unsubscribe(subscriber) {
+    this.subscribers = this.subscribers.filter(sub => sub !== subscriber)
+  }
+
+  // 发布通知
+  publish(data){
+    this.subscribers.forEach(this.subscribers=>this.subscribers.notify(data))
+  }
+}
+
+// 订阅者
+class subscriber{
+  constructor(name){
+    this.name=name
+  }
+
+  // 接收通知
+  notify(data){
+    console.log(`${this.name} received: ${data}`)
+  }
+}
+
+// 使用
+const publisher = new Publisher()
+const subscriber1 = new subscriber('Subscriber 1')
+const subscriber2 = new subscriber('Subscriber 2')
+
+publisher.subscribe(subscriber1)
+publisher.subscribe(subscriber2)
+
+publisher.publish('Hello，world!')
+
+publisher.unsubscribe(subscriber2)
+
+publisher.publish('How are you?')
+```
+
+
+
