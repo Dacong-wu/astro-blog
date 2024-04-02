@@ -1,0 +1,96 @@
+---
+publishDate: 2024-04-02
+title: 缤纷云的使用介绍
+excerpt: 介绍使用 Nodejs 生成预签名链接
+image: '~/assets/images/blog/daniel-j-schwarz-cIogBVk3SEQ-unsplash.jpg'
+category: server
+tags:
+  - koa node
+metadata:
+  image_author:
+    link: https://unsplash.com/@danieljschwarz
+    name: danieljschwarz
+---
+
+## 缤纷云简介
+
+[缤纷云](https://www.bitiful.com/)（北京）科技有限公司出品，公司注册于 2023-06-13 日，还是一个很新的产品。它吸引我的点是`50GB 存储 + 30GB 流量/月 + 20 万次请求/月`免费额度，而且管理控制台用着很舒服，并且功能更新及时。
+
+## 使用方式
+
+#### 1.  获取预签名链接
+
+```javascript
+const router = require('koa-router')()
+const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+const s3Client = new S3Client({
+  region: '******', //桶信息中的服务可用区
+  endpoint: '******', //桶信息中的服务端点
+  credentials: {
+    accessKeyId: '******', //AccessKeyId
+    secretAccessKey: '******' //AccessKey
+  }
+})
+
+router.get('/put-signedurl', async ctx => {
+  const putCmd = new PutObjectCommand({
+    Bucket: '******', //桶名称
+    Key: 'avatar/******.png' //图片的key，avatar/ 就是把它放到avatar文件夹下
+  })
+  //获取预签名链接
+  await getSignedUrl(s3Client, putCmd, { expiresIn: 3600 }).then(url => {
+    ctx.body = url
+  })
+})
+
+router.get('/get-signedurl', async ctx => {
+  const putCmd = new GetObjectCommand({
+    Bucket: '******',
+    Key: 'avatar/******.png'
+  })
+  //获取访问签名链接
+  await getSignedUrl(s3Client, putCmd, { expiresIn: 3600 }).then(url => {
+    ctx.body = url
+  })
+})
+
+module.exports = router.routes()
+```
+
+#### 2. 微信小程序图片上传
+
+```javascript
+Page({
+  onLoad() {
+    wx.chooseMedia({
+      count: 9,
+      mediaType: ['image'],
+      sourceType: ['album'],
+      success(res) {
+        let url = '' // put-signedurl获取到的链接
+        var fs = wx.getFileSystemManager() // 读取文件 二进制内容
+        wx.request({
+          url: url,
+          method: 'put',
+          header: {
+            'content-type': null, // 小程序 content-type 默认为 application/json， 这里强制为 null 
+          },
+          data: fs.readFileSync(res.tempFiles[0].tempFilePath),
+          success: function (res) {
+            console.log('上传成功')
+            console.log(res)
+          },
+          error: function (err) {
+            console.log('上传失败')
+            console.log(err)
+          },
+        })
+      },
+    })
+  },
+})
+```
+
+
+
