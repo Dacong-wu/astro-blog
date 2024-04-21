@@ -1,0 +1,140 @@
+---
+publishDate: 2024-04-20
+title: Web Serial Api 介绍
+excerpt: Web Serial Api 简单使用
+image: '~/assets/images/blog/david-becker-itoznwojPyo-unsplash.jpg'
+category: client
+tags:
+  - serial
+metadata:
+  image_author:
+    link: https://unsplash.com/@beckerworks
+    name: beckerworks
+---
+
+## Web Serial Api 简介
+
+在了解 Web Serial Api 之前，我们应该先了解串行端口，它是一种双向通信接口，可以逐字节发送和接受数据。
+
+而 [Web Serial Api](https://developer.chrome.com/docs/capabilities/serial?hl=zh-cn#what) 为网站提供了一种使用 JavaScript 对串行设备执行读写操作的方法。串行设备通过用户系统上的串行端口或通过模拟串行端口的可移除 USB 和蓝牙设备进行连接。
+
+换言之，Web Serial Api 允许网站与串行设备（例如微控制器和 3D 打印机）进行通过，从而连接了网络和现实世界。
+
+## 使用方式
+
+#### 1. 判断浏览器是否支持
+
+```javascript
+const support = ref(false)
+if ('serial' in navigator) {
+  support.value = true
+}
+```
+
+#### 2. 选择设备并打开
+
+```javascript
+// 选择设备端口并打开
+export async function selectPort() {
+  const terminalInfoStore = useTerminalInfoStore()
+  const portInfoStore = usePortInfoStore()
+  try {
+    const port = await navigator.serial.requestPort()
+    portInfoStore.portSelect = port
+    try {
+      await portInfoStore.portSelect.open({
+        baudRate: portInfoStore.baudrateSelect,
+        dataBits: portInfoStore.byteSizeSelect,
+        stopBits: portInfoStore.stopBitsSelect,
+        parity: portInfoStore.paritySelect,
+        bufferSize: 255,
+        flowControl: portInfoStore.flowControlSelect
+      })
+      portInfoStore.portOpen = true
+      portInfoStore.keepReading = true
+      terminalInfoStore.addInfo('Open Serial Port Success')
+    } catch (error) {
+      terminalInfoStore.addInfo(error, 'error')
+    }
+  } catch (error) {
+    terminalInfoStore.addInfo(error, 'error')
+  }
+}
+```
+
+#### 2. 关闭端口
+
+```javascript
+// 关闭端口
+export async function closePort() {
+  const terminalInfoStore = useTerminalInfoStore()
+  const portInfoStore = usePortInfoStore()
+  try {
+    portInfoStore.keepReading = false
+    /* !!!
+    调用 reader.cancel() 将强制 reader.read() 立即使用 { value: undefined, done: true } 进行解析，从而允许循环调用 reader.releaseLock()
+    */
+    await portInfoStore.portSelectRender.cancel() 
+    await portInfoStore.portSelect.close()
+    portInfoStore.portOpen = false
+    terminalInfoStore.addInfo('Close Serial Port Success')
+  } catch (error) {
+    terminalInfoStore.addInfo(error, 'error')
+  }
+}
+```
+
+#### 3. 读取数据
+
+```javascript
+// 读取数据
+export async function readerRead() {
+  const terminalInfoStore = useTerminalInfoStore()
+  const portInfoStore = usePortInfoStore()
+  const infoStore = useInfoStore()
+  const decoder = new TextDecoder()
+  while (portInfoStore.portSelect.readable && portInfoStore.keepReading) {
+    const reader = portInfoStore.portSelect.readable.getReader()
+    portInfoStore.portSelectRender = reader
+    try {
+      while (true) {
+        const { value, done } = await reader.read()
+        if (done) {
+          reader.releaseLock()
+          break
+        }
+        infoStore.receiveLength += value.length
+        const decoded = decoder.decode(value)
+        infoStore.addInfo(decoded)
+      }
+    } catch (error) {
+      terminalInfoStore.addInfo(error, 'error')
+    }
+  }
+}
+```
+
+#### 4. 写入数据
+
+```javascript
+// 写入数据
+export async function sendText(text, hex) {
+  const portInfoStore = usePortInfoStore()
+  const infoStore = useInfoStore()
+  let data = hex ? hexToString(text) : text
+  const encoder = new TextEncoder()
+  const writer = portInfoStore.portSelect.writable.getWriter()
+  let encodeData = encoder.encode(`${data}\n`)
+  infoStore.sendLength += encodeData.length
+  await writer.write(encodeData)
+  writer.releaseLock()
+}
+```
+
+## 注意事项
+
+  1. 读取数据进行展示的时候，应该使用一个缓存数组去实时存数据，然后定时读取缓存数组中的数据，去更新视图，切记不可直接更新视图，因为数据量大会导致页面卡死。
+  2. 因为 port.getInfo() 得到的信息有限，所以不能做到刷新后恢复状态，因为通过得到的信息，你没法知道上次选择的是哪个，除非就一个选项。
+  3. 中文传输乱码的问题，这个问题在官方示例中也存在，目前没有找到解决方案。
+  4. 数据量大导致内存占用飙升，这个目前也没有找到合适的解决方案。
+  5. 试用地址 https://web-serial-qtum.vercel.app/ （不保证有效期，目前是测试阶段）
