@@ -20,6 +20,10 @@ export const headerData = {
       href: getPermalink('/photography'),
       links: [
         {
+          text: '温州行',
+          href: getPermalink('photography/wenzhou'),
+        },
+        {
           text: '杭州行',
           href: getPermalink('photography/hangzhou'),
         },
@@ -47,7 +51,10 @@ export const footerData = {
     {
       title: '摄影展示',
       href: getPermalink('/photography'),
-      links: [{ text: '杭州行', href: getPermalink('photography/hangzhou') }],
+      links: [
+        { text: '温州行', href: getPermalink('photography/wenzhou') },
+        { text: '杭州行', href: getPermalink('photography/hangzhou') },
+      ],
     },
     {
       title: '幸福记录',
