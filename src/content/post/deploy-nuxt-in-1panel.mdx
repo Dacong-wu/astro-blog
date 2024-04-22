@@ -1,0 +1,29 @@
+---
+publishDate: 2024-04-22
+title: 在 1Panel 中部署 Nuxt 网页
+excerpt: 部署 Nuxt 网页，并实现 Console 子页面
+image: '~/assets/images/blog/kellen-riggin-To4-hsfiA3A-unsplash.jpg'
+category: server
+tags:
+  - 1panel nuxt
+metadata:
+  image_author:
+    link: https://unsplash.com/@kalaniparker
+    name: kalaniparker
+---
+
+## Nuxt 主页
+
+1. `node .output/server/index.mjs`
+2. 然后 nginx 反向代理到 http://127.0.0.1:3000/
+
+## Console 控制页
+
+这是基于 Vue 的后台管理页面，在 1Panel 中需要手动改配置文件
+
+```nginx
+location /console {
+    alias /www/sites/ll1025.cn/index/dist; # 替换为你 Vite 项目构建后的 dist 目录路径
+    try_files $uri $uri/ /console/index.html; # 为了支持 HTML5 历史模式路由，需要重定向到 index.html
+}
+```
