@@ -1,0 +1,132 @@
+---
+publishDate: 2024-04-27
+title: 在谷歌浏览器插件中建立 socket 通信
+excerpt: 在谷歌浏览器中建立 socket 通信，以此来推送通知
+image: '~/assets/images/blog/akira-fIlM9bT3WaM-unsplash.webp'
+category: client
+tags:
+  - extension google socket
+metadata:
+  image_author:
+    link: https://unsplash.com/@akira_b
+    name: akira_b
+---
+
+### 背景
+
+希望通过插件给用户推送消息。
+
+### 步骤
+
+1. 创建 `manifest.json` 文件
+
+```json
+{
+  "name": "大葱Ding",
+  "description": "快回消息，Ding!",
+  "version": "1.0.1",
+  "manifest_version": 3,
+  "icons": {
+    "16": "assets/16.png",
+    "32": "assets/32.png",
+    "48": "assets/48.png",
+    "128": "assets/128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "permissions": ["notifications"],
+  "minimum_chrome_version": "116",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
+}
+```
+
+2. 创建 `background.js` 文件，它是通信的关键
+
+```javascript
+import { sendMessage, getMessage } from './utils/socket.js'
+const TEN_SECONDS_MS = 10 * 1000
+let webSocket = null
+let keepAliveIntervalId = null
+connect()
+
+chrome.runtime.onStartup.addListener(() => {
+  if (!webSocket) connect()
+})
+
+function connect() {
+  if (keepAliveIntervalId) clearInterval(keepAliveIntervalId)
+  webSocket = new WebSocket('wss://api.ll1025.cn')
+
+  keepAlive()
+
+  webSocket.onopen = () => {
+    chrome.action.setIcon({ path: 'assets/128-success.png' })
+  }
+
+  webSocket.onmessage = event => {
+    getMessage(event.data)
+  }
+
+  webSocket.onclose = () => {
+    chrome.action.setIcon({ path: 'assets/128-close.png' })
+    webSocket = null
+    setTimeout(connect, 2000)
+  }
+}
+
+function keepAlive() { // 这很重要，因为如果在后台没有通信，会被休眠
+  keepAliveIntervalId = setInterval(() => {
+    if (webSocket) {
+      sendMessage(webSocket, 'ping', '1')
+    } else {
+      clearInterval(keepAliveIntervalId)
+    }
+  }, TEN_SECONDS_MS)
+}
+```
+
+3. 创建 `/utils/socket.js` 文件
+
+```javascript
+export function sendMessage(webSocket, type, value) {
+  webSocket.send(JSON.stringify({ type, value }))
+}
+
+export function updateBadgeText() {
+  chrome.action.getBadgeText({}, function (result) {
+    let newValue = parseInt(result ? result : 0) + 1
+    chrome.action.setBadgeText({ text: newValue.toString() })
+  })
+}
+
+export function getMessage(data) {
+  let { type, value } = JSON.parse(data)
+  switch (type) {
+    case 'notification':
+      updateBadgeText()
+      const options = {
+        type: 'basic',
+        iconUrl: '/assets/128.png', // 通知图标
+        title: '大葱给你发了消息',
+        message: value
+      }
+      // 发送通知
+      chrome.notifications.create(options)
+      break
+  }
+}
+```
+
+主要就是上面三个步骤，此插件开源地址 https://github.com/Dacong-wu/google-plugin
+
+### 注意事项
+
+1. 使用的 manifest_version 为 3，官方文档地址 https://developer.chrome.com/docs/extensions?hl=zh-cn （需要科学上网）请以官方文档为准。
+2. 请不要 socket.io 测试无效。
+3. 发布到谷歌应用市场注册需要 5 美元，微软商店不需要费用，但是注册会报错，请将城市用大写英文表示，例如 北京-BJ
+4. 后端部分没有开源，有需要请用邮箱联系🤣
+
