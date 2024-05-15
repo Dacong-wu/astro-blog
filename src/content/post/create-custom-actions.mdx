@@ -1,0 +1,159 @@
+---
+publishDate: 2024-04-27
+title: 创建自定义 action
+excerpt: 创建一个自定义 action 用于将 action 中生成的 dist 文件夹上传到服务器
+image: '~/assets/images/blog/eugene-golovesov-ZRjnk4MpWA4-unsplash.jpg'
+category: ops
+tags:
+  - action
+  - github
+metadata:
+  image_author:
+    link: https://unsplash.com/@eugene_golovesov
+    name: eugene_golovesov
+---
+
+### 背景
+
+当我们把 Vue 代码提交到 github 后，我们希望通过 action 去构建生成代码，并将生产代码复制到生产服务器的指定目录。构建过程非常简单，但是要复制生产代码到指定服务器目录，这个部分就需要我们自己实现。
+
+### 步骤
+
+1. 新建一个 github 仓库 **sftp-deploy-action**
+2. 创建 **action.yml** 文件
+
+```yaml
+name: 'SFTP Deploy Action'
+description: 'Deploy files to a server via SFTP.'
+author: 'dacong-wu'
+inputs:
+  SFTP_HOST:
+    description: 'The SFTP host.'
+    required: true
+  SFTP_USERNAME:
+    description: 'The SFTP username.'
+    required: true
+  SFTP_PASSWORD:
+    description: 'The SFTP password.'
+    required: true
+  SFTP_REMOTE:
+    description: 'The remote directory on the SFTP server.'
+    required: true
+runs:
+  using: 'node20'
+  main: 'deploy-to-sftp.js'
+```
+
+3. 创建 **deploy-to-sftp.js** 文件
+
+```javascript
+const path = require('path')
+const fs = require('fs')
+const Client = require('ssh2-sftp-client')
+const dayjs = require('dayjs')
+const utc = require('dayjs/plugin/utc')
+const timezone = require('dayjs/plugin/timezone')
+const logSymbols = require('log-symbols')
+const core = require('@actions/core')
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+let remote = core.getInput('SFTP_REMOTE')
+let localPath = path.join(process.cwd(), 'dist') // 修改路径以适应新环境
+let fileNumber = getPathFileNumber(localPath)
+let steps = 100 / fileNumber
+let percent = 0
+
+const sftp = new Client()
+
+async function deploy() {
+  console.log(logSymbols.info, '正在上传到服务器...')
+  sftp
+    .connect({
+      host: core.getInput('SFTP_HOST'),
+      port: 22,
+      username: core.getInput('SFTP_USERNAME'),
+      password: core.getInput('SFTP_PASSWORD')
+    })
+    .then(async () => {
+      let fromPath = remote + '/dist'
+      let uploadPath = remote + '/upload'
+      let toPath = remote + '/backup/' + dayjs().tz('Asia/Shanghai').format('YYYY-MM-DD(HH:mm:ss)')
+      await sftp.uploadDir(localPath, uploadPath)
+      if (!(await sftp.exists(remote + '/backup/'))) sftp.mkdir(remote + '/backup/', true)
+      if (await sftp.exists(fromPath)) {
+        await sftp.rename(fromPath, toPath)
+      }
+      await sftp.rename(uploadPath, fromPath)
+    })
+    .then(() => {
+      console.log(logSymbols.success, '上传成功😁')
+      return sftp.end()
+    })
+    .catch(err => {
+      console.log(logSymbols.error, `上传失败😭\n${err}`)
+      return sftp.end()
+    })
+  sftp.on('upload', () => {
+    percent += steps
+    console.log(logSymbols.info, `上传进度：${Math.round(percent)}%`)
+  })
+}
+
+function getPathFileNumber(folder) {
+  var number = 0
+  function readFolder(folder) {
+    try {
+      let files = fs.readdirSync(folder)
+      files.forEach(item => {
+        let fileItemPath = path.join(folder, item)
+        let stat = fs.statSync(fileItemPath)
+        if (stat.isFile()) number++
+        else readFolder(fileItemPath)
+      })
+    } catch (err) {
+      console.log(logSymbols.error, `读取文件错误😖\n${err}`)
+    }
+  }
+  readFolder(folder)
+  return number
+}
+
+deploy()
+```
+
+3. 执行 `npm init -y` 创建 **package.json** 文件
+4. 安装需要的依赖 `npm i  @actions/core dayjs log-symbols ssh2-sftp-client`
+5. 创建 **README.md** 文件，对项目进行说明
+
+```markdown
+## Please refer to action.yml to get the data you need to provide.
+
+1. Version 1 only supports logging into the server with a username and password.
+2. Version 1 only supports Vue in principle because the build output directory is dist.
+3. The SFTP_REMOTE address does not need to include dist and /.
+```
+
+主要就是上面五个步骤，此 action 开源地址 https://github.com/Dacong-wu/sftp-deploy-action
+
+### 注意事项
+
+1. 你需要使用 @actions/core 来接受参数
+1. 注意设置 dayjs 的时区，不然备份文件夹的时间会有问题
+
+### 使用
+
+1. 在你 action 的 jobs 的 steps 增加如下步骤
+
+```yaml
+- name: 执行部署
+  	uses: Dacong-wu/sftp-deploy-action@main
+    with:
+    	SFTP_HOST: ${{ secrets.USER_HOST }}
+    	SFTP_USERNAME: ${{ secrets.USER_NAME }}
+    	SFTP_PASSWORD: ${{ secrets.PASSWORD }}
+    	SFTP_REMOTE: ${{secrets.USER_TARGET}}
+```
+
+2. 在 github 中添加对应的 secret
+
