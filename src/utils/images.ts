@@ -76,7 +76,6 @@ export const adaptOpenGraphImages = async (
           width: image?.width || defaultWidth,
           height: image?.height || defaultHeight,
         });
-
         if (typeof _image === 'object') {
           return {
             url: typeof _image.src === 'string' ? String(new URL(_image.src, astroSite)) : 'pepe',

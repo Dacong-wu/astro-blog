@@ -17,7 +17,7 @@ metadata:
   openGraph:
     site_name: spanBlog
     images:
-      - url: '~/assets/images/default.png'
+      - url: '/apple-touch-icon.png'
         width: 1200
         height: 628
     type: website

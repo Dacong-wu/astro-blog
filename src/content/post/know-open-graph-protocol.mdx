@@ -1,0 +1,46 @@
+---
+publishDate: 2024-05-20
+title: 认识 Open Graph 协议
+excerpt: 认识 Open Graph 协议，并在微信朋友圈中应用 
+image: '~/assets/images/blog/detait-dSCYHRVsCAM-unsplash.jpg'
+category: client
+tags:
+  - seo
+metadata:
+  image_author:
+    link: https://unsplash.com/@detait
+    name: detait
+---
+
+### 背景
+
+今天是 5 月 20 日，我做了一个纪念网页 [https://2018-0215.cn](https://2018-0215.cn)，我想将这个网页分享到朋友圈，但是发现网址的 icon 并没有显示，而是显示了一个统一的链接 icon。后来查询得知，要自定义 icon 有俩个方法：
+
+1. ~~利用微信公众号的JSSDK~~（个人公众号无分享权限）
+2. 利用 Open Graph
+
+### 概念
+
+它是一种用于网页，有利用 SEO 的开放协议，具体的介绍请看这里 [https://ogp.me](https://ogp.me)
+
+### 示例
+
+```html
+<html prefix="og: https://ogp.me/ns#">
+<head>
+<title>The Rock (1996)</title>
+<meta property="og:title" content="The Rock" />
+<meta property="og:type" content="video.movie" />
+<meta property="og:url" content="https://www.imdb.com/title/tt0117500/" />
+<meta property="og:image" content="https://ia.media-imdb.com/images/rock.jpg" />
+...
+</head>
+...
+</html>
+```
+
+### 注意事项
+
+1. image 的链接请使用完整链接
+1. 请从浏览器将网址分享到朋友圈，在微信内分享到朋友圈会失效
+
