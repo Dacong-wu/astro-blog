@@ -30,11 +30,6 @@ export const headerData = {
       ],
     },
     {
-      text: '幸福记录',
-      href: getPermalink('/happiness'),
-      links: [{ text: '1999', href: 'https://2018-0215.cn/1999', target: '_blank' }],
-    },
-    {
       text: '关于我',
       href: getPermalink('/about'),
     },
@@ -55,11 +50,6 @@ export const footerData = {
         { text: '温州行', href: getPermalink('photography/wenzhou') },
         { text: '杭州行', href: getPermalink('photography/hangzhou') },
       ],
-    },
-    {
-      title: '幸福记录',
-      href: getPermalink('/happiness'),
-      links: [{ text: '1999', href: 'https://2018-0215.cn', target: '_blank' }],
     },
     {
       title: '关于我',
