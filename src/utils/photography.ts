@@ -2,7 +2,7 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import type { Photography } from '~/types';
 import { APP_PHTOTGRAPHY } from '~/utils/config';
-import { cleanSlug, PHTOTGRAPHY_BASE, trimSlash, PHTOTGRAPHY_PERMALINK_PATTERN } from './permalinks';
+import { cleanSlug, PHOTOGRAPHY_BASE, trimSlash, PHTOTGRAPHY_PERMALINK_PATTERN } from './permalinks';
 
 const generatePermalink = async ({ id, slug, publishDate }: { id: string; slug: string; publishDate: Date }) => {
   const year = String(publishDate.getFullYear()).padStart(4, '0');
@@ -63,7 +63,7 @@ export const fetchPhotographys = async (): Promise<Array<Photography>> => {
 
 export const getStaticPathsPhotographyList = async ({ paginate }) => {
   return paginate(await fetchPhotographys(), {
-    params: { photography: PHTOTGRAPHY_BASE || undefined },
+    params: { photography: PHOTOGRAPHY_BASE || undefined },
     pageSize: photographyPostsPerPage,
   });
 };

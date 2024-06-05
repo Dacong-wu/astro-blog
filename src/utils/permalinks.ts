@@ -21,12 +21,14 @@ export const cleanSlug = (text = '') =>
     .map((slug) => slugify(slug))
     .join('/');
 export const BLOG_BASE = cleanSlug(APP_BLOG?.list?.pathname);
-export const PHTOTGRAPHY_BASE = cleanSlug(APP_PHTOTGRAPHY?.list?.pathname);
+export const PHOTOGRAPHY_BASE = cleanSlug(APP_PHTOTGRAPHY?.list?.pathname);
 export const CATEGORY_BASE = cleanSlug(APP_BLOG?.category?.pathname);
 export const TAG_BASE = cleanSlug(APP_BLOG?.tag?.pathname) || 'tag';
 
 export const POST_PERMALINK_PATTERN = trimSlash(APP_BLOG?.post?.permalink || `${BLOG_BASE}/%slug%`);
-export const PHTOTGRAPHY_PERMALINK_PATTERN = trimSlash(APP_PHTOTGRAPHY?.post?.permalink || `${PHTOTGRAPHY_BASE}/%slug%`);
+export const PHTOTGRAPHY_PERMALINK_PATTERN = trimSlash(
+  APP_PHTOTGRAPHY?.post?.permalink || `${PHOTOGRAPHY_BASE}/%slug%`
+);
 
 /** */
 export const getCanonical = (path = ''): string | URL => {
@@ -70,6 +72,7 @@ export const getHomePermalink = (): string => getPermalink('/');
 
 /** */
 export const getBlogPermalink = (): string => getPermalink(BLOG_BASE);
+export const getPhotographyPermalink = (): string => getPermalink(PHOTOGRAPHY_BASE);
 
 /** */
 export const getAsset = (path: string): string =>
