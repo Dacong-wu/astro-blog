@@ -2,7 +2,7 @@
 import merge from 'lodash.merge';
 import Layout from '~/layouts/PageLayout.astro';
 import SinglePost from '~/components/photography/SinglePost.astro';
-import ToBlogLink from '~/components/photography/ToBlogLink.astro';
+import ToListLink from '~/components/widgets/ToListLink.astro';
 
 import { getCanonical, getPermalink } from '~/utils/permalinks';
 import { getStaticPathsPhotographyPost } from '~/utils/photography';
@@ -23,5 +23,5 @@ const metadata = merge({
 
 <Layout metadata={metadata}>
   <SinglePost photography={{ ...photography }} url={url} />
-  <ToBlogLink photo="true" />
+  <ToListLink photo={true} />
 </Layout>
