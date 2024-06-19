@@ -1,0 +1,66 @@
+---
+interface Props {
+  category?: string;
+  categoryId?: string;
+}
+const { category, categoryId } = Astro.props;
+---
+
+<astro-giscus data-category={category} data-category-id={categoryId}>
+  <div class="giscus mx-auto px-6 sm:px-6 max-w-3xl pt-8 md:pt-4 pb-12 md:pb-20"></div>
+</astro-giscus>
+
+<script>
+  class AstroGiscus extends HTMLElement {
+    constructor() {
+      super();
+      const category = this.dataset.category;
+      const categoryId = this.dataset.categoryId;
+      document.addEventListener('DOMContentLoaded', function () {
+        // 获取 localStorage 中的 theme 值
+        const theme = localStorage.getItem('theme') || 'light'; // 默认值为 'light'
+        const toggle = document.querySelector('label[for="theme-switcher"]');
+        if (toggle) {
+          toggle.addEventListener('click', () => {
+            let theme = (localStorage.getItem('theme') || 'light') === 'light' ? 'dark' : 'light';
+            setGiscusTheme(theme);
+          });
+        }
+        // 创建 script 元素
+        const script = document.createElement('script');
+        script.src = 'https://giscus.app/client.js';
+        script.setAttribute('data-repo', 'dacong-wu/astro-blog');
+        script.setAttribute('data-repo-id', 'R_kgDOK1aVGg');
+        script.setAttribute('data-category', category ?? 'Blog');
+        script.setAttribute('data-category-id', categoryId ?? 'DIC_kwDOK1aVGs4CgMLo');
+        script.setAttribute('data-mapping', 'pathname');
+        script.setAttribute('data-strict', '0');
+        script.setAttribute('data-reactions-enabled', '1');
+        script.setAttribute('data-emit-metadata', '0');
+        script.setAttribute('data-input-position', 'bottom');
+        script.setAttribute('data-theme', theme); // 根据 localStorage.theme 设置 data-theme
+        script.setAttribute('data-lang', 'zh-CN');
+        script.setAttribute('crossorigin', 'anonymous');
+        script.async = true;
+
+        // 将 script 元素添加到页面
+        document.head.appendChild(script);
+
+        function setGiscusTheme(theme) {
+          function sendMessage(message) {
+            const iframe = document.querySelector('iframe.giscus-frame');
+            if (!iframe) return;
+            iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+          }
+          sendMessage({
+            setConfig: {
+              theme,
+            },
+          });
+        }
+      });
+    }
+  }
+  customElements.define('astro-giscus', AstroGiscus);
+  // 在文档加载完成后执行
+</script>

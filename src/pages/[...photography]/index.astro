@@ -3,7 +3,7 @@ import merge from 'lodash.merge';
 import Layout from '~/layouts/PageLayout.astro';
 import SinglePost from '~/components/photography/SinglePost.astro';
 import ToListLink from '~/components/widgets/ToListLink.astro';
-
+import AstroGiscus from '~/components/widgets/AstroGiscus.astro';
 import { getCanonical, getPermalink } from '~/utils/permalinks';
 import { getStaticPathsPhotographyPost } from '~/utils/photography';
 
@@ -24,4 +24,5 @@ const metadata = merge({
 <Layout metadata={metadata}>
   <SinglePost photography={{ ...photography }} url={url} />
   <ToListLink photo={true} />
+  <AstroGiscus category='Photo' categoryId='DIC_kwDOK1aVGs4CgMXq' />
 </Layout>
