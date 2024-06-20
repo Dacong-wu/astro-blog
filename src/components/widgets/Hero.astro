@@ -71,6 +71,9 @@ const {
                 <Image
                   class="mx-auto rounded-md w-full"
                   loading="eager"
+                  widths={[400, 2040]}
+                  width={2040}
+                  sizes="(max-width: 2039px) 400px, 2040px"
                   height={autoHeight ? 'auto' : 576}
                   {...image}
                 />

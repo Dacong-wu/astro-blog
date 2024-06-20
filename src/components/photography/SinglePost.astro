@@ -46,10 +46,9 @@ const { photography, url } = Astro.props;
               src={image}
               class="max-w-full lg:max-w-[900px] mx-auto mb-3 sm:rounded-md bg-gray-200 dark:bg-slate-700"
               widths={[400, 900]}
-              sizes="(max-width: 900px) 400px, 900px"
-              alt={photography?.excerpt || ''}
               width={900}
-              height={506}
+              sizes="(max-width: 899px) 400px, 900px"
+              alt={photography?.excerpt || ''}
               loading="eager"
               decoding="async"
             />
