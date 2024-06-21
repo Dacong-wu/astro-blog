@@ -1,4 +1,28 @@
 ---
+publishDate: 2024-06-21
+title: 解决 giscus 主题切换问题
+excerpt: 在 Astro 中使用 giscus 并解决主题切换同步问题 
+image: '~/assets/images/blog/rodrigo-silva-DQ7-ouISDNc-unsplash.jpg'
+category: client
+tags:
+  - giscus
+  - tailwindcss
+metadata:
+  image_author:
+    link: https://unsplash.com/@rodrigoesant
+    name: rodrigoesant
+---
+
+### 背景
+
+为了在博客文章下实现评论功能，我最终选择了 [giscus](https://giscus.app/zh-CN) 方案。giscus 是一个依赖 [GitHub Discussions](https://docs.github.com/en/discussions) 实现的评论系统。但它在主题切换过程中，无法实现动态主题更新，我利用了主题切换监听，在 Astro 中实现了这个功能。
+
+### 实现
+
+`AstroGiscus.astro` 自定义组件
+
+```html
+---
 interface Props {
   category?: string;
   categoryId?: string;
@@ -71,3 +95,9 @@ const { category, categoryId } = Astro.props;
 
   customElements.define('astro-giscus', AstroGiscus);
 </script>
+```
+
+### 注意事项
+
+1. frontmatter 变量传递给脚本 参考[链接](https://docs.astro.build/zh-cn/guides/client-side-scripts/#%E5%B0%86-frontmatter-%E5%8F%98%E9%87%8F%E4%BC%A0%E9%80%92%E7%BB%99%E8%84%9A%E6%9C%AC)
+2. `data-repo-id` 和 `data-category-id` 可以在 [giscus 官网](https://giscus.app) 查看
