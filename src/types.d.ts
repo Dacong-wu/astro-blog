@@ -229,3 +229,7 @@ export interface Content extends Headline, Widget {
   isAfterContent?: boolean;
   callToAction?: CallToAction;
 }
+
+export interface Stats extends Omit<Headline, 'classes'>, Widget {
+  stats?: Array<Stat>;
+}
