@@ -52,7 +52,7 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
         links.map(({ title, href, links }) => (
           <div class="col-span-6 md:col-span-3 lg:col-span-2">
             <a
-              class="text-muted hover:text-gray-700 hover:underline dark:text-gray-300 font-medium mb-2 transition duration-150 ease-in-out"
+              class="block text-muted hover:text-gray-700 hover:underline dark:text-gray-300 font-medium mb-2 transition duration-150 ease-in-out"
               href={href}
             >
               <Fragment set:html={title} />
