@@ -1,7 +1,7 @@
 import yaml from 'js-yaml';
 import merge from 'lodash.merge';
 import type { MetaData } from '~/types';
-
+import fs from 'fs';
 export interface SiteConfig {
   name: string;
   site?: string;
@@ -187,7 +187,7 @@ const getAppBlog = () => {
         index: false,
         follow: true,
       },
-    }
+    },
   };
   return merge({}, _default, config?.apps?.blog ?? {}) as AppBlogConfig;
 };
