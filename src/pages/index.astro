@@ -4,6 +4,7 @@ import Hero from '~/components/widgets/Hero.astro';
 import Note from '~/components/widgets/Note.astro';
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
+import Stats from '~/components/widgets/Stats.astro';
 import { SITE } from '~/utils/config';
 const metadata = {
   title: '首页',
@@ -16,20 +17,27 @@ const metadata = {
       <span class="hidden xl:inline">欢迎来到</span>
       <span class="relative bottom-2">{SITE?.name}<br /></span>
       <span>一个充满</span>
-      <span class="text-accent dark:text-white highlight">乐趣的 </span><span>网站</span>
+      <span class="text-accent dark:text-white highlight">乐趣的</span><span>网站</span>
     </Fragment>
     <Fragment slot="subtitle">
       <span class="block sm:inline text-blue-600 sm:text-page">专注于技术与生活分享，</span>致力于传播并创造快乐。
     </Fragment>
   </Hero>
 
+  <Stats
+    stats={[
+      { title: 'Performance', amount: '100' },
+      { title: 'Accessibility', amount: '100' },
+      { title: 'Best Practices', amount: '100' },
+      { title: 'SEO', amount: '100' },
+    ]}
+  />
   <Note />
 
   <BlogLatestPosts
     title="知识分享"
     information={`在这里，我将分享一些我所掌握的知识，以及我在工作中遇到问题时采取的解决方案。`}
   />
-
   <CallToAction
     actions={[
       {
