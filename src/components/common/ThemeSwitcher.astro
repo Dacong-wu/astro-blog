@@ -3,7 +3,13 @@ import { Icon } from 'astro-icon/components';
 ---
 
 <div class="inline-flex mr-5">
-  <input class="absolute opacity-0" id="theme-switcher" data-theme-switcher type="checkbox" />
+  <input
+    class="absolute opacity-0"
+    id="theme-switcher"
+    data-theme-switcher
+    type="checkbox"
+    aria-label="data-theme-switcher-label"
+  />
   <label
     id="data-theme-switcher-label"
     class="relative hidden h-4 cursor-pointer rounded-2xl bg-zinc-300 w-10"
