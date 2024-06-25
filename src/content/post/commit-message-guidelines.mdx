@@ -1,0 +1,131 @@
+---
+publishDate: 2024-06-24
+title: 常见的提交信息规范
+excerpt: 介绍几种在 GitHub 等版本控制平台上，常见的提交信息规范
+image: '~/assets/images/blog/kristaps-ungurs-bj-ln6oHni0-unsplash.jpg'
+category: client
+tags:
+  - github
+metadata:
+  image_author:
+    link: https://unsplash.com/@kristapsungurs
+    name: kristapsungurs
+---
+
+在 GitHub 等版本控制平台上，常见的提交信息前缀可以帮助团队快速了解提交的目的和内容。以下是几个流行的提交信息规范：
+
+---
+
+## 1. Angular Commit Message Guidelines
+
+Angular 项目使用的一种提交信息规范，与 Conventional Commits 非常相似。
+
+### 主要规则
+
+- 提交消息格式为：`<type>(<scope>): <subject>`
+- `type`（类型）：表示提交的类别。
+- `scope`（范围）：一个可选部分，用于描述影响的范围（例如模块、文件名）。
+- `subject`（主题）：简要描述提交内容。
+
+### 常见的 type
+
+- `feat`：新功能
+- `fix`：修复 bug
+- `docs`：仅文档更改
+- `style`：不影响代码含义的更改（空白、格式、缺少分号等）
+- `refactor`：代码重构
+- `perf`：提高性能的代码更改
+- `test`：添加缺失的测试或纠正现有的测试
+- `build`：影响构建系统或外部依赖项的更改
+- `ci`：对持续集成配置文件和脚本的更改
+- `chore`：其他不修改 src 或测试文件的更改
+- `revert`：回滚先前的提交
+
+### 示例
+
+```markdown
+feat: allow users to create new accounts
+fix: correct login form validation
+docs: update README with new instructions
+style: reformat code with ESLint
+refactor: simplify user service logic
+perf: optimize database queries
+test: add unit tests for user service
+build: upgrade npm dependencies
+ci: add Travis CI configuration
+chore: remove unused dependencies
+revert: revert "feat: allow users to create new accounts"
+```
+
+------
+
+## 2. Gitmoji
+
+Gitmoji 是一种通过使用表情符号（emoji）来表示提交类型的提交消息规范。
+
+### 主要规则
+
+- 提交消息格式为：`<emoji> <subject>`
+
+### 常见的 emoji
+
+- ✨ `:sparkles:` 新功能
+- 🐛 `:bug:` 修复 bug
+- 📚 `:books:` 文档更改
+- 🎨 `:art:` 改进代码结构/格式
+- ♻️ `:recycle:` 代码重构
+- ⚡️ `:zap:` 提高性能的代码更改
+- 🚨 `:rotating_light:` 修复测试
+- 🛠 `:hammer_and_wrench:` 影响构建系统或外部依赖项的更改
+- 🚧 `:construction:` 工作进行中
+- ⏪ `:rewind:` 回滚先前的提交
+
+### 示例
+
+```markdown
+plaintext复制代码✨ Add OAuth2 login
+🐛 Fix item count update logic in cart
+📚 Update installation instructions in README
+🎨 Format code with Prettier
+♻️ Reorganize user endpoint routes
+⚡️ Optimize image loading
+🚨 Add tests for login functionality
+🛠 Update webpack to version 5
+🚧 Add GitHub Actions for CI
+⏪ Revert "✨ Add OAuth2 login"
+```
+
+------
+
+## 3. Karma
+
+Karma 提交消息规范主要关注提交类型和影响范围，适合一些较为复杂的项目。
+
+### 主要规则
+
+- 提交消息格式为：`<verb>(<scope>): <subject>`
+
+### 常见的 verb
+
+- `add`：新增功能或文件
+- `fix`：修复 bug
+- `update`：更新功能
+- `remove`：删除文件或功能
+- `refactor`：代码重构
+- `improve`：提升性能或优化
+- `docs`：文档更改
+- `test`：添加或修改测试
+
+### 示例
+
+```markdown
+plaintext复制代码add(auth): add OAuth2 login functionality
+fix(cart): fix item count update logic
+update(readme): update installation instructions
+remove(user): remove unused user model
+refactor(api): reorganize user endpoint routes
+improve(image): optimize image loading
+docs(api): update API documentation
+test(auth): add unit tests for login functionality
+```
+
