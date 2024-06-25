@@ -16,13 +16,19 @@ import { Icon } from 'astro-icon/components';
       if (code) {
         code.classList.add('block', 'w-full', 'overflow-y-auto');
         const lineSpans = code?.querySelectorAll('span.line');
-        let spanLength = String(lineSpans.length).length;
-        lineSpans.forEach((span, index) => {
-          span.style.setProperty('--aw-code-span-before-w', `${0.8 * spanLength}rem`);
-          span.style.setProperty('--aw-code-span-ml', `${0.8 * spanLength + 0.1}rem`);
-          let indexData = `${index + 1}`;
-          span.setAttribute('data-index', indexData);
-        });
+        if (lineSpans) {
+          const spanLength = String(lineSpans.length).length;
+          const widthMultiplier = 0.8 * spanLength;
+          lineSpans.forEach((span, index) => {
+            const spanElement = span as HTMLElement;
+            const spanWidth = span.getBoundingClientRect().width;
+            if (spanWidth > 0) {
+              spanElement.style.setProperty('--aw-code-span-before-w', `${widthMultiplier}rem`);
+              spanElement.style.setProperty('--aw-code-span-ml', `${widthMultiplier + 0.1}rem`);
+              spanElement.setAttribute('data-index', `${index + 1}`);
+            }
+          });
+        }
       }
 
       button!.addEventListener('click', () => {
