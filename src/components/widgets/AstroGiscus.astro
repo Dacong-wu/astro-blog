@@ -11,6 +11,14 @@ const { category, categoryId } = Astro.props;
 </astro-giscus>
 
 <script>
+  function getCurrentTheme() {
+    let currentTheme: string | null = localStorage.getItem('theme');
+    if (!currentTheme) {
+      const matchMedia = window.matchMedia('(prefers-color-scheme: dark)');
+      currentTheme = matchMedia.matches ? 'dark' : 'light';
+    }
+    return currentTheme;
+  }
   class AstroGiscus extends HTMLElement {
     constructor() {
       super();
@@ -33,7 +41,7 @@ const { category, categoryId } = Astro.props;
     }
 
     handleThemeToggle() {
-      const currentTheme = localStorage.getItem('theme') || 'light';
+      const currentTheme = getCurrentTheme();
       const newTheme = currentTheme === 'light' ? 'dark' : 'light';
       AstroGiscus.setGiscusTheme(newTheme);
     }
@@ -43,12 +51,10 @@ const { category, categoryId } = Astro.props;
       if (!iframe) return;
       iframe.contentWindow.postMessage({ giscus: { setConfig: { theme } } }, 'https://giscus.app');
     }
-
     loadGiscusScript() {
-      const theme = localStorage.getItem('theme') || 'light';
+      const theme = getCurrentTheme();
       const category = this.dataset.category || 'Blog';
       const categoryId = this.dataset.categoryId || 'DIC_kwDOK1aVGs4CgMLo';
-
       const script = document.createElement('script');
       script.src = 'https://giscus.app/client.js';
       script.setAttribute('data-repo', 'dacong-wu/astro-blog');
