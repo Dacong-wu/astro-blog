@@ -11,9 +11,7 @@ export const prerender = true;
 export async function getStaticPaths ({ paginate }) {
   return await getStaticPathsBlogTag({ paginate });
 }
-
 const { page, tag } = Astro.props;
-
 const currentPage = page.currentPage ?? 1;
 
 const metadata = {
