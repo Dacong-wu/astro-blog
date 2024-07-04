@@ -2,7 +2,7 @@
 import { Icon } from 'astro-icon/components';
 ---
 
-<div class="inline-flex mr-5">
+<div class="inline-flex mr-3.5 md:mr-0">
   <input
     class="absolute opacity-0"
     id="theme-switcher"
@@ -12,7 +12,7 @@ import { Icon } from 'astro-icon/components';
   />
   <label
     id="data-theme-switcher-label"
-    class="relative hidden h-4 cursor-pointer rounded-2xl bg-zinc-300 w-10"
+    class="relative hidden h-4 cursor-pointer rounded-2xl bg-zinc-300 md:w-10 w-4"
     for="theme-switcher"
   >
     <span
@@ -38,7 +38,6 @@ import { Icon } from 'astro-icon/components';
     themeSwitch.forEach((sw: any) => (sw.checked = isDarkTheme));
     document.documentElement.classList.toggle('dark', isDarkTheme);
     if (spanWithAttribute && labelWithAttribute) {
-      spanWithAttribute.classList.toggle('left-4', isDarkTheme);
       labelWithAttribute.classList.remove('hidden');
     }
   }

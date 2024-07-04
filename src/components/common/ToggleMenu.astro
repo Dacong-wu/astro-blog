@@ -4,15 +4,12 @@ export interface Props {
   class?: string;
 }
 
-const {
-  label = 'Toggle Menu',
-  class:
-    className = "flex flex-col h-12 w-12 rounded justify-center items-center cursor-pointer group",
-} = Astro.props;
+const { label = 'Toggle Menu', class: className = '' } = Astro.props;
 ---
 
 <button
-  class={className}
+  class:list={[className]}
+  class="flex flex-col h-12 w-12 rounded justify-center items-center cursor-pointer group"
   aria-label={label}
   data-aw-toggle-menu
 >
