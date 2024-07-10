@@ -1,7 +1,7 @@
 import yaml from 'js-yaml';
 import merge from 'lodash.merge';
 import type { MetaData } from '~/types';
-// import fs from 'fs';
+import fs from 'fs';
 export interface SiteConfig {
   name: string;
   site?: string;
@@ -197,7 +197,7 @@ const getAppPhotography = () => {
     postsPerPage: 6,
     post: {
       isEnabled: true,
-      permalink: '/blog/%slug%',
+      permalink: '/photography/%slug%',
       robots: {
         index: true,
         follow: true,
@@ -205,7 +205,7 @@ const getAppPhotography = () => {
     },
     list: {
       isEnabled: true,
-      pathname: 'blog',
+      pathname: 'photography',
       robots: {
         index: true,
         follow: true,
