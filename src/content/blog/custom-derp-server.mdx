@@ -1,0 +1,116 @@
+---
+publishDate: 2024-07-09
+title: 自定义 DERP 服务器（中继）
+excerpt: 自定义 DERP 中继，以解决使用 tailscale 延时问题
+image: '~/assets/images/blog/boliviainteligente-QN-8MkXgSQc-unsplash.jpg'
+category: ops
+tags:
+  - tailscale
+  - derp
+  - docker
+metadata:
+  image_author:
+    link: https://unsplash.com/@boliviainteligente
+    name: boliviainteligente
+---
+
+在使用 Tailscale 时，我们可能会遇到在某些网络环境下无法进行点对点连接的情况。这时，流量会通过中继服务器传输。由于 Tailscale 官方没有在中国大陆部署中继服务器，这会导致较高的延迟和丢包。因此，我需要自己部署一台中继服务器来解决这一问题。可以参考官方文档了解详细部署步骤：[Tailscale 官方文档](https://tailscale.com/kb/1118/custom-derp-servers)。
+
+---
+
+
+## 1. 一台拥有公网 IP 的主机
+
+我推荐使用 docker 部署服务，但是你也可以不这样做。主机防火墙需要放开 3478/UDP和80&443/TCP端口，或者你也可以使用一个自定义端口。
+
+------
+
+## 2. 创建容器镜像并运行容器
+
+1. 通过下面的 Dockerfile 文件，构建镜像 `docker build -t derper .`
+
+```dockerfile
+FROM golang:latest AS builder
+WORKDIR /app
+# 使用国内的代理
+ENV GOPROXY=https://goproxy.cn
+RUN go install tailscale.com/cmd/derper@main
+
+FROM ubuntu
+WORKDIR /app
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends apt-utils && \
+    apt-get install -y ca-certificates && \
+    mkdir /app/certs
+    
+# 自己的域名，例如 qq.com
+ENV DERP_DOMAIN qq.com
+ENV DERP_CERT_MODE manual
+ENV DERP_CERT_DIR /app/certs
+# 自定义端口，例如 8443 （注意:）
+ENV DERP_ADDR :8443
+ENV DERP_STUN true
+ENV DERP_HTTP_PORT 80
+ENV DERP_VERIFY_CLIENTS false
+
+COPY --from=builder /go/bin/derper .
+# 具体的配置信息可以参考 https://github.com/tailscale/tailscale/blob/main/cmd/derper/derper.go
+CMD /app/derper --hostname=$DERP_DOMAIN \
+    --certmode=$DERP_CERT_MODE \
+    --certdir=$DERP_CERT_DIR \
+    --a=$DERP_ADDR \
+    --stun=$DERP_STUN  \
+    --http-port=$DERP_HTTP_PORT \
+    --verify-clients=$DERP_VERIFY_CLIENTS
+```
+
+2. 通过下面的命令运行容器
+
+这里需要注意 `8443` 为自定义端口，`/root/ssl/` 为证书存放地址，可以自定义，但是证书格式需要满足 `**.crt` 和 `**.key`，例如 `qq.com.crt` 和 `qq.com.key`。
+
+```shell
+docker run --restart always \
+  --name derper -p 8443:8443 -p 3478:3478/udp \
+  -v /root/ssl/:/app/certs \
+  -e DERP_CERT_MODE=manual \
+  -d derper:latest
+```
+
+------
+
+## 3. 在 Tailscale 控制面板修改 `Access controls` 配置
+
+增加 `derpMap` 属性，并配置一下内容，如果保存失败，有可能是浏览器兼容问题，请使用谷歌等浏览器。
+
+* `OmitDefaultRegions` 只使用自定义中继
+
+```json
+"derpMap": {
+    "OmitDefaultRegions": true,
+    "Regions": {
+      "901": {
+        "RegionID": 900,
+        "RegionCode": "qqDerp",
+        "Nodes": [
+          {
+            "Name": "qqDerp",
+            "RegionID": 900,
+            "DERPPort": 8443,
+            "HostName": "qq.com"
+          }
+        ]
+      }
+    }
+}
+```
+
+---
+
+## 4. 验证 DERP 中继是否生效
+
+1. 浏览 https://qq.com:8443 ，你应该会看到一些提示包括 `This is a Tailscale DERP server.`
+2. 在终端使用命令 `tailscale netcheck` 查看 Report 信息，验证 `DERP latency` 是否为你自定义的
+3. 将手机切换为移动数据模式，电脑终端使用 `tailscale ping ` 查看，应该会包括这些信息 `pong from iphone-14-pro (100.*.*.*) via DERP(qqDerp) in 49ms`
+
+到这里就证明，你已经成功的打通了自己的中继服务。
