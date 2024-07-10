@@ -3,6 +3,7 @@ import { blogTagRobots, getStaticPathsBlogTags } from '~/utils/blog';
 import { getPermalink } from '~/utils/permalinks';
 import Layout from '~/layouts/PageLayout.astro';
 import Headline from '~/components/blog/Headline.astro';
+import TagList from '~/components/widgets/TagList.astro';
 const tags = await getStaticPathsBlogTags();
 const metadata = {
   title: `文章标签`,
@@ -14,19 +15,5 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <section class="px-4 md:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
-    <Headline>标签列表</Headline>
-    <div class="flex flex-wrap gap-3">
-      {
-        tags.map((tag) => (
-          <a
-            class="bg-slate-200 dark:bg-slate-700 px-3 py-1 text-black/80 dark:text-white/80"
-            href={getPermalink(`tag/${tag}`)}
-          >
-            {tag}
-          </a>
-        ))
-      }
-    </div>
-  </section>
+  <TagList title="标签列表" tagList={tags} pathPrefix="tag" />
 </Layout>

@@ -1,0 +1,17 @@
+---
+import { blogCategoryRobots, getStaticPathsBlogCategories } from '~/utils/blog';
+import Layout from '~/layouts/PageLayout.astro';
+import TagList from '~/components/widgets/TagList.astro';
+const categories = await getStaticPathsBlogCategories();
+const metadata = {
+  title: `文章分类`,
+  robots: {
+    index: blogCategoryRobots?.index,
+    follow: blogCategoryRobots?.follow,
+  },
+};
+---
+
+<Layout metadata={metadata}>
+  <TagList title="分类列表" tagList={categories} pathPrefix="category" />
+</Layout>
