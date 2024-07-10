@@ -21,7 +21,6 @@ const generatePermalink = async ({
   const hour = String(publishDate.getHours()).padStart(2, '0');
   const minute = String(publishDate.getMinutes()).padStart(2, '0');
   const second = String(publishDate.getSeconds()).padStart(2, '0');
-
   const permalink = POST_PERMALINK_PATTERN.replace('%slug%', slug)
     .replace('%id%', id)
     .replace('%category%', category || '')
@@ -39,7 +38,7 @@ const generatePermalink = async ({
     .join('/');
 };
 
-const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> => {
+const getNormalizedPost = async (post: CollectionEntry<'blog'>): Promise<Post> => {
   const { id, slug: rawSlug = '', data } = post;
   const { Content, remarkPluginFrontmatter } = await post.render();
 
@@ -61,12 +60,11 @@ const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> =
   const updateDate = rawUpdateDate ? new Date(rawUpdateDate) : undefined;
   const category = rawCategory ? cleanSlug(rawCategory) : undefined;
   const tags = rawTags.map((tag: string) => cleanSlug(tag));
-
+  const permalink = await generatePermalink({ id, slug, publishDate, category });
   return {
     id: id,
     slug: slug,
-    permalink: await generatePermalink({ id, slug, publishDate, category }),
-
+    permalink,
     publishDate: publishDate,
     updateDate: updateDate,
 
@@ -90,7 +88,7 @@ const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> =
 };
 
 const load = async function (): Promise<Array<Post>> {
-  const posts = await getCollection('post');
+  const posts = await getCollection('blog');
   const normalizedPosts = posts.map(async (post) => await getNormalizedPost(post));
   const results = (await Promise.all(normalizedPosts))
     .sort((a, b) => b.publishDate.valueOf() - a.publishDate.valueOf())
@@ -225,9 +223,20 @@ export const getStaticPathsBlogTag = async ({ paginate }) => {
 export const getStaticPathsBlogTags = async () => {
   if (!isBlogEnabled || !isBlogTagRouteEnabled) return [];
   const posts = await fetchPosts();
-  const tags = new Set();
+  const tags = new Set<string>();
   posts.map((post) => {
     Array.isArray(post.tags) && post.tags.map((tag) => tags.add(tag.toLowerCase()));
   });
   return [...tags].sort();
+};
+
+export const getStaticPathsBlogCategories = async () => {
+  if (!isBlogEnabled || !isBlogTagRouteEnabled) return [];
+  const posts = await fetchPosts();
+  const categories = new Set<string>();
+  posts.map((post) => {
+    if (typeof post.category === 'string') categories.add(post.category.toLowerCase());
+    Array.isArray(post.category) && post.category.map((category) => categories.add(category.toLowerCase()));
+  });
+  return [...categories].sort();
 };
