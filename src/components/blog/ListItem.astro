@@ -17,7 +17,6 @@ export interface Props {
 
 const { post } = Astro.props;
 const image = (await findImage(post.image)) as ImageMetadata | undefined;
-
 const link = APP_BLOG?.post?.isEnabled ? getPermalink(post.permalink, 'post') : '';
 ---
 
