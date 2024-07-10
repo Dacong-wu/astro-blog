@@ -13,6 +13,10 @@ export const headerData = {
           text: '标签列表',
           href: getPermalink('tags'),
         },
+        {
+          text: '分类列表',
+          href: getPermalink('categories'),
+        },
       ],
     },
     {
@@ -41,7 +45,10 @@ export const footerData = {
     {
       title: '知识分享',
       href: getPermalink('/knowledge'),
-      links: [{ text: '标签列表', href: getPermalink('tags') }],
+      links: [
+        { text: '标签列表', href: getPermalink('tags') },
+        { text: '分类列表', href: getPermalink('categories') },
+      ],
     },
     {
       title: '摄影展示',
@@ -66,6 +73,6 @@ export const footerData = {
       href: 'https://github.com/Dacong-wu/astro-blog',
     },
   ],
-  footNote: `<span class="ml-1.5">Made By Span · 2023 - <a class="hover:underline" href="https://beian.miit.gov.cn/">苏ICP备2021045936号-2</a></span>`,
-  // footNote: `<span class="ml-1.5">Made By Span · 2023 - <a class="hover:underline" href="https://onwidget.com/">苏ICP备2021045936号-2</a></span>`,
+  // footNote: `<span class="ml-1.5">Made By Span · 2023 - <a class="hover:underline" href="https://beian.miit.gov.cn/">苏ICP备2021045936号-2</a></span>`,
+  footNote: `<span class="ml-1.5">Made By &copy;Span · 2023 - <a class="hover:underline" href="https://beian.miit.gov.cn/">苏ICP备2021045936号-2</a></span>`,
 };
