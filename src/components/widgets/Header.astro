@@ -3,6 +3,7 @@ import { Icon } from 'astro-icon/components';
 import Logo from '~/components/Logo.astro';
 import ThemeSwitcher from '~/components/common/ThemeSwitcher.astro';
 import ToggleMenu from '~/components/common/ToggleMenu.astro';
+import SearchIcon from './SearchIcon.astro';
 
 import { getHomePermalink } from '~/utils/permalinks';
 import { trimSlash } from '~/utils/permalinks';
@@ -108,6 +109,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
       </ul>
     </nav>
     <div class="flex items-center col-span-1 justify-end">
+      <SearchIcon />
       <ThemeSwitcher />
       <ToggleMenu class="md:hidden" />
     </div>
