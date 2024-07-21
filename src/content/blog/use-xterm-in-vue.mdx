@@ -1,0 +1,178 @@
+---
+publishDate: 2024-07-20
+title: Xterm 在 Vue 中的应用
+excerpt: 在 Vue 中使用 Xterm，并适配屏幕尺寸变化
+image: '~/assets/images/blog/michael-myers-XzAUWNPCp1A-unsplash.jpg'
+category: client
+tags:
+  - xterm
+  - vue
+metadata:
+  image_author:
+    link: https://unsplash.com/@myers2021
+    name: myers2021
+---
+
+## Xterm 简介
+
+Xterm 是一个浏览器终端工具，很多你见到的开源项目中都有使用它，比如一些管理面板，比如 1panel等。它的官网是 [https://xtermjs.org](https://xtermjs.org)。
+
+## 使用方式
+
+#### 1. 创建主文件，`main.js`
+
+```javascript
+import { Terminal } from '@xterm/xterm'
+import { WebglAddon } from '@xterm/addon-webgl'
+import { FitAddon } from '@xterm/addon-fit'
+import { WebLinksAddon } from '@xterm/addon-web-links'
+import { baseTheme } from './theme'
+import { customData } from './data'
+
+export const fitAddon = new FitAddon()
+
+export const term = new Terminal({
+  fontFamily: '"Cascadia Code", Menlo, monospace',
+  theme: baseTheme,
+  cursorBlink: true,
+  cursorStyle: 'bar'
+})
+
+export function runFakeTerminal() {
+  initializeXterm() //初始化 Xterm
+  if (term._initialized) {
+    return
+  }
+  term._initialized = true
+  term.writeln('Hello, Welcome To QCOM!🎊')
+  customData(term)
+}
+
+function initializeXterm() {
+  term.loadAddon(fitAddon)
+  term.loadAddon(new WebLinksAddon())
+  term.open(document.getElementById('xterm-inner'))
+  setTimeout(() => {
+    fitAddon.fit()
+  }, 60)
+  try {
+    term.loadAddon(new WebglAddon())
+  } catch (e) {
+    console.warn('WebGL addon threw an exception during load', e)
+  }
+  document.querySelector('.xterm').addEventListener('wheel', handleWheel)
+}
+
+function handleWheel(e) {
+  if (term.buffer.active.baseY > 0) {
+    e.preventDefault()
+  }
+}
+```
+
+#### 2. 创建主题文件，`theme.js`
+
+```javascript
+export const baseTheme = {
+  foreground: '#F8F8F8',
+  background: '#2D2E2C',
+  selection: '#5DA5D533',
+  black: '#1E1E1D',
+  brightBlack: '#262625',
+  red: '#CE5C5C',
+  brightRed: '#FF7272',
+  green: '#5BCC5B',
+  brightGreen: '#72FF72',
+  yellow: '#CCCC5B',
+  brightYellow: '#FFFF72',
+  blue: '#5D5DD3',
+  brightBlue: '#7279FF',
+  magenta: '#BC5ED1',
+  brightMagenta: '#E572FF',
+  cyan: '#5DA5D5',
+  brightCyan: '#72F0FF',
+  white: '#F8F8F8',
+  brightWhite: '#FFFFFF'
+}
+// vscode-snazzy https://github.com/Tyriar/vscode-snazzy
+export const otherTheme = {
+  foreground: '#eff0eb',
+  background: '#282a36',
+  selection: '#97979b33',
+  black: '#282a36',
+  brightBlack: '#686868',
+  red: '#ff5c57',
+  brightRed: '#ff5c57',
+  green: '#5af78e',
+  brightGreen: '#5af78e',
+  yellow: '#f3f99d',
+  brightYellow: '#f3f99d',
+  blue: '#57c7ff',
+  brightBlue: '#57c7ff',
+  magenta: '#ff6ac1',
+  brightMagenta: '#ff6ac1',
+  cyan: '#9aedfe',
+  brightCyan: '#9aedfe',
+  white: '#f1f1f0',
+  brightWhite: '#eff0eb'
+}
+```
+
+#### 3. 创建处理数据文件，`data.js`
+
+```javascript
+export function customData(term) {
+  term.onData(e => {
+    sendData(e)
+  })
+}
+
+async function sendData(e) {
+  // 定义自己的处理逻辑
+}
+```
+
+#### 4. 创建 Xterm 组件 MyXterm.vue
+
+```vue
+<script setup>
+import { runFakeTerminal } from '@/utils/xterm/main'
+import '@xterm/xterm/css/xterm.css'
+import { fitAddon } from '@/utils/xterm/main'
+
+const resizeHandler = () => {
+  fitAddon.fit()
+}
+onMounted(() => {
+  runFakeTerminal()
+  window.addEventListener('resize', resizeHandler)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeHandler)
+})
+</script>
+<template>
+  <div id="xterm-body" class="rounded px-3 py-2 bg-[#2d2e2c] pr-1 h-full min-h-[300px]">
+    <div id="xterm-inner" class="h-full"></div>
+  </div>
+</template>
+
+<style>
+.xterm-viewport::-webkit-scrollbar {
+  width: 8px;
+}
+.xterm-viewport::-webkit-scrollbar-track {
+  opacity: 0;
+}
+.xterm-viewport::-webkit-scrollbar-thumb {
+  min-height: 20px;
+  background-color: #a0a0a092;
+}
+</style>
+```
+
+## 注意事项
+
+  1. 请不要在 `xterm-inner ` 上设置 `padding` 等影响大小的样式
+  1. 如果遇到终端大小和父元素不一致的情况，请在 `xterm.open` 后延迟执行 `fitAddon.fit()`
+  1. 我之所以导出 `fitAddon` 方法，是因为我需要去监听其他组件大小的变化，然后让终端大小自适应。
