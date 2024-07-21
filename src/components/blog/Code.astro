@@ -21,12 +21,12 @@ import { Icon } from 'astro-icon/components';
           const widthMultiplier = 0.8 * spanLength;
           lineSpans.forEach((span, index) => {
             const spanElement = span as HTMLElement;
-            const spanWidth = span.getBoundingClientRect().width;
-            if (spanWidth > 0) {
+            // const spanWidth = span.getBoundingClientRect().width;
+            // if (spanWidth > 0) {
               spanElement.style.setProperty('--aw-code-span-before-w', `${widthMultiplier}rem`);
               spanElement.style.setProperty('--aw-code-span-ml', `${widthMultiplier + 0.1}rem`);
               spanElement.setAttribute('data-index', `${index + 1}`);
-            }
+            // }
           });
         }
       }
