@@ -1,0 +1,86 @@
+---
+publishDate: 2024-07-29
+title: 解决 pm2 日志时间戳显示问题
+excerpt: 解决 pm2 日志无时间戳，并且格式化时间戳
+image: '~/assets/images/blog/michael-myers-yM1sviqbCjs-unsplash.jpg'
+category: ops
+tags:
+  - pm2
+metadata:
+  image_author:
+    link: https://unsplash.com/@myers2021
+    name: myers2021
+---
+
+## pm2 常见命令总结
+
+1. 启动相关配置命令总结(`pm2 start app.js`)
+
+```shell
+# 指定应用名称
+--name <app_name>
+
+# 当文件更改时，观察并重启应用程序
+--watch
+
+# 设置应用重新加载的内存阈值
+--max-memory-restart <200MB>
+
+# 指定日志文件
+--log <log_path>
+
+# 向脚本传递额外的参数
+-- arg1 arg2 arg3
+
+# 自动重启之间的延迟时间
+--restart-delay <delay in ms>
+
+# 为日志添加时间前缀
+--time
+
+# 不自动重启应用程序
+--no-autorestart
+
+# 指定cron强制重启
+--cron <cron_pattern>
+
+# 附加到应用程序日志
+--no-daemon
+
+# 格式化日志时间戳
+--log-date-format 'YYYY-MM-DD HH:mm:ss'
+```
+
+2. 管理相关配置命令总结
+
+```shell
+# 停止应用
+pm2 stop <app_name>|<id>
+
+# 重启应用
+pm2 restart <app_name>|<id>
+
+# 重载应用（零停机）
+pm2 reload <app_name>|<id>
+
+# 删除应用
+pm2 delete <app_name>|<id>
+
+# 列出所有应用列表
+pm2 list
+
+# 查看应用日志
+pm2 logs
+
+# 查看指定应用日志
+pm2 logs <app_name>|<id>
+
+# 实时监控应用
+pm2 monit
+```
+
+## 注意事项
+
+1. 如果要以 npm 命令的方式启动，请使用 `pm2 start npm --name app-name -- run start`
+2. pm2 是开源软件，同时它也有 plus 商业版本，请注意区分功能
+3. pm2 可以通过一个配置文件启动，具体请参考[官网](https://pm2.keymetrics.io/docs/usage/use-pm2-with-cloud-providers/#set-your-ecosystem-file)
