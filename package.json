@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "npm run generate-json && astro dev --host 0.0.0.0",
+    "preadd": "cd add && pnpm install && cd ..",
+    "add": "node add/index.js",
     "start": "npm run generate-json && astro dev",
     "build": "npm run generate-json && astro build",
     "preview": "astro preview",
