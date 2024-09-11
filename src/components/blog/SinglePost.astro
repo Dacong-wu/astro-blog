@@ -1,7 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
 
-import Image from '~/components/common/Image.astro';
+import { Image } from 'astro:assets';
 import PostTags from '~/components/blog/Tags.astro';
 import Code from '~/components/blog/Code.astro';
 import SocialShare from '~/components/common/SocialShare.astro';
@@ -58,14 +58,11 @@ const { Content } = post;
             <Image
               img-can-preview
               src={post.image}
-              class="max-w-full lg:max-w-[900px] mx-auto mb-1 sm:rounded-md bg-gray-200 dark:bg-slate-700"
-              widths={[400, 900]}
-              sizes="(max-width: 900px) 400px, 900px"
-              alt={post?.excerpt || ''}
-              width={900}
-              height={506}
-              loading="eager"
-              decoding="async"
+              alt={post.title}
+              widths={[360, 540, 1200]}
+              width={1200}
+              sizes={`(max-width:540px) 360px, (max-width: 1200px) 540px, 1200px`}
+              class="max-w-3xl rounded-lg sm:rounded-md mx-auto"
             />
             <p class="text-center">
               <a

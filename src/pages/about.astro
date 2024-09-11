@@ -2,6 +2,7 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Content from '~/components/widgets/Content.astro';
+import browserLogo from '~/assets/images/browser-logo.jpg';
 const metadata = {
   title: '关于我',
 };
@@ -34,10 +35,7 @@ const metadata = {
   <Content
     id="technology-stack"
     columns={3}
-    image={{
-      src: '~/assets/images/browser-logo.jpg',
-      alt: 'browser Image',
-    }}
+    image={browserLogo}
     items={[
       {
         icon: 'logos:vue',

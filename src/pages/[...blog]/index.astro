@@ -1,13 +1,12 @@
 ---
 import merge from 'lodash.merge';
-import type { ImageMetadata } from 'astro';
 import Layout from '~/layouts/PageLayout.astro';
 import SinglePost from '~/components/blog/SinglePost.astro';
 import ToListLink from '~/components/widgets/ToListLink.astro';
 import AstroGiscus from '~/components/widgets/AstroGiscus.astro';
 import { getCanonical, getPermalink } from '~/utils/permalinks';
 import { getStaticPathsBlogPost, blogPostRobots } from '~/utils/blog';
-import { findImage } from '~/utils/images';
+import { getImage } from 'astro:assets';
 
 export const prerender = true;
 
@@ -17,7 +16,8 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const url = getCanonical(getPermalink(post.permalink, 'post'));
-const image = (await findImage(post.image)) as ImageMetadata | undefined;
+const image = post.image;
+const openGraphImg = await getImage({ src: image, format: 'webp', width: 1200 });
 const metadata = merge(
   {
     title: post.title,
@@ -28,10 +28,20 @@ const metadata = merge(
     },
     openGraph: {
       type: 'article',
-      ...(image ? { images: [{ url: image, width: image?.width, height: image?.height }] } : {}),
+      ...(image
+        ? {
+            images: [
+              {
+                url: `${Astro.url.origin}${openGraphImg.src}`,
+                width: openGraphImg.attributes.width,
+                height: openGraphImg.attributes.height,
+              },
+            ],
+          }
+        : {}),
     },
   },
-  { ...(post?.metadata ? { ...post.metadata, canonical: post.metadata?.canonical || url } : {}) }
+  { ...(post?.metadata ? { ...post.metadata, canonical: post.metadata?.canonical || (url as string) } : {}) }
 );
 ---
 

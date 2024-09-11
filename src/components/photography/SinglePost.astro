@@ -1,7 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
-
-import Image from '~/components/common/Image.astro';
+import { Image } from 'astro:assets';
 
 import SocialShare from '~/components/common/SocialShare.astro';
 
@@ -38,19 +37,19 @@ const { photography, url } = Astro.props;
       >
         {photography.excerpt}
       </p>
-      <div class="gap-3 columns-1 sm:columns-2 lg:columns-3 max-w-5xl px-4 sm:px-6 mx-auto sm:rounded-md">
+      <div
+        class="columns-1 md:columns-2 lg:columns-3 gap-3 max-w-5xl px-4 sm:px-6 mx-auto"
+      >
         {
-          photography.images.map((image) => (
+          photography.images.map((image, index) => (
             <Image
               img-can-preview
               src={image}
-              class="max-w-full lg:max-w-[900px] mx-auto mb-3 sm:rounded-md bg-gray-200 dark:bg-slate-700"
-              widths={[400, 900]}
-              width={900}
-              sizes="(max-width: 899px) 400px, 900px"
-              alt={photography?.excerpt || ''}
-              loading="eager"
-              decoding="async"
+              alt={`${photography.title}-${index}`}
+              widths={[360, 540, 1200]}
+              width={1200}
+              sizes={`(max-width:540px) 360px, (max-width: 1200px) 540px, 1200px`}
+              class="rounded-lg sm:rounded-md mb-3"
             />
           ))
         }

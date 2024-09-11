@@ -21,7 +21,7 @@ const getData = async (folder, groupDepth) => {
         return await getData(filepath, groupDepth);
       } else if (filename.endsWith('.md') || filename.endsWith('.mdx')) {
         const file = await fs.readFile(filepath, 'utf-8');
-        const { data, content } = matter(file);
+        const { data } = matter(file);
         const pathParts = filepath.split(path.sep);
         const slug =
           data.slug ||
@@ -34,7 +34,6 @@ const getData = async (folder, groupDepth) => {
           group: group,
           slug: slug,
           frontmatter: data,
-          content: content,
         };
       } else {
         return [];

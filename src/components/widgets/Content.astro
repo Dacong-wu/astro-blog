@@ -2,7 +2,7 @@
 import type { Content } from '~/types';
 import Headline from '../ui/Headline.astro';
 import WidgetWrapper from '../ui/WidgetWrapper.astro';
-import Image from '~/components/common/Image.astro';
+import { Image } from 'astro:assets';
 import Button from '~/components/ui/Button.astro';
 import ItemGrid from '../ui/ItemGrid.astro';
 
@@ -14,10 +14,9 @@ const {
   callToAction,
   items = [],
   columns,
-  image = await Astro.slots.render('image'),
+  image,
   isReversed = false,
   isAfterContent = false,
-
   id,
   isDark = false,
   classes = {},
@@ -72,19 +71,12 @@ const {
         {
           image && (
             <div class="relative m-auto max-w-4xl">
-              {typeof image === 'string' ? (
-                <Fragment set:html={image} />
-              ) : (
-                <Image
-                  class="mx-auto w-full rounded-lg bg-gray-500 shadow-lg"
-                  width={400}
-                  height={400}
-                  widths={[400, 768]}
-                  sizes="(max-width: 768px) 400px, 768px"
-                  layout="responsive"
-                  {...(image as any)}
-                />
-              )}
+              <Image
+                src={image}
+                alt="content logo"
+                class="rounded-lg"
+                width={540}
+              />
             </div>
           )
         }

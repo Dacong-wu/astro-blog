@@ -21,9 +21,8 @@ const SearchModal = () => {
         const description = item.frontmatter.description?.toLowerCase().match(regex);
         const categories = item.frontmatter.categories?.join(' ').toLowerCase().match(regex);
         const tags = item.frontmatter.tags?.join(' ').toLowerCase().match(regex);
-        const content = item.content.toLowerCase().match(regex);
 
-        if (title || content || description || categories || tags) {
+        if (title || description || categories || tags) {
           return item;
         }
       });

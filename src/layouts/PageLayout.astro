@@ -6,10 +6,10 @@ import Announcement from '~/components/widgets/Announcement.astro';
 import SearchModal from '~/components/widgets/SearchModal';
 import { headerData, footerData } from '~/navigation';
 
-import type { MetaData } from '~/types';
+import type { MetaData as MetaDataType } from '~/types';
 
 export interface Props {
-  metadata?: MetaData;
+  metadata?: MetaDataType;
 }
 
 const { metadata } = Astro.props;

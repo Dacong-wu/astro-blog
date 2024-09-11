@@ -8,8 +8,6 @@ import { SITE, METADATA, I18N } from '~/utils/config';
 import type { MetaData } from '~/types';
 import { getCanonical } from '~/utils/permalinks';
 
-import { adaptOpenGraphImages } from '~/utils/images';
-
 export interface Props extends MetaData {
   dontUseTitleTemplate?: boolean;
 }
@@ -65,4 +63,4 @@ const seoProps: AstroSeoProps = merge(
 );
 ---
 
-<AstroSeo {...{ ...seoProps, openGraph: await adaptOpenGraphImages(seoProps?.openGraph, Astro.url) }} />
+<AstroSeo {...{ ...seoProps }} />

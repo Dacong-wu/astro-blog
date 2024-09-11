@@ -51,30 +51,32 @@ const metadataDefinition = () =>
     })
     .optional();
 
-const postCollection = defineCollection({
-  schema: z.object({
-    publishDate: z.date().optional(),
-    updateDate: z.date().optional(),
-    draft: z.boolean().optional(),
-    title: z.string(),
-    excerpt: z.string().optional(),
-    image: z.string().optional(),
-    category: z.string().optional(),
-    tags: z.array(z.string()).optional(),
-    author: z.string().optional(),
-    metadata: metadataDefinition(),
-  }),
+const blogCollection = defineCollection({
+  schema: ({ image }) =>
+    z.object({
+      publishDate: z.date().optional(),
+      updateDate: z.date().optional(),
+      draft: z.boolean().optional(),
+      title: z.string(),
+      excerpt: z.string().optional(),
+      image: image(),
+      category: z.string().optional(),
+      tags: z.array(z.string()).optional(),
+      author: z.string().optional(),
+      metadata: metadataDefinition(),
+    }),
 });
 const photographyCollection = defineCollection({
-  schema: z.object({
-    publishDate: z.date().optional(),
-    title: z.string(),
-    excerpt: z.string().optional(),
-    images: z.array(z.string()).optional(),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      publishDate: z.date().optional(),
+      title: z.string(),
+      excerpt: z.string().optional(),
+      images: z.array(image()),
+    }),
 });
 
 export const collections = {
-  post: postCollection,
+  blog: blogCollection,
   photography: photographyCollection,
 };

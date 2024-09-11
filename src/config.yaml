@@ -18,8 +18,8 @@ metadata:
     site_name: spanBlog
     images:
       - url: '/apple-touch-icon.png'
-        width: 1200
-        height: 628
+        width: 180
+        height: 180
     type: website
   twitter:
     handle: '@dacong_wu'

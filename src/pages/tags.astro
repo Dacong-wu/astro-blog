@@ -1,8 +1,6 @@
 ---
 import { blogTagRobots, getStaticPathsBlogTags } from '~/utils/blog';
-import { getPermalink } from '~/utils/permalinks';
 import Layout from '~/layouts/PageLayout.astro';
-import Headline from '~/components/blog/Headline.astro';
 import TagList from '~/components/widgets/TagList.astro';
 const tags = await getStaticPathsBlogTags();
 const metadata = {

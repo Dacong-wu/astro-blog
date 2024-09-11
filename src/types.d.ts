@@ -1,5 +1,6 @@
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import type { HTMLAttributes } from 'astro/types';
+import type { ImageMetadata } from 'astro';
 
 export interface Post {
   /** A unique ID number that identifies a post. */
@@ -21,7 +22,7 @@ export interface Post {
   /** Optional summary of post content. */
   excerpt?: string;
   /**  */
-  image?: string;
+  image: ImageMetadata;
 
   /**  */
   category?: string;
@@ -62,7 +63,7 @@ export interface Photography {
   /** Optional summary of post content. */
   excerpt?: string;
   /**  */
-  images: Array<string>;
+  images: Array<>;
 }
 
 export interface MetaData {
@@ -222,7 +223,7 @@ export interface Team extends Headline, Widget {
 
 export interface Content extends Headline, Widget {
   content?: string;
-  image?: string | unknown;
+  image?: ImageMetadata;
   items?: Array<Item>;
   columns?: number;
   isReversed?: boolean;

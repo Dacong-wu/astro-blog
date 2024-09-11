@@ -1,37 +1,28 @@
 ---
 import { APP_BLOG } from '~/utils/config';
 import type { Post } from '~/types';
-
-import Image from '~/components/common/Image.astro';
-
-import { findImage } from '~/utils/images';
+import { Image } from 'astro:assets';
 import { getPermalink } from '~/utils/permalinks';
-
 
 export interface Props {
   post: Post;
 }
 
 const { post } = Astro.props;
-const image = (await findImage(post.image));
 ---
 
 <article class="mb-6 transition">
   <div class="relative md:h-64 bg-gray-400 dark:bg-slate-700 rounded shadow-lg mb-6">
     {
-      image && (
+      post.image && (
         <a href={getPermalink(post.permalink, 'post')}>
           <Image
-            src={image}
-            class="w-full md:h-full rounded shadow-lg bg-gray-400 dark:bg-slate-700"
-            widths={[400, 900]}
-            width={400}
-            sizes="(max-width: 900px) 400px, 900px"
+            src={post.image}
+            width={360}
+            widths={[360, 540]}
+            sizes={`(max-width:540px) 360px, 540px`}
+            class="h-full w-full rounded-lg sm:rounded-md object-cover"
             alt={post.title}
-            aspectRatio="16:9"
-            layout="cover"
-            loading="lazy"
-            decoding="async"
           />
         </a>
       )
