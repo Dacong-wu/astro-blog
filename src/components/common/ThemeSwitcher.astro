@@ -3,26 +3,15 @@ import { Icon } from 'astro-icon/components';
 ---
 
 <div class="inline-flex mr-3.5 md:mr-0">
-  <input
-    class="absolute opacity-0"
-    id="theme-switcher"
-    data-theme-switcher
-    type="checkbox"
-    aria-label="data-theme-switcher-label"
-  />
-  <label
-    id="data-theme-switcher-label"
-    class="relative hidden h-4 cursor-pointer rounded-2xl bg-zinc-300 md:w-10 w-4"
-    for="theme-switcher"
-  >
+  <div id="data-theme-switcher-label" class="relative hidden h-4 cursor-pointer rounded-2xl bg-zinc-300 md:w-10 w-4">
     <span
       id="data-theme-switcher-span"
-      class="absolute -top-1 left-0 flex h-6 w-6 items-center justify-center rounded-full bg-black transition-all duration-300 dark:bg-white"
+      class="absolute -top-1 left-0 flex h-6 w-6 items-center justify-center rounded-full bg-black transition-all duration-300 dark:bg-white dark:left-0 dark:md:left-4"
     >
       <Icon name="tabler:sun-filled" class="text-white absolute z-10 opacity-100 dark:opacity-0" />
       <Icon name="tabler:moon-filled" class="text-black absolute z-10 opacity-0 dark:opacity-100" />
     </span>
-  </label>
+  </div>
 </div>
 
 <script>
@@ -30,33 +19,86 @@ import { Icon } from 'astro-icon/components';
   const matchMedia = window.matchMedia('(prefers-color-scheme: dark)');
   const spanWithAttribute = document.getElementById('data-theme-switcher-span');
   const labelWithAttribute = document.getElementById('data-theme-switcher-label');
-  matchMedia.addEventListener('change', () => toggleTheme(document.querySelectorAll('[data-theme-switcher]')));
-  function toggleTheme(themeSwitch: NodeListOf<Element>) {
+  matchMedia.addEventListener('change', () => setDarkMode());
+
+  const isDarkTheme = () => {
     const defaulTheme = defaultTheme === 'system' ? (matchMedia.matches ? 'dark' : 'light') : defaultTheme;
     const currentTheme = localStorage.getItem('theme') || defaulTheme;
     const isDarkTheme = currentTheme === 'dark';
-    themeSwitch.forEach((sw: any) => (sw.checked = isDarkTheme));
-    document.documentElement.classList.toggle('dark', isDarkTheme);
+    return isDarkTheme;
+  };
+
+  const setDarkMode = () => {
+    document.documentElement.classList.toggle('dark', isDarkTheme());
+  };
+
+  const initializationTheme = () => {
+    setDarkMode();
     if (spanWithAttribute && labelWithAttribute) {
       labelWithAttribute.classList.remove('hidden');
     }
-  }
-  const setDarkMode = () => {
-    const themeSwitch = document.querySelectorAll('[data-theme-switcher]');
-    toggleTheme(themeSwitch);
-    themeSwitch.forEach((sw) => {
-      sw.addEventListener('click', function () {
-        const defaulTheme = defaultTheme === 'system' ? (matchMedia.matches ? 'dark' : 'light') : defaultTheme;
-        const currentTheme = localStorage.getItem('theme') || defaulTheme;
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        localStorage.setItem('theme', newTheme);
-        toggleTheme(themeSwitch);
-      });
-    });
+    const themeSwitch = document.getElementById('data-theme-switcher-label');
+    themeSwitch?.addEventListener('click', toggleDark);
   };
 
+  async function toggleDark(event: MouseEvent) {
+    const { clientX, clientY } = event;
+
+    // 切换主题逻辑
+    const handler = () => {
+      const newTheme = isDarkTheme() ? 'light' : 'dark';
+      localStorage.setItem('theme', newTheme);
+      setDarkMode();
+    };
+
+    // 判断是否支持 startViewTransition
+    if (!document.startViewTransition) {
+      return handler();
+    }
+
+    // 动画的 clipPath
+    const maxRadius = Math.hypot(
+      Math.max(clientX, window.innerWidth - clientX),
+      Math.max(clientY, window.innerHeight - clientY)
+    );
+    const clipPath = [
+      `circle(0px at ${clientX}px ${clientY}px)`,
+      `circle(${maxRadius}px at ${clientX}px ${clientY}px)`,
+    ];
+
+    await document.startViewTransition(handler).ready;
+
+    // 执行动画
+    document.documentElement.animate(
+      { clipPath: isDarkTheme() ? clipPath.reverse() : clipPath },
+      {
+        duration: 400,
+        easing: 'ease-in',
+        pseudoElement: `::view-transition-${isDarkTheme() ? 'old' : 'new'}(root)`,
+      }
+    );
+  }
+
   // Runs on initial navigation
-  setDarkMode();
+  initializationTheme();
   // Runs on view transitions navigation
-  document.addEventListener('astro:after-swap', setDarkMode);
+  document.addEventListener('astro:after-swap', initializationTheme);
 </script>
+
+<style is:global>
+  /* 切换主题的动画效果 */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  ::view-transition-old(root),
+  .dark::view-transition-new(root) {
+    z-index: 1;
+  }
+
+  ::view-transition-new(root),
+  .dark::view-transition-old(root) {
+    z-index: 9999;
+  }
+</style>
