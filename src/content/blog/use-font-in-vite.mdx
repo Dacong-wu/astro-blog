@@ -1,0 +1,70 @@
+---
+publishDate: 2024-10-17
+title: 在 vite 中使用字体
+excerpt: 使用 vite-plugin-font 优化在 vite 中对字体的引用
+image: '~/assets/images/blog/sam-quek-0VzmQPiz20M-unsplash.webp'
+category: client
+tags:
+  - vite
+  - astro
+metadata:
+  image_author:
+    link: https://unsplash.com/@samuelqyx
+    name: samuelqyx
+---
+
+## 为什么要使用 vite-plugin-font
+
+1. 实现智能分包
+2. 可以自动压缩
+3. 拥有构建缓存
+4. 达到首屏优化
+
+## 在基于 vite 的项目中使用
+
+**示例基于 Astro**
+
+1. 安装 `vite-plugin-font`，`npm i -D vite-plugin-font`
+
+2. 在配置文件中引入
+
+   ```javascript
+   // astro.config.mjs
+   import { defineConfig } from 'astro/config'
+   import Font from 'vite-plugin-font'
+   
+   export default defineConfig({
+     vite: {
+       plugins: [Font.vite()]
+     }
+   })
+   ```
+
+3. 去下载对应的字体，并将字体存放到 `src/assets/fonts` 文件夹中
+
+4. 导入字体样式
+
+   ```html
+   ---
+   // Layout.astro
+   // ~ 为定义的路径别名，请使用你自己的路径
+   import { css as OPPOSans } from '~/assets/fonts/OPPOSans.ttf'
+   ---
+   
+   <!doctype html>
+   <html lang="en">
+   	<head>
+   		<meta charset="UTF-8" />
+   		<meta name="description" content="Astro description" />
+   		<meta name="viewport" content="width=device-width" />
+   		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+   		<meta name="generator" content={Astro.generator} />
+   	</head>
+   	<body style={{ fontFamily: OPPOSans.family}}>
+   		<slot />
+   	</body>
+   </html>
+   ```
+
+   
+
