@@ -1,0 +1,92 @@
+---
+import type { Photography } from '~/types';
+import { getImage } from 'astro:assets';
+interface Props {
+  photography: Photography;
+}
+const { photography } = Astro.props;
+const images = await Promise.all(
+  photography.images.map((image) =>
+    getImage({
+      src: image,
+      format: 'webp',
+      widths: [360, 540, 1200],
+      sizes: '(max-width:540px) 360px, (max-width: 1200px) 540px, 1200px',
+      width: 1200,
+    })
+  )
+);
+---
+
+<astro-photograph
+  id="waterfall-container"
+  data-images={JSON.stringify(images)}
+  data-alt={photography.title}
+  class="max-w-5xl flex mx-auto gap-3"
+>
+</astro-photograph>
+
+<script>
+  class AstroPhotograph extends HTMLElement {
+    connectedCallback() {
+      // 从 data（数据）属性中读取消息。
+      const data = this.dataset.images;
+      const alt = this.dataset.alt;
+      const images = data ? JSON.parse(data) : [];
+      function createWaterfallLayout(columnsCount) {
+        const container = document.getElementById('waterfall-container');
+        if (!container) return;
+        container.innerHTML = ''; // 清空之前的布局
+
+        // 创建 columnsCount 数量的列
+        const columns = Array.from({ length: columnsCount }, () => {
+          const column = document.createElement('div');
+          column.style.cssText = 'width: calc(100% / ' + columnsCount + ');';
+          column.classList.add('h-max', 'flex', 'flex-col', 'gap-3');
+          container.appendChild(column);
+          return column;
+        });
+
+        // 分配图片到高度最小的列中
+        images.forEach(({ src, srcSet, attributes }, index) => {
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = `${alt}-${index}`;
+          img.setAttribute('img-can-preview', 'true');
+          img.setAttribute('loading', 'lazy');
+          img.setAttribute('decoding', 'async');
+          img.classList.add('rounded-lg', 'sm:rounded-md');
+          img.width = 1200; // 图片填充列宽度
+          img.height = attributes.height;
+          img.srcset = srcSet.attribute;
+          img.sizes = attributes.sizes;
+          // 计算图片的占位高度
+          // const aspectRatio = height / width;
+          // const displayHeight = (container.clientWidth / columnsCount) * aspectRatio;
+
+          // 找到当前高度最小的列
+          const minHeightColumn = columns.reduce((minColumn, currentColumn) =>
+            currentColumn.offsetHeight < minColumn.offsetHeight ? currentColumn : minColumn
+          );
+
+          // 设置图片的占位高度并添加到列中
+          // img.style.height = `${displayHeight}px`;
+          minHeightColumn.appendChild(img);
+        });
+      }
+
+      // 初始化瀑布流布局，默认列数为 3
+      function initializeWaterfall() {
+        const columnsCount = window.innerWidth > 1024 ? 3 : window.innerWidth > 768 ? 2 : 1;
+        createWaterfallLayout(columnsCount);
+      }
+
+      // 窗口大小调整时重新布局
+      window.addEventListener('resize', initializeWaterfall);
+
+      initializeWaterfall();
+    }
+  }
+
+  customElements.define('astro-photograph', AstroPhotograph);
+</script>

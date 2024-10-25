@@ -1,12 +1,9 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { Image } from 'astro:assets';
-
 import SocialShare from '~/components/common/SocialShare.astro';
-
 import { getFormattedDate } from '~/utils/utils';
-
 import type { Photography } from '~/types';
+import AstroPhotograph from '~/components/widgets/AstroPhotograph.astro';
 
 export interface Props {
   photography: Photography;
@@ -37,23 +34,7 @@ const { photography, url } = Astro.props;
       >
         {photography.excerpt}
       </p>
-      <div
-        class="columns-1 md:columns-2 lg:columns-3 gap-3 max-w-5xl px-4 sm:px-6 mx-auto"
-      >
-        {
-          photography.images.map((image, index) => (
-            <Image
-              img-can-preview
-              src={image}
-              alt={`${photography.title}-${index}`}
-              widths={[360, 540, 1200]}
-              width={1200}
-              sizes={`(max-width:540px) 360px, (max-width: 1200px) 540px, 1200px`}
-              class="rounded-lg sm:rounded-md mb-3"
-            />
-          ))
-        }
-      </div>
+      <AstroPhotograph photography={photography} />
     </header>
   </article>
   <div class="mx-auto px-6 sm:px-6 max-w-5xl mt-8 flex justify-end flex-col sm:flex-row">
