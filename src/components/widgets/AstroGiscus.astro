@@ -33,7 +33,7 @@ const { category, categoryId } = Astro.props;
     }
 
     setupThemeToggle() {
-      const toggle = document.querySelector('label[for="theme-switcher"]');
+      const toggle = document.getElementById('data-theme-switcher-label');
       if (toggle) {
         // 监听自己的主题切换按钮点击事件
         toggle.addEventListener('click', this.handleThemeToggle);
@@ -47,9 +47,9 @@ const { category, categoryId } = Astro.props;
     }
 
     static setGiscusTheme(theme) {
-      const iframe = document.querySelector('iframe.giscus-frame');
+      const iframe = document.querySelector('iframe.giscus-frame') as HTMLIFrameElement;
       if (!iframe) return;
-      iframe.contentWindow.postMessage({ giscus: { setConfig: { theme } } }, 'https://giscus.app');
+      iframe.contentWindow?.postMessage({ giscus: { setConfig: { theme } } }, 'https://giscus.app');
     }
     loadGiscusScript() {
       const theme = getCurrentTheme();
