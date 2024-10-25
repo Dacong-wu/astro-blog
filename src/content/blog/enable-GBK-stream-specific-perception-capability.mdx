@@ -1,0 +1,117 @@
+---
+publishDate: 2024-10-25
+title: 让 GBK 流具体感知能力
+excerpt: 让 GBK 流具体感知能力，以解决 GBK 流解码异常问题
+image: '~/assets/images/blog/mathieu-odin-U6UxnZho0wc-unsplash.webp'
+category: client
+tags:
+  - gbk
+metadata:
+  image_author:
+    link: https://unsplash.com/@mathieuodin
+    name: mathieuodin
+---
+
+## 什么是 `GBK`，它与 `UTF-8` 有什么区别？
+
+### `GBK`
+
+- **全称**：国标扩展编码（`GBK`），是对 `GB2312` 的扩展，主要用于中文字符的编码。
+- **字符集**：`GBK` 能够表示简体中文、繁体中文及一些其他汉字，共支持约 21,000 个字符。
+- **字节数**：`GBK` 使用 1 个字节表示 `ASCII` 字符，使用 2 个字节表示大多数中文字符。
+
+### `UTF-8`
+
+- **全称**：8 位可变长度字符编码（`UTF-8`），是 `Unicode` 的一种实现。
+- **字符集**：`UTF-8` 可以表示所有 `Unicode` 字符，支持多种语言和符号，包括中文。
+- **字节数**：`UTF-8` 使用 1 到 4 个字节表示一个字符。`ASCII` 字符使用1个字节，而中文字符通常使用 3 个字节。
+
+### 主要区别
+
+1. **兼容性**：`UTF-8` 向下兼容 `ASCII`，而 `GBK` 主要用于中文环境。
+2. **字符范围**：`UTF-8` 支持更广泛的字符集，适用于多语言文本；`GBK` 主要专注于中文字符。
+3. **使用场景**：`UTF-8` 更适合现代网络应用，因为它能处理多语言内容，而 `GBK` 常用于某些特定的中文应用。
+
+## 为什么要让 `GBK` 具有流感知能力？
+
+在我们使用 `Web Serial API` 与串口进行通信时，有一些串口或者软件使用 `GBK` 编码，而 `Web Serial API` 默认使用 `UTF-8` 编解码，这就导致结果会出现乱码问题。按理我们只需统一使用 `GBK` 编解码即可，但结果却并非如此。这里我们需要明白一个概念，即 `Web Serial API` 的读操作可能是分段读取的。这就导致发送数据 `C4 E3 BA C3`，收到的结果可能是 `C4` 和 `E3 BA C3`，那如果我们直接对结果进行解码就会导致乱码，所以我们需要让数据流具有感知能力。
+
+## 实现 `GBk` 流感知能力
+
+```typescript
+export class GBKDecoderStreamAware {
+  private _decoder: TextDecoder
+  private _buffer: Uint8Array | null // 用于缓存未完成的字节
+
+  constructor() {
+    this._decoder = new TextDecoder('gbk')
+    this._buffer = null // 初始没有缓存
+  }
+
+  decode(data: Uint8Array): string {
+    // 如果有缓存，将缓存与新数据合并
+    if (this._buffer) {
+      const combinedData = new Uint8Array(this._buffer.length + data.length)
+      combinedData.set(this._buffer)
+      combinedData.set(data, this._buffer.length)
+      this._buffer = null // 清空缓存
+      return this._processChunk(combinedData)
+    }
+    return this._processChunk(data)
+  }
+
+  // 处理每一块数据，处理跨块的多字节字符
+  private _processChunk(data: Uint8Array): string {
+    let i = 0
+    let lastIncompleteByteIndex = -1 // 记录最后一个不完整字节的索引
+
+    while (i < data.length) {
+      const byte = data[i]
+
+      if (byte >= 0x81 && byte <= 0xfe) {
+        // 如果是多字节字符的第一个字节
+        if (i + 1 >= data.length) {
+          // 如果下一个字节不存在，说明这是不完整的字符，缓存它
+          lastIncompleteByteIndex = i
+          break
+        } else {
+          // 如果下一个字节存在，检查第二个字节是否有效
+          const nextByte = data[i + 1]
+          if (nextByte >= 0x40 && nextByte <= 0xfe && nextByte !== 0x7f) {
+            // 是有效的 GBK 双字节字符，跳过这两个字节
+            i += 2
+          } else {
+            // 非法的 GBK 字符，跳过一个字节（解码可能有问题）
+            i++
+          }
+        }
+      } else {
+        // 单字节字符，直接跳过
+        i++
+      }
+    }
+
+    // 如果检测到不完整的多字节字符，缓存它
+    if (lastIncompleteByteIndex !== -1) {
+      this._buffer = data.slice(lastIncompleteByteIndex)
+      data = data.slice(0, lastIncompleteByteIndex)
+    }
+
+    // 解码完整的字节序列
+    return this._decoder.decode(data)
+  }
+
+  // 清空缓冲区 (可选，根据上下文需要)
+  clearBuffer(): void {
+    this._buffer = null
+  }
+}
+
+const decoderWithGBK = new GBKDecoderStreamAware()
+
+export function print(data: Uint8Array){
+    // 打印读取数据
+    console.log(decoderWithGBK.decode(data))
+}
+```
+

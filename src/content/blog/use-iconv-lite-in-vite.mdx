@@ -1,0 +1,41 @@
+---
+publishDate: 2024-10-25
+title: 在 vite 中使用 iconv-lite
+excerpt: 在 vite 中使用 iconv-lite 以解决 GBK 编码问题
+image: '~/assets/images/blog/mathieu-odin-a4O1CXUIH28-unsplash.webp'
+category: client
+tags:
+  - vite
+  - gbk
+metadata:
+  image_author:
+    link: https://unsplash.com/@mathieuodin
+    name: mathieuodin
+---
+
+## iconv-lite 是什么？
+
+`iconv-lite` 是一个 NPM 包，提供了一个纯 JavaScript 的编码转换工具，主要用于 Node.js 环境。它支持多种字符编码格式：
+
+- 所有 node.js 原生编码：utf8、ucs2 / utf16-le、ascii、binary、base64、hex。
+- 其他 Unicode 编码：utf16、utf16-be、utf-7、utf-7-imap、utf32、utf32-le 和 utf32-be。
+- 所有广泛使用的单字节编码：Windows 125x 系列、ISO-8859 系列、IBM/DOS 代码页、Macintosh 系列、KOI8 系列以及 iconv 库支持的所有其他编码。还支持“latin1”、“us-ascii”等别名。
+- 所有广泛的多字节编码：CP932、CP936、CP949、CP950、GB2312、GBK、GB18030、Big5、Shift_JIS、EUC-JP。
+
+## 在浏览器端怎么使用（基于 vite 构建）？
+
+这里就需要使用另一个包：`vite-plugin-node-polyfills`。它用于在浏览器环境中填充 Node.js 的核心模块。这样就可以保证 `iconv-lite` 能够正常工作。下面示例是在 vite 中配置它：
+
+```javascript
+import { defineConfig } from 'vite'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+
+export default defineConfig({
+    plugins: [
+        nodePolyfills()
+    ]
+})
+```
+
+
+

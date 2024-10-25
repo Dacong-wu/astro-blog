@@ -22,7 +22,7 @@ const images = await Promise.all(
   id="waterfall-container"
   data-images={JSON.stringify(images)}
   data-alt={photography.title}
-  class="max-w-5xl flex mx-auto gap-3"
+  class="max-w-5xl flex mx-auto gap-3 px-3"
 >
 </astro-photograph>
 
@@ -82,7 +82,16 @@ const images = await Promise.all(
       }
 
       // 窗口大小调整时重新布局
-      window.addEventListener('resize', initializeWaterfall);
+      let lastWidth = window.innerWidth; // 记录上一个宽度
+      window.addEventListener('resize', () => {
+        const currentWidth = window.innerWidth;
+
+        // 只有在宽度变化时才调用 initializeWaterfall
+        if (currentWidth !== lastWidth) {
+          initializeWaterfall();
+          lastWidth = currentWidth; // 更新上一个宽度
+        }
+      });
 
       initializeWaterfall();
     }
