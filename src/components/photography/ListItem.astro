@@ -44,12 +44,12 @@ const link = APP_PHTOTGRAPHY?.post?.isEnabled ? getPermalink(photography.permali
   {
     photography.images[0] && (
       <a class="relative block group" href={link ?? 'javascript:void(0)'}>
-        <div class="relative md:h-72 h-54">
+        <div class="relative md:h-80 h-56">
           <Image
             src={photography.images[0]}
-            widths={[360, 540]}
-            width={540}
-            sizes={`(max-width:540px) 360px, 540px`}
+            widths={[360, 1200]}
+            width={1200}
+            sizes={`(max-width:540px) 360px, 1200px`}
             class="h-full rounded-lg sm:rounded-md object-cover"
             alt={photography.title}
           />
