@@ -1,0 +1,60 @@
+---
+publishDate: 2024-11-01
+title: fiber 配置选项
+excerpt: 列举 fiber 支持的配置内容，并简单介绍。
+image: '~/assets/images/blog/quick-ps-_BmEoCHCsD4-unsplash.webp'
+category: server
+tags:
+  - go
+  - fiber
+metadata:
+  image_author:
+    link: https://unsplash.com/@quickps
+    name: quickps
+---
+
+## 创建 `fiber` 应用时支持的配置选项
+
+| Property                     | Type                                                         | Description                                                  | Default                                                      |
+| ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| AppName                      | `string`                                                     | 用于设置应用程序的名称。                                     | `""`                                                         |
+| BodyLimit                    | `int`                                                        | 设置请求体的最大允许大小，如果超出配置限制，则会发送 `413 - Request Entity Too Large` 响应。 | `4 * 1024 * 1024`                                            |
+| CaseSensitive                | `bool`                                                       | 启用时， `/Foo` 和 `/foo` 是不同的路由。禁用时， `/Foo` 和 `/foo` 被视为相同。 | `false`                                                      |
+| ColorScheme                  | [`Colors`](https://github.com/gofiber/fiber/blob/master/color.go) | 你可以自定义颜色方案。它们将被用于启动消息、路由列表和一些中间件。 | [`DefaultColors`](https://github.com/gofiber/fiber/blob/master/color.go) |
+| CompressedFileSuffix         | `string`                                                     | 向原始文件名添加后缀， 并尝试将压缩后的文件保存到新的文件名下。 | `".fiber.gz"`                                                |
+| Concurrency                  | `int`                                                        | 最大并发连接数。                                             | `256 * 1024`                                                 |
+| DisableDefaultContentType    | `bool`                                                       | 启用时，将导致响应中排除默认的 `Content-type` 头。           | `false`                                                      |
+| DisableDefaultDate           | `bool`                                                       | 启用时，将导致响应中排除默认的日期头。                       | `false`                                                      |
+| DisableHeaderNormalizing     | `bool`                                                       | 默认情况下（禁用），所有头部名称都进行规范化，例如 `conteNT-tYPE` -> `Content-Type` | `false`                                                      |
+| DisableKeepalive             | `bool`                                                       | 禁用 `keep-alive` 连接，服务器将在向客户端发送第一个响应后关闭传入连接。 | `false`                                                      |
+| DisablePreParseMultipartForm | `bool`                                                       | 启用时，将不预解析 `Multipart` 表单数据。                    | `false`                                                      |
+| DisableStartupMessage        | `bool`                                                       | 启用时，将不打印调试信息。                                   | `false`                                                      |
+| ETag                         | `bool`                                                       | 启用或禁用 `ETag` 头生成，因为弱 `ETag` 和强 `ETag` 都是使用相同的哈希方法（`CRC-32`）生成的。弱 `ETag` 是默认启用的。 | `false`                                                      |
+| EnableIPValidation           | `bool`                                                       | 如果启用， `c.IP()` 和 `c.IPs()` 将在返回 IP 地址之前验证 IP 地址。此外，`c.IP()` 将只返回第一个有效的 IP，而不仅仅是原始的头部信息值（可能是逗号分隔的字符串）。**警告：** 进行此验证会有小的性能开销。如果您只关心速度，并且您的应用程序位于已验证此 `header` 的可信代理之后，则保持禁用。 | `false`                                                      |
+| EnablePrintRoutes            | `bool`                                                       | 如果启用，则允许打印所有路由及其方法、路径、名称和处理程序。 | `false`                                                      |
+| EnableSplittingOnParsers     | `bool`                                                       | 启用时，按逗号分隔查询 query/body/header 参数。例如，你可以使用它从一个查询参数中解析多个值，如下所示：`/api?foo=bar,baz == foo[]=bar&foo[]=baz` | `false`                                                      |
+| EnableTrustedProxyCheck      | `bool`                                                       | 启用时，fiber 将使用 TrustedProxies 列表检查 proxy 是否受信任。默认情况下，`c.Protocol()` 将从 `X-Forwarded-Proto、X-Forwarded-Protocal、X-Forwared-Ssl` 或 `X-Url-Scheme` 头中获取值，`c.IP()` 将从 `X-Forwarded-Host` 头中获取值。启用，并且 `RemoteIP` 在 `TrustedProxies` 列表中，`c.Protocol()`、`c.IP()` 和 `c.Hostname()` 的行为将与 `EnableTrustedProxyCheck` 禁用时相同。如果 `RemoteIP` 不在列表中，`c.Protocal()` 会根据应用是否处理 TLS 连接来返回`https` 或 `http`。`c.IP()` 会返回来自 fasthttp 上下文的 `RemoteIP()`。`c.Hostname()` 会返回 `fasthttp.Request.URI().Host()`。 | `false`                                                      |
+| ErrorHandler                 | `ErrorHandler`                                               | 当从 `fiber.Handler` 返回错误时执行的处理程序。              | `DefaultErrorHandler`                                        |
+| GETOnly                      | `bool`                                                       | 启用时，拒绝所有非 `GET` 请求。这个选项对于只接受 `GET` 请求的服务器来说是防止拒绝服务（Dos）攻击的有效保护。当启用时，请求大小受 `ReadBufferSize` 的限制。 | `false`                                                      |
+| IdleTimeout                  | `time.Duration`                                              | 当启用保持连接（keep-alive）时，等待下一个请求的最长时间。如果 `IdleTimeout` 为零，则使用 `ReadTimeout` 的值。 | `nil`                                                        |
+| Immutable                    | `bool`                                                       | 启用时，所有由上下文方法返回的值都是不可变的。默认情况下，它们在您从处理程序返回之前有效。 | `false`                                                      |
+| JSONDecoder                  | `utils.JSONUnmarshal`                                        | 允许灵活使用其它 `JSON` 库进行解码。                         | `json.Unmarshal`                                             |
+| JSONEncoder                  | `utils.JSONMarshal`                                          | 允许灵活使用其他 `JSON` 库进行编码。                         | `json.Marshal`                                               |
+| Network                      | `string`                                                     | 已知的网络类型有“tcp”、“tcp4”（仅支持 IPv4）和“tcp6”（仅支持 IPv6）。**警告：** 当 prefork 设置为 true 时，仅可选择“tcp4”和“tcp6”。 | `NetworkTCP4`                                                |
+| PassLocalsToViews            | `bool`                                                       | 启用时，会将设置在 `fiber.Ctx` 上的局部变量传递给模板引擎。  | `false`                                                      |
+| Prefork                      | `bool`                                                       | 启用 `SO_REUSEPORT` 套接字选项。这将生成多个 `Go` 进程在同一端口上监听。**注意：如果启用，应用程序需要通过 shell 运行，因为 prefork 模式会设置环境变量。如果您使用 Docker，请确保以 `CMD ./app` 或 `CMD ["sh", "-c", "/app"]` 运行应用程序。 ** | `false`                                                      |
+| ProxyHeader                  | `string`                                                     | 这将使 `c.IP()` 返回给定头部键的值。默认情况下，`c.IP()` 将返回 TCP 连接的远程 IP，这个属性在您位于负载均衡器后面时非常有用，例如 `X-forwarded-*` | `""`                                                         |
+| ReadBufferSize               | `int`                                                        | 每个连接的请求读取缓冲区大小。这也限制了最大头部大小。如果您的客户发送多个 KB 的 RequestURIs 和 `/` 或多个 KB 的头部（例如， BIG cookies），请增加此缓冲区。 | `4096`                                                       |
+| ReadTimeout                  | `time.Duration`                                              | 允许读取完整请求（包括请求体）的时间。默认超时时间是无限制的。 | `nil`                                                        |
+| RequestMethods               | `[]string`                                                   | RequestMethods 提供了对 HTTP 方法的自定义功能。您可以根据需要添加或删除方法。 | `DefaultMethods`                                             |
+| ServerHeader                 | `string`                                                     | 启用带有指定值的 `Server` HTTP 头部。                        | `""`                                                         |
+| StreamRequestBody            | `bool`                                                       | StreamRequestBody 启用请求体流式传输，并在给定的请求体超过当前限制时更早地调用 | `false`                                                      |
+| StrictRouting                | `bool`                                                       | 启用时，路由器将 `/foo` 和 `/foo/` 视为不同的路径。否则，路由器将 `/foo` 和 `/foo/` 视为相同的路径。 | `false`                                                      |
+| TrustedProxies               | `[]string`                                                   | 包含可信代理 `IP` 列表。请查看 `EnableTrustedProxyCheck` 文档。它可以接受单个 `IP` 或 `IP` 范围地址。如果提供的是 `IP` 范围，它将遍历所有可能的地址 | `[]string*__*`                                               |
+| UnescapePath                 | `bool`                                                       | 在为上下文设置路径之前，将路由中的所有编码字符转换回原始字符，以便路由也能正常处理 URL 编码的特殊字符。 | `false`                                                      |
+| Views                        | `Views`                                                      | Views is the interface that wraps the Render function. See our **Template Middleware** for supported engines. | `nil`                                                        |
+| ViewsLayout                  | `string`                                                     | Views 是一个封装了 Render 函数的接口。                       | `""`                                                         |
+| WriteBufferSize              | `int`                                                        | 每个连接的响应写入缓冲区大小。                               | `4096`                                                       |
+| WriteTimeout                 | `time.Duration`                                              | 写入响应之前的最长超时时间。默认超时时间是无限制的。         | `nil`                                                        |
+| XMLEncoder                   | `utils.XMLMarshal`                                           | 允许灵活使用其他 XML 库进行编码。                            | `xml.Marshal`                                                |
+
