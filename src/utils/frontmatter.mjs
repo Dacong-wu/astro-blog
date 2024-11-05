@@ -26,9 +26,7 @@ export function responsiveTablesRehypePlugin() {
           },
           children: [child],
         };
-
         tree.children[i] = wrapper;
-
         i++;
       }
     }

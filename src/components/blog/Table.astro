@@ -1,0 +1,11 @@
+<div class="max-h-[70vh] overflow-auto">
+  <table>
+    <slot />
+  </table>
+</div>
+
+<style lang="scss" is:global>
+  table thead {
+    @apply sticky -top-1 bg-page dark:bg-dark;
+  }
+</style>
