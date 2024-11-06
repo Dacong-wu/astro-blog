@@ -1,6 +1,6 @@
+@tailwind utilities;
 @tailwind base;
 @tailwind components;
-@tailwind utilities;
 
 @layer utilities {
   .bg-page {
@@ -112,4 +112,8 @@ span.line::before {
 }
 #theme-switcher:checked + label span {
   @apply md:left-4 left-0;
+}
+
+table thead {
+  @apply sticky -top-1 bg-page dark:bg-dark;
 }
