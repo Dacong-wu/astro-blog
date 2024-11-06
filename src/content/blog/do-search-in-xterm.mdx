@@ -1,0 +1,270 @@
+---
+publishDate: 2024-11-06
+title: 在 xterm 中实现缓冲区搜索
+excerpt: 仿照 vscode 在 xterm 缓冲区中实现搜索功能。
+image: '~/assets/images/blog/perry-merrity-ii-Ok8raaktUQQ-unsplash.webp'
+category: client
+tags:
+  - xterm
+metadata:
+  image_author:
+    link: https://unsplash.com/@prince_perry
+    name: prince_perry
+---
+
+如果你不是使用 `WebglAddon` 渲染，那大可不必这么折腾。因为你可以依托浏览器自带的查找，实现简要的搜索。但 `WebglAddon` 使用 `canvas` 进行渲染，这就导致了查找失败。
+
+以下示例基于 `Vue3`：
+
+1. 安装插件 `npm i @xterm/addon-search`
+
+2. 加载插件
+
+   ```javascript
+   import { SearchAddon } from '@xterm/addon-search'
+   export const term = new Terminal({
+     allowProposedApi: true // 请开启
+   })
+   export const searchAddon = new SearchAddon()
+   term.loadAddon(searchAddon)
+   ```
+
+3. 创建搜索组件 `XtermSearch.vue`
+
+   ```vue
+   <script setup lang="ts">
+   import { searchAddon } from '@/utils/xterm/main'
+   import Icon from '@/components/custom/Icon.vue'
+   import Popover from '@/components/custom/Popover.vue'
+   import { useI18n } from 'vue-i18n'
+   const { t } = useI18n()
+   
+   const showSearch = ref(false)
+   const matchCase = ref(false) // 是否匹配大小写
+   const matchWord = ref(false) // 是否匹配整个单词
+   const regularExpression = ref(false) // 是否使用正则表达式
+   const searchText = ref('')
+   const searchIndex = ref(1)
+   const searchLength = ref(0)
+   const searchDecorationOptions = {
+     // 匹配项的背景颜色
+     matchBackground: '#FFD700', // 金色，明亮且易于识别
+   
+     // 匹配项的边框颜色
+     matchBorder: '#FF8C00', // 暗橙色，与背景形成对比
+   
+     // 匹配项在概览标尺中的颜色
+     matchOverviewRuler: '#FFD700', // 与背景相同，使其在标尺中突出
+   
+     // 当前激活匹配项的背景颜色
+     activeMatchBackground: '#FF4500', // 橙红色，清晰显示当前项
+   
+     // 当前激活匹配项的边框颜色
+     activeMatchBorder: '#FF6347', // 西红柿色，进一步强调当前匹配
+   
+     // 当前激活匹配项在概览标尺中的颜色
+     activeMatchColorOverviewRuler: '#FF4500' // 与激活背景相同，便于识别
+   }
+   const searchOptions = computed(() => ({
+     caseSensitive: matchCase.value,
+     wholeWord: matchWord.value,
+     regex: regularExpression.value,
+     incremental: true,
+     decorations: searchDecorationOptions // 这非常重要，不然无效
+   }))
+   
+   onMounted(() => {
+     searchAddon.onDidChangeResults(({ resultIndex, resultCount }) => {
+       if (resultCount > 0) {
+         searchIndex.value = resultIndex + 1
+         searchLength.value = resultCount
+       } else {
+         searchLength.value = 0
+       }
+     })
+   })
+   
+   watch([showSearch, matchCase, matchWord, regularExpression, searchText], ([newShowSearch]) => {
+     if (!newShowSearch) {
+       searchAddon.clearDecorations()
+     } else {
+       findNext()
+     }
+   })
+   
+   function findNext() {
+     searchAddon.findNext(searchText.value, searchOptions.value)
+   }
+   function findPrevious() {
+     searchAddon.findPrevious(searchText.value, searchOptions.value)
+   }
+   const SearchIcon = defineComponent({
+     props: {
+       name: { type: String, required: true },
+       title: { type: String, required: true },
+       modelValue: { type: Boolean as PropType<Boolean | undefined>, default: undefined }
+     },
+     emits: ['update:modelValue', 'iconClick'],
+     setup(props, { emit }) {
+       return () => {
+         return h(Popover, null, {
+           default: () => h('span', t(props.title)),
+           trigger: () =>
+             h(Icon, {
+               name: props.name,
+               height: '24px',
+               class: ['menu-icon', { 'menu-icon-selected': props.modelValue }],
+               onClick: () => {
+                 // 如果 props.modelValue 存在，则更新 modelValue
+                 if (props.modelValue !== undefined) {
+                   emit('update:modelValue', !props.modelValue)
+                 } else {
+                   emit('iconClick')
+                 }
+               }
+             })
+         })
+       }
+     }
+   })
+   </script>
+   <template>
+     <div class="relative">
+       <Popover>
+         <template #trigger>
+           <Icon
+             @click="showSearch = true"
+             name="ri:search-line"
+             class="text-green-600 cursor-pointer"
+           />
+         </template>
+         <span>{{ $t('XtermIconSearch') }}</span>
+       </Popover>
+       <Transition name="show" mode="out-in">
+         <div v-show="showSearch" class="flex items-center absolute top-full right-0 mt-2 text-xs">
+           <div
+             class="flex border dark:border-zinc-700 items-center gap-1 bg-white dark:bg-[#121212] p-1 rounded-sm"
+           >
+             <input
+               @keyup.enter.exact="findNext"
+               @keyup.shift.enter="findPrevious"
+               @keyup.esc="showSearch = false"
+               class="outline-none px-1"
+               type="text"
+               v-model="searchText"
+             />
+             <SearchIcon
+               v-model="matchCase"
+               name="material-symbols-light:match-case-rounded"
+               title="XtermIconMatchCase"
+             />
+             <SearchIcon
+               v-model="matchWord"
+               name="material-symbols-light:match-word-rounded"
+               title="XtermIconMatchWord"
+             />
+             <SearchIcon
+               v-model="regularExpression"
+               name="material-symbols-light:regular-expression-rounded"
+               title="XtermIconRegularExpression"
+             />
+           </div>
+           <div class="min-w-24 mx-1.5 select-none">
+             <p v-if="searchLength > 0" class="whitespace-nowrap">
+               {{ $t('XtermSearchResult', { title: searchIndex, title2: searchLength }) }}
+             </p>
+             <p class="whitespace-nowrap" v-else>{{ $t('XtermNoResults') }}</p>
+           </div>
+           <div class="flex">
+             <SearchIcon
+               name="material-symbols-light:arrow-upward-alt"
+               title="XtermIconPrevious"
+               @iconClick="findPrevious"
+             />
+             <SearchIcon
+               name="material-symbols-light:arrow-downward-alt"
+               title="XtermIconNext"
+               @iconClick="findNext"
+             />
+             <SearchIcon
+               name="material-symbols-light:close-small-rounded"
+               title="XtermIconClose"
+               @iconClick="showSearch = false"
+             />
+           </div>
+         </div>
+       </Transition>
+     </div>
+   </template>
+   hello
+   <style>
+   .menu-icon {
+     @apply border border-transparent transition-colors duration-300 cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-600 rounded p-0 h-max;
+   }
+   .menu-icon-selected {
+     @apply border-primary border hover:bg-white dark:hover:bg-[#121212];
+   }
+   </style>
+   
+   <!-- Popover.vue 组件
+   <template>
+     <n-popover
+       trigger="hover"
+       size="small"
+       content-class="text-xs"
+       placement="bottom"
+       arrow-wrapper-class="p-0"
+     >
+       <template #trigger>
+         <slot name="trigger" />
+       </template>
+       <slot />
+     </n-popover>
+   </template>
+   -->
+   
+   <!-- Icon.vue 组件
+   <script setup lang="ts">
+   import { Icon } from '@iconify/vue'
+   defineProps({
+     name: {
+       type: String,
+       required: true
+     },
+     height: {
+       type: String,
+       default: '1rem'
+     },
+     inline: {
+       type: Boolean,
+       default: false
+     },
+     color: {
+       type: String,
+       default: ''
+     },
+     canHover: {
+       type: Boolean,
+       default: false
+     }
+   })
+   </script>
+   <template>
+     <div
+       :class="{ 'hover:bg-zinc-200 dark:hover:bg-zinc-600 rounded': canHover }"
+       class="p-0.5"
+     >
+       <Icon
+         :class="{ 'cursor-pointer': canHover }"
+         :icon="name"
+         :height="height"
+         :inline="inline"
+         :color="color"
+       />
+     </div>
+   </template>
+   -->
+   ```
+
+4. 引入搜索组件即可
+
