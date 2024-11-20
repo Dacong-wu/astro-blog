@@ -1,0 +1,59 @@
+---
+publishDate: 2024-11-07
+title: 在 vue 中使用 defineComponent 创建局部组件
+excerpt: 用 defineComponent 在单文件组件中创建局部组件。
+image: '~/assets/images/blog/perry-merrity-ii-5P0lI61BIj8-unsplash.webp'
+category: client
+tags:
+  - vue 
+metadata:
+  image_author:
+    link: https://unsplash.com/@prince_perry
+    name: prince_perry
+---
+
+当我期望在一个组件中创建一个局部组件时，`defineComponent` 就会对我很有帮助。它需要你掌握一定的 `h` 函数功能。
+
+以下示例是一个图标局部组件：
+
+```vue
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+import Icon from '@/components/custom/Icon.vue'
+import Popover from '@/components/custom/Popover.vue'
+
+const SearchIcon = defineComponent({
+  props: {
+    name: { type: String, required: true },
+    title: { type: String, required: true },
+    modelValue: { type: Boolean as PropType<Boolean | undefined>, default: undefined }
+  },
+  emits: ['update:modelValue', 'iconClick'],
+  setup(props, { emit }) {
+    return () => {
+      return h(Popover, null, {
+        default: () => h('span', t(props.title)),
+        trigger: () =>
+          h(Icon, {
+            name: props.name,
+            height: '24px',
+            class: ['menu-icon', { 'menu-icon-selected': props.modelValue }],
+            onClick: () => {
+              // 如果 props.modelValue 存在，则更新 modelValue
+              if (props.modelValue !== undefined) {
+                emit('update:modelValue', !props.modelValue)
+              } else {
+                emit('iconClick')
+              }
+            }
+          })
+      })
+    }
+  }
+})
+</script>
+```
+
+这样就可以在单文件组件内部直接复用这个 `SearchIcon` 组件。
+
