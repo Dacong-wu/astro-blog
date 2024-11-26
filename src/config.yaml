@@ -5,6 +5,7 @@ site:
   trailingSlash: false
   baiduSiteVerificationId: codeva-0BAB1lP6h6
   googleSiteVerificationId: W9BTBdddE_jsICqc8dSRNsfGU8dCn14LLLzJSJhGeVQ
+  sougouSiteVerificationId: ptXi5kdDUa
 # Default SEO metadata
 metadata:
   title:

@@ -9,6 +9,7 @@ export interface SiteConfig {
   trailingSlash?: boolean;
   baiduSiteVerificationId?: string;
   googleSiteVerificationId?: string;
+  sougouSiteVerificationId?: string;
 }
 export interface MetaDataConfig extends Omit<MetaData, 'title'> {
   title?: {

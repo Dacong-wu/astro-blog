@@ -1,6 +1,7 @@
 ---
-import { SITE } from "~/utils/config";
+import { SITE } from '~/utils/config';
 ---
 
 {SITE.googleSiteVerificationId && <meta name="google-site-verification" content={SITE.googleSiteVerificationId} />}
 {SITE.baiduSiteVerificationId && <meta name="baidu-site-verification" content={SITE.baiduSiteVerificationId} />}
+{SITE.sougouSiteVerificationId && <meta name="sogou_site_verification" content={SITE.sougouSiteVerificationId} />}
