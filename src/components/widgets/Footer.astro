@@ -14,6 +14,7 @@ interface Link {
 interface Links {
   title?: string;
   href: string;
+  target?: string;
   links: Array<Link>;
 }
 
@@ -49,11 +50,12 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
         </div>
       </div>
       {
-        links.map(({ title, href, links }) => (
+        links.map(({ title, href, links, target }) => (
           <div class="col-span-6 md:col-span-3 lg:col-span-2">
             <a
               class="block text-muted hover:text-gray-700 hover:underline dark:text-gray-300 font-medium mb-2 transition duration-150 ease-in-out"
               href={href}
+              target={target ? target : '_self'}
             >
               <Fragment set:html={title} />
             </a>

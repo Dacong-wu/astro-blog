@@ -38,6 +38,11 @@ export const headerData = {
       ],
     },
     {
+      text: '工具集',
+      target: '_blank',
+      href: getPermalink('/tools'),
+    },
+    {
       text: '关于我',
       href: getPermalink('/about'),
     },
@@ -58,10 +63,16 @@ export const footerData = {
       title: '摄影展示',
       href: getPermalink('/photography'),
       links: [
-        { text: '武汉行', href: getPermalink('photography/wuhan'), },
+        { text: '武汉行', href: getPermalink('photography/wuhan') },
         { text: '温州行', href: getPermalink('photography/wenzhou') },
         { text: '杭州行', href: getPermalink('photography/hangzhou') },
       ],
+    },
+    {
+      title: '工具集',
+      href: getPermalink('/tools'),
+      target: '_blank',
+      links: [{ text: '网络工具', href: getPermalink('/tools#network-tools'), target: '_blank' }],
     },
     {
       title: '关于我',
