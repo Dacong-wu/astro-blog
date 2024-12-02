@@ -1,0 +1,35 @@
+---
+publishDate: 2024-12-02
+title: 在 openEuler 中使用 mongodb
+excerpt: 在 openEuler 中使用 mongodb，并解决 ssh 隧道连接问题。
+image: '~/assets/images/blog/edwin-chen-uFH7yP-hy44-unsplash.webp'
+category: server
+tags:
+  - mongodb
+metadata:
+  image_author:
+    link: https://unsplash.com/@star7a
+    name: star7a
+---
+
+## 在 openEuler 中安装 mongodb
+
+1. 使用 `lscpu` 查看 `CPU` 架构
+2. 在 `https://www.mongodb.com/try/download/community` 找到对应架构的 `RedHat` 系统，复制下载链接。
+3. 使用 `wget` 下载安装包，假设安装包名为 `mongodb-org-server-7.0.15-1.el8.x86_64.rpm`
+4. 使用 `sudo dnf install mongodb-org-server-7.0.15-1.el8.x86_64.rpm` 安装
+5. 使用 `mongod --version` 查看版本
+6. 启动并设置为开机自启 `sudo systemctl start mongod` `sudo systemctl enable mongod`
+7. 安装 `mongosh`，`sudo dnf install mongodb-mongosh`
+8. 查看 mongodb 的状态 `sudo systemctl status mongod`
+
+## 修改 mongodb 的绑定地址
+
+1. 打开 `/etc/mongod.conf`
+2. 修改 `bindIp` 内容为 `0.0.0.0`
+3. 重启 mongodb `sudo systemctl restart mongod`
+
+## 开启 ssh 隧道 TCP 转发功能
+
+1. 修改 ssh 的配置项 `AllowTcpForwarding` 为 yes
+2. 重启 ssh
