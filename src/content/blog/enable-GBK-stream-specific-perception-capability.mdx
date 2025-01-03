@@ -40,78 +40,77 @@ metadata:
 
 ```typescript
 export class GBKDecoderStreamAware {
-  private _decoder: TextDecoder
-  private _buffer: Uint8Array | null // 用于缓存未完成的字节
+  private _decoder: TextDecoder;
+  private _buffer: Uint8Array | null; // 用于缓存未完成的字节
 
   constructor() {
-    this._decoder = new TextDecoder('gbk')
-    this._buffer = null // 初始没有缓存
+    this._decoder = new TextDecoder('gbk');
+    this._buffer = null; // 初始没有缓存
   }
 
   decode(data: Uint8Array): string {
     // 如果有缓存，将缓存与新数据合并
     if (this._buffer) {
-      const combinedData = new Uint8Array(this._buffer.length + data.length)
-      combinedData.set(this._buffer)
-      combinedData.set(data, this._buffer.length)
-      this._buffer = null // 清空缓存
-      return this._processChunk(combinedData)
+      const combinedData = new Uint8Array(this._buffer.length + data.length);
+      combinedData.set(this._buffer);
+      combinedData.set(data, this._buffer.length);
+      this._buffer = null; // 清空缓存
+      return this._processChunk(combinedData);
     }
-    return this._processChunk(data)
+    return this._processChunk(data);
   }
 
   // 处理每一块数据，处理跨块的多字节字符
   private _processChunk(data: Uint8Array): string {
-    let i = 0
-    let lastIncompleteByteIndex = -1 // 记录最后一个不完整字节的索引
+    let i = 0;
+    let lastIncompleteByteIndex = -1; // 记录最后一个不完整字节的索引
 
     while (i < data.length) {
-      const byte = data[i]
+      const byte = data[i];
 
       if (byte >= 0x81 && byte <= 0xfe) {
         // 如果是多字节字符的第一个字节
         if (i + 1 >= data.length) {
           // 如果下一个字节不存在，说明这是不完整的字符，缓存它
-          lastIncompleteByteIndex = i
-          break
+          lastIncompleteByteIndex = i;
+          break;
         } else {
           // 如果下一个字节存在，检查第二个字节是否有效
-          const nextByte = data[i + 1]
+          const nextByte = data[i + 1];
           if (nextByte >= 0x40 && nextByte <= 0xfe && nextByte !== 0x7f) {
             // 是有效的 GBK 双字节字符，跳过这两个字节
-            i += 2
+            i += 2;
           } else {
             // 非法的 GBK 字符，跳过一个字节（解码可能有问题）
-            i++
+            i++;
           }
         }
       } else {
         // 单字节字符，直接跳过
-        i++
+        i++;
       }
     }
 
     // 如果检测到不完整的多字节字符，缓存它
     if (lastIncompleteByteIndex !== -1) {
-      this._buffer = data.slice(lastIncompleteByteIndex)
-      data = data.slice(0, lastIncompleteByteIndex)
+      this._buffer = data.slice(lastIncompleteByteIndex);
+      data = data.slice(0, lastIncompleteByteIndex);
     }
 
     // 解码完整的字节序列
-    return this._decoder.decode(data)
+    return this._decoder.decode(data);
   }
 
   // 清空缓冲区 (可选，根据上下文需要)
   clearBuffer(): void {
-    this._buffer = null
+    this._buffer = null;
   }
 }
 
-const decoderWithGBK = new GBKDecoderStreamAware()
+const decoderWithGBK = new GBKDecoderStreamAware();
 
-export function print(data: Uint8Array){
-    // 打印读取数据
-    console.log(decoderWithGBK.decode(data))
+export function print(data: Uint8Array) {
+  // 打印读取数据
+  console.log(decoderWithGBK.decode(data));
 }
 ```
-

@@ -27,15 +27,10 @@ metadata:
 这里就需要使用另一个包：`vite-plugin-node-polyfills`。它用于在浏览器环境中填充 Node.js 的核心模块。这样就可以保证 `iconv-lite` 能够正常工作。下面示例是在 vite 中配置它：
 
 ```javascript
-import { defineConfig } from 'vite'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { defineConfig } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
-    plugins: [
-        nodePolyfills()
-    ]
-})
+  plugins: [nodePolyfills()],
+});
 ```
-
-
-

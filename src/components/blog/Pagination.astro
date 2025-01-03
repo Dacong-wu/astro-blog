@@ -16,7 +16,7 @@ const { prevUrl, nextUrl, prevText = '上一页', nextText = '下一页' } = Ast
 {
   (prevUrl || nextUrl) && (
     <div class="container flex">
-      <div class="flex flex-row mx-auto container justify-between">
+      <div class="flex flex-row mx-auto container justify-between intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
         <Button
           variant="tertiary"
           class={`md:px-3 px-3 mr-2 ${!prevUrl ? 'invisible' : ''}`}

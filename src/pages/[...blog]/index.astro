@@ -3,7 +3,7 @@ import merge from 'lodash.merge';
 import Layout from '~/layouts/PageLayout.astro';
 import SinglePost from '~/components/blog/SinglePost.astro';
 import ToListLink from '~/components/widgets/ToListLink.astro';
-import AstroGiscus from '~/components/widgets/AstroGiscus.astro';
+// import AstroGiscus from '~/components/widgets/AstroGiscus.astro';
 import { getCanonical, getPermalink } from '~/utils/permalinks';
 import { getStaticPathsBlogPost, blogPostRobots } from '~/utils/blog';
 import { getImage } from 'astro:assets';
@@ -48,5 +48,5 @@ const metadata = merge(
 <Layout metadata={metadata}>
   <SinglePost post={{ ...post, image: image }} url={url} />
   <ToListLink />
-  <AstroGiscus />
+  <!-- <AstroGiscus /> -->
 </Layout>

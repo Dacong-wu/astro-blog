@@ -17,7 +17,11 @@ const { post } = Astro.props;
 const link = APP_BLOG?.post?.isEnabled ? getPermalink(post.permalink, 'post') : '';
 ---
 
-<article class={`max-w-md mx-auto md:max-w-none grid gap-6 md:gap-8 ${post.image ? 'md:grid-cols-2' : ''}`}>
+<article
+  class={`max-w-md mx-auto md:max-w-none grid gap-6 md:gap-8 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade ${
+    post.image ? 'md:grid-cols-2' : ''
+  }`}
+>
   {
     post.image && (
       <a class="relative block group" href={link ?? 'javascript:void(0)'}>

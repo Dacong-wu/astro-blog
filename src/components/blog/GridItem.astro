@@ -11,7 +11,9 @@ export interface Props {
 const { post } = Astro.props;
 ---
 
-<article class="mb-6 transition">
+<article
+  class="mb-6 transition intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
+>
   <div class="relative h-52 md:h-64 rounded shadow-lg mb-6">
     {
       post.image && (
