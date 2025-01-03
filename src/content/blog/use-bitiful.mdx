@@ -19,44 +19,44 @@ metadata:
 
 ## 使用方式
 
-#### 1.  获取预签名链接
+#### 1. 获取预签名链接
 
 ```javascript
-const router = require('koa-router')()
-const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+const router = require('koa-router')();
+const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const s3Client = new S3Client({
   region: '******', //桶信息中的服务可用区
   endpoint: '******', //桶信息中的服务端点
   credentials: {
     accessKeyId: '******', //AccessKeyId
-    secretAccessKey: '******' //AccessKey
-  }
-})
+    secretAccessKey: '******', //AccessKey
+  },
+});
 
-router.get('/put-signedurl', async ctx => {
+router.get('/put-signedurl', async (ctx) => {
   const putCmd = new PutObjectCommand({
     Bucket: '******', //桶名称
-    Key: 'avatar/******.png' //图片的key，avatar/ 就是把它放到avatar文件夹下
-  })
+    Key: 'avatar/******.png', //图片的key，avatar/ 就是把它放到avatar文件夹下
+  });
   //获取预签名链接
-  await getSignedUrl(s3Client, putCmd, { expiresIn: 3600 }).then(url => {
-    ctx.body = url
-  })
-})
+  await getSignedUrl(s3Client, putCmd, { expiresIn: 3600 }).then((url) => {
+    ctx.body = url;
+  });
+});
 
-router.get('/get-signedurl', async ctx => {
+router.get('/get-signedurl', async (ctx) => {
   const putCmd = new GetObjectCommand({
     Bucket: '******',
-    Key: 'avatar/******.png'
-  })
+    Key: 'avatar/******.png',
+  });
   //获取访问签名链接
-  await getSignedUrl(s3Client, putCmd, { expiresIn: 3600 }).then(url => {
-    ctx.body = url
-  })
-})
+  await getSignedUrl(s3Client, putCmd, { expiresIn: 3600 }).then((url) => {
+    ctx.body = url;
+  });
+});
 
-module.exports = router.routes()
+module.exports = router.routes();
 ```
 
 #### 2. 微信小程序图片上传
@@ -69,29 +69,26 @@ Page({
       mediaType: ['image'],
       sourceType: ['album'],
       success(res) {
-        let url = '' // put-signedurl获取到的链接
-        var fs = wx.getFileSystemManager() // 读取文件 二进制内容
+        let url = ''; // put-signedurl获取到的链接
+        var fs = wx.getFileSystemManager(); // 读取文件 二进制内容
         wx.request({
           url: url,
           method: 'put',
           header: {
-            'content-type': null, // 小程序 content-type 默认为 application/json， 这里强制为 null 
+            'content-type': null, // 小程序 content-type 默认为 application/json， 这里强制为 null
           },
           data: fs.readFileSync(res.tempFiles[0].tempFilePath),
           success: function (res) {
-            console.log('上传成功')
-            console.log(res)
+            console.log('上传成功');
+            console.log(res);
           },
           error: function (err) {
-            console.log('上传失败')
-            console.log(err)
+            console.log('上传失败');
+            console.log(err);
           },
-        })
+        });
       },
-    })
+    });
   },
-})
+});
 ```
-
-
-

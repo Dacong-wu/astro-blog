@@ -12,7 +12,7 @@ const { photographys } = Astro.props;
 <ul>
   {
     photographys.map((photography) => (
-      <li class="mb-12 md:mb-20">
+      <li class="mb-12 md:mb-20 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
         <Item photography={photography} />
       </li>
     ))
