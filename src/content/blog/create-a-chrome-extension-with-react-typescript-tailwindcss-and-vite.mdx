@@ -1,0 +1,163 @@
+---
+publishDate: 2025-02-25
+title: 使用 React、TypeScript、TailwindCSS 和 Vite 创建 Chrome 扩展程序
+excerpt: 介绍如何使用 React、TypeScript、TailwindCSS 和 Vite 创建 Chrome 扩展程序。
+image: '~/assets/images/blog/daniel-sessler-xHxfXRbTG1Y-unsplash.jpg'
+category: client
+tags:
+  - react
+  - vite
+  - extension 
+metadata:
+  image_author:
+    link: https://unsplash.com/@danielsessler
+    name: danielsessler
+---
+
+创建 Chrome 拓展程序是一个有趣且有益的项目，尤其是当您结合使用 React、TypeScript、TailwindCSS 和 Vite 等强大工具时。在本文中，我们将逐步指导您完成整个过程。
+
+### 1. 创建新的 Vite 项目
+
+`npm create vite@latest my-chrome-extension -- --template react-ts`
+
+### 2. 了解 Chrome 拓展程序
+
+每个 Chrome 拓展程序都需要一个清单文件（mainfest.json）。此文件包含有关拓展程序的元数据，包括其名称、版本、权限以及它使用的后台脚本。
+
+典型的 Chrome 拓展程序包括：
+
+- 后台脚本：在后台运行并处理实践。
+- 内容脚本：注入网页以及 DOM 交互。
+- Popup UI：点击拓展图标时出现的界面。
+
+### 3. 将 React 与 Vite 集成
+
+请先执行 `npm install` 安装项目依赖。然后创建你的第一个组件，在文件夹 `src` 中创建一个新组件 `Popup.tsx`：
+
+```jsx
+import React from 'react';
+
+const Popup: React.FC = () => (
+    <div className="p-4">
+        <h1 className="text-lg font-blod">
+            Hello, Chrome Extension!
+        </h1>
+    </div>
+);
+
+export default Popup;
+```
+
+现在我们在 `App.tsx` 文件中导入刚刚创建的 `Popup.tsx` 组件：
+
+```jsx
+import Popup from './Popup';
+
+const App: React.FC = () => {
+    return <Popup />;
+}
+
+export default App;
+```
+
+### 4. 将 TypeScript 添加到你的项目
+
+使用命令 `npm install --save-dev typescript` 安装 TypeScript。然后在项目根目录下创建 `tsconfig.json`文件以此配置 TypeScript，下面是基本配置：
+
+```json
+{
+    "compilerOptions":{
+        "target": "ES2020",
+        "useDefineForClassFields": true,
+        "lib": ["ES2020", "DOM0", "DOM.Iterable"],
+        "module": "ESNext",
+        "skipLibCheck": true,
+        
+        /* Bundler mode */
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "isolatedModules": true,
+        "moduleDetection": "force",
+        "noEmit": true,
+        "jsx": "react-jsx",
+        
+        /* Linting */
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true
+    },
+    "include": ["src"]
+}
+```
+
+### 5. 使用 TailwindCSS 设置样式
+
+请使用以下命令安装：
+
+```shell
+npm install -D tailwindcss postcss autoprefixer
+
+npx tailwindcss init -p
+```
+
+在根目录下的 `tailwind.config.js` 下配置以下内容：
+
+```javascript
+module.exports = {
+    content: [
+        './index.html',
+        './src/**/*.{js,ts,jsx,tsx}'
+    ],
+    theme: {
+        extend: {},
+    },
+    plugins: [],
+};
+```
+
+然后，将以下内容添加到您的 `src/index.css` 中：
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+### 6. 构建你的 Chrome 拓展程序
+
+安装 vite 插件 `npm install @crxjs/vite-plugin@beta -D`
+
+更新 vite 的配置文件 `vite.config.ts`：
+
+```tsx
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { crx } from './manifest.json'
+
+export default defineConfig({
+    plugins: [
+        react(),
+        crx({ manifest }),
+    ],
+})
+```
+
+根目录下创建一个 `maifest.json` 文件，并输入一下内容：
+
+```json
+{
+    "manifest_version": 3,
+    "name": "Test Chrome Extension",
+    "version": "1.0.0",
+    "description": "A Chrome extension built with Vite and React",
+    "action": {
+        "default_popup": "index.html"
+    },
+    "permissions": []
+}
+```
+
+### 7. 测试你的拓展程序
+
+打开 Chrome 并导航至 `chrome://extensions`，启用 `Developer mode` 并点击 `Load unpacked`。选择您的 `dist` 目录。
