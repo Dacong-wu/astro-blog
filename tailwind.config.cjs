@@ -24,6 +24,9 @@ module.exports = {
           'theme-dark': '#222222',
         },
       },
+      fontFamily: {
+        code: ['Cascadia Code', 'Menlo', 'monospace'],
+      },
     },
   },
   plugins: [require('@tailwindcss/typography')],
