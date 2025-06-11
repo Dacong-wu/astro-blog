@@ -102,23 +102,6 @@ import { UI } from '~/utils/config';
         ticking = true;
       }
     });
-    attachEvent('[img-can-preview]', 'click', function (ele) {
-      var myHtml = document.querySelector('html');
-      myHtml.classList.toggle('overflow-hidden');
-      var divElement = document.createElement('div');
-      divElement.setAttribute('id', 'img-preview-body');
-      divElement.addEventListener('click', function () {
-        var imgPreviewBody = document.getElementById('img-preview-body');
-        document.body.removeChild(imgPreviewBody);
-        myHtml.classList.toggle('overflow-hidden');
-      });
-      var imgElement = document.createElement('img');
-      imgElement.setAttribute('src', ele.target.src);
-      imgElement.setAttribute('alt', ele.target.alt);
-      imgElement.classList.add('preview');
-      divElement.appendChild(imgElement);
-      document.body.appendChild(divElement);
-    });
   };
 
   window.onpageshow = function () {
@@ -131,5 +114,56 @@ import { UI } from '~/utils/config';
     document.getElementById('header')?.classList.remove('h-screen');
     document.getElementById('header')?.classList.remove('expanded');
     document.querySelector('#header nav')?.classList.add('hidden');
+  };
+</script>
+
+<script>
+  import { gsap } from 'gsap';
+  function attachEvent(selector, event, fn) {
+    const matches = typeof selector === 'string' ? document.querySelectorAll(selector) : selector;
+    if (matches && matches.length) {
+      matches.forEach((elem) => {
+        elem.addEventListener(event, (e) => fn(e, elem), false);
+      });
+    }
+  }
+  window.onload = function () {
+    attachEvent('[img-can-preview]', 'click', function (ele) {
+      const myHtml = document.querySelector('html');
+      myHtml.classList.toggle('overflow-hidden');
+
+      const divElement = document.createElement('div');
+      divElement.setAttribute('id', 'img-preview-body');
+
+      const imgElement = document.createElement('img');
+      imgElement.setAttribute('src', ele.target.src);
+      imgElement.setAttribute('alt', ele.target.alt);
+      imgElement.classList.add('preview');
+
+      divElement.appendChild(imgElement);
+      document.body.appendChild(divElement);
+
+      // 动画显示
+      gsap.fromTo(
+        imgElement,
+        { opacity: 0, scale: 0.85 },
+        { opacity: 1, scale: 1, duration: 0.25, ease: 'power2.out' }
+      );
+
+      divElement.addEventListener('click', function () {
+        // 动画关闭
+        gsap.to(imgElement, {
+          opacity: 0,
+          scale: 0.85,
+          duration: 0.2,
+          ease: 'power2.in',
+          onComplete: function () {
+            const imgPreviewBody = document.getElementById('img-preview-body');
+            if (imgPreviewBody) document.body.removeChild(imgPreviewBody);
+            myHtml.classList.toggle('overflow-hidden');
+          },
+        });
+      });
+    });
   };
 </script>
