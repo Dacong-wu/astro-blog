@@ -11,6 +11,7 @@ metadata:
   image_author:
     link: https://unsplash.com/@kristapsungurs
     name: kristapsungurs
+
 ---
 
 ### 什么是 `BOM`?
@@ -49,14 +50,14 @@ metadata:
 
 ```javascript
 let pageWidth = window.innerWidth,
-  pageHeight = window.innerHeight;
+  pageHeight = window.innerHeight
 if (typeof pageWidth != 'number') {
   if (document.compatMode == 'CSS1Compat') {
-    pageWidth = document.documentElement.clientWidth;
-    pageHeight = document.documentElement.clientHeight;
+    pageWidth = document.documentElement.clientWidth
+    pageHeight = document.documentElement.clientHeight
   } else {
-    pageWidth = document.body.clientWidth;
-    pageHeight = document.body.clientHeight;
+    pageWidth = document.body.clientWidth
+    pageHeight = document.body.clientHeight
   }
 }
 ```
@@ -66,3 +67,6 @@ if (typeof pageWidth != 'number') {
 度量文档相对于视口滚动距离的属性有两对，返回相等的值：`window.pageXoffset/window.scrollX` 和 `window.pageYoffset/window.scrollY`。
 
 可以使用 `scroll()`、`scrollTo()` 和 `scrollBy()` 方法滚动页面。其中 `scrollBy()` 表示的是相对于视口的滚动距离，前两个是相对视口要滚动到的坐标。
+
+
+

@@ -12,9 +12,7 @@ const { title, tagList, pathPrefix } = Astro.props;
 
 <section class="px-4 md:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
   <Headline>{title}~{tagList.length}</Headline>
-  <div
-    class="flex flex-wrap gap-4 min-h-[200px] intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
-  >
+  <div class="flex flex-wrap gap-4 min-h-[200px]">
     {
       tagList.map((tag) => (
         <a

@@ -11,6 +11,7 @@ metadata:
   image_author:
     link: https://unsplash.com/@kristapsungurs
     name: kristapsungurs
+
 ---
 
 ### 最有用的 `BOM` 对象 - `location`
@@ -26,40 +27,40 @@ let getQueryStringArgs = function () {
   // 取得没有开头问号的查询字符串
   let qs = location.search.length > 0 ? location.search.substring(1) : '',
     // 保存数据的对象
-    args = {};
+    args = {}
   // 把每个参数添加到 args 对象
-  for (let item of qs.split('&').map((kv) => kv.split('='))) {
+  for (let item of qs.split('&').map(kv => kv.split('='))) {
     let name = decodeURIComponent(item[0]),
-      value = decodeURIComponent(item[1]);
+      value = decodeURIComponent(item[1])
     if (name.length) {
-      args[name] = value;
+      args[name] = value
     }
   }
-  return args;
-};
+  return args
+}
 ```
 
 或者你可以使用 `URLSearchParams` ，它暴露了 `get()`、`set()` 和 `delete()` 等方法
 
 ```javascript
-let qs = '?year=2024&text=hello';
-let searchParams = new URLSearchParams(qs);
-console.log(searchParams.toString()); // "year=2024&text=hello"
-searchParams.has('year'); // true
-searchParams.get('year'); // 2024
-searchParams.set('page', '3');
-console.log(searchParams.toString()); // "year=2024&text=hello&page=3"
-searchParams.delete('year');
-console.log(searchParams.toString()); // "text=hello&page=3"
+let qs = '?year=2024&text=hello'
+let searchParams = new URLSearchParams(qs)
+console.log(searchParams.toString()) // "year=2024&text=hello"
+searchParams.has('year') // true
+searchParams.get('year') // 2024
+searchParams.set('page', '3')
+console.log(searchParams.toString()) // "year=2024&text=hello&page=3"
+searchParams.delete('year')
+console.log(searchParams.toString()) // "text=hello&page=3"
 ```
 
 大多数支持 `URLSearchParams` 的浏览器，也支持将 `URLSearchParams` 的实例用作可迭代对象
 
 ```javascript
-let qs = '?year=2024&text=hello';
-let searchParams = new URLSearchParams(qs);
+let qs = '?year=2024&text=hello'
+let searchParams = new URLSearchParams(qs)
 for (let param of searchParams) {
-  console.log(param);
+  console.log(param)
 }
 // ['year', '2024']
 // ['text', 'hello']
@@ -86,3 +87,8 @@ for (let param of searchParams) {
 如果想要重新加载当前页面，其实就是**刷新**，我们可以使用 `reload()` 方法。它会以最有效的方式重新加载页面，但是如果页面自上次请求后没有被修改，那浏览器可能会从缓存中加载页面。如果使用 `reload(true)`，那么就会强制从服务器重新加载。
 
 > 最好把 `reload()` 作为最后一行代码，因为它后面的代码可能会不执行，这取决于网络延迟和系统资源等因素。
+
+
+
+
+

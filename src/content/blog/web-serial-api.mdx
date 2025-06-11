@@ -25,9 +25,9 @@ metadata:
 #### 1. 判断浏览器是否支持
 
 ```javascript
-const support = ref(false);
+const support = ref(false)
 if ('serial' in navigator) {
-  support.value = true;
+  support.value = true
 }
 ```
 
@@ -36,11 +36,11 @@ if ('serial' in navigator) {
 ```javascript
 // 选择设备端口并打开
 export async function selectPort() {
-  const terminalInfoStore = useTerminalInfoStore();
-  const portInfoStore = usePortInfoStore();
+  const terminalInfoStore = useTerminalInfoStore()
+  const portInfoStore = usePortInfoStore()
   try {
-    const port = await navigator.serial.requestPort();
-    portInfoStore.portSelect = port;
+    const port = await navigator.serial.requestPort()
+    portInfoStore.portSelect = port
     try {
       await portInfoStore.portSelect.open({
         baudRate: portInfoStore.baudrateSelect,
@@ -48,16 +48,16 @@ export async function selectPort() {
         stopBits: portInfoStore.stopBitsSelect,
         parity: portInfoStore.paritySelect,
         bufferSize: 255,
-        flowControl: portInfoStore.flowControlSelect,
-      });
-      portInfoStore.portOpen = true;
-      portInfoStore.keepReading = true;
-      terminalInfoStore.addInfo('Open Serial Port Success');
+        flowControl: portInfoStore.flowControlSelect
+      })
+      portInfoStore.portOpen = true
+      portInfoStore.keepReading = true
+      terminalInfoStore.addInfo('Open Serial Port Success')
     } catch (error) {
-      terminalInfoStore.addInfo(error, 'error');
+      terminalInfoStore.addInfo(error, 'error')
     }
   } catch (error) {
-    terminalInfoStore.addInfo(error, 'error');
+    terminalInfoStore.addInfo(error, 'error')
   }
 }
 ```
@@ -67,19 +67,19 @@ export async function selectPort() {
 ```javascript
 // 关闭端口
 export async function closePort() {
-  const terminalInfoStore = useTerminalInfoStore();
-  const portInfoStore = usePortInfoStore();
+  const terminalInfoStore = useTerminalInfoStore()
+  const portInfoStore = usePortInfoStore()
   try {
-    portInfoStore.keepReading = false;
+    portInfoStore.keepReading = false
     /* !!!
     调用 reader.cancel() 将强制 reader.read() 立即使用 { value: undefined, done: true } 进行解析，从而允许循环调用 reader.releaseLock()
     */
-    await portInfoStore.portSelectRender.cancel();
-    await portInfoStore.portSelect.close();
-    portInfoStore.portOpen = false;
-    terminalInfoStore.addInfo('Close Serial Port Success');
+    await portInfoStore.portSelectRender.cancel() 
+    await portInfoStore.portSelect.close()
+    portInfoStore.portOpen = false
+    terminalInfoStore.addInfo('Close Serial Port Success')
   } catch (error) {
-    terminalInfoStore.addInfo(error, 'error');
+    terminalInfoStore.addInfo(error, 'error')
   }
 }
 ```
@@ -89,26 +89,26 @@ export async function closePort() {
 ```javascript
 // 读取数据
 export async function readerRead() {
-  const terminalInfoStore = useTerminalInfoStore();
-  const portInfoStore = usePortInfoStore();
-  const infoStore = useInfoStore();
-  const decoder = new TextDecoder();
+  const terminalInfoStore = useTerminalInfoStore()
+  const portInfoStore = usePortInfoStore()
+  const infoStore = useInfoStore()
+  const decoder = new TextDecoder()
   while (portInfoStore.portSelect.readable && portInfoStore.keepReading) {
-    const reader = portInfoStore.portSelect.readable.getReader();
-    portInfoStore.portSelectRender = reader;
+    const reader = portInfoStore.portSelect.readable.getReader()
+    portInfoStore.portSelectRender = reader
     try {
       while (true) {
-        const { value, done } = await reader.read();
+        const { value, done } = await reader.read()
         if (done) {
-          reader.releaseLock();
-          break;
+          reader.releaseLock()
+          break
         }
-        infoStore.receiveLength += value.length;
-        const decoded = decoder.decode(value);
-        infoStore.addInfo(decoded);
+        infoStore.receiveLength += value.length
+        const decoded = decoder.decode(value)
+        infoStore.addInfo(decoded)
       }
     } catch (error) {
-      terminalInfoStore.addInfo(error, 'error');
+      terminalInfoStore.addInfo(error, 'error')
     }
   }
 }
@@ -119,22 +119,22 @@ export async function readerRead() {
 ```javascript
 // 写入数据
 export async function sendText(text, hex) {
-  const portInfoStore = usePortInfoStore();
-  const infoStore = useInfoStore();
-  let data = hex ? hexToString(text) : text;
-  const encoder = new TextEncoder();
-  const writer = portInfoStore.portSelect.writable.getWriter();
-  let encodeData = encoder.encode(`${data}\n`);
-  infoStore.sendLength += encodeData.length;
-  await writer.write(encodeData);
-  writer.releaseLock();
+  const portInfoStore = usePortInfoStore()
+  const infoStore = useInfoStore()
+  let data = hex ? hexToString(text) : text
+  const encoder = new TextEncoder()
+  const writer = portInfoStore.portSelect.writable.getWriter()
+  let encodeData = encoder.encode(`${data}\n`)
+  infoStore.sendLength += encodeData.length
+  await writer.write(encodeData)
+  writer.releaseLock()
 }
 ```
 
 ## 注意事项
 
-1. 读取数据进行展示的时候，应该使用一个缓存数组去实时存数据，然后定时读取缓存数组中的数据，去更新视图，切记不可直接更新视图，因为数据量大会导致页面卡死。
-2. 因为 port.getInfo() 得到的信息有限，所以不能做到刷新后恢复状态，因为通过得到的信息，你没法知道上次选择的是哪个，除非就一个选项。
-3. 中文传输乱码的问题，这个问题在官方示例中也存在，目前没有找到解决方案。
-4. 数据量大导致内存占用飙升，这个目前也没有找到合适的解决方案。
-5. 试用地址 https://web-serial-qtum.vercel.app/ （不保证有效期，目前是测试阶段）
+  1. 读取数据进行展示的时候，应该使用一个缓存数组去实时存数据，然后定时读取缓存数组中的数据，去更新视图，切记不可直接更新视图，因为数据量大会导致页面卡死。
+  2. 因为 port.getInfo() 得到的信息有限，所以不能做到刷新后恢复状态，因为通过得到的信息，你没法知道上次选择的是哪个，除非就一个选项。
+  3. 中文传输乱码的问题，这个问题在官方示例中也存在，目前没有找到解决方案。
+  4. 数据量大导致内存占用飙升，这个目前也没有找到合适的解决方案。
+  5. 试用地址 https://web-serial-qtum.vercel.app/ （不保证有效期，目前是测试阶段）

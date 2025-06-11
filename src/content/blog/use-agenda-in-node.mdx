@@ -73,19 +73,19 @@ metadata:
    ```javascript
    const dayjs = require('dayjs');
    const mongoose = require('mongoose');
-
+   
    // 创建定时任务，data 为任务处理需要的数据
    async function createAgenda(data) {
      let { time } = data; // 为执行定时任务的时间
      await agenda.schedule(dayjs(time).toDate(), 'sendTest', data);
    }
-
+   
    // 查询定时任务，你可以查询 data 的 key 为 8 的相关任务
    async function findAgenda() {
      const jobs = await agenda.jobs({ name: 'sendEmail', 'data.key': 8 }, { nextRunAt: -1 });
      return jobs;
    }
-
+   
    // 删除定位任务，_id 为查询定时任务中获取到的
    async function removeAgenda({ _id }) {
      const numRemoved = await agenda.cancel({

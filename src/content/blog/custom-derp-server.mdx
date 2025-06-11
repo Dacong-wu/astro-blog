@@ -18,11 +18,12 @@ metadata:
 
 ---
 
+
 ## 1. 一台拥有公网 IP 的主机
 
 我推荐使用 docker 部署服务，但是你也可以不这样做。主机防火墙需要放开 3478/UDP和80&443/TCP端口，或者你也可以使用一个自定义端口。
 
----
+------
 
 ## 2. 创建容器镜像并运行容器
 
@@ -42,7 +43,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends apt-utils && \
     apt-get install -y ca-certificates && \
     mkdir /app/certs
-
+    
 # 自己的域名，例如 qq.com
 ENV DERP_DOMAIN qq.com
 ENV DERP_CERT_MODE manual
@@ -76,13 +77,13 @@ docker run --restart always \
   -d derper:latest
 ```
 
----
+------
 
 ## 3. 在 Tailscale 控制面板修改 `Access controls` 配置
 
 增加 `derpMap` 属性，并配置一下内容，如果保存失败，有可能是浏览器兼容问题，请使用谷歌等浏览器。
 
-- `OmitDefaultRegions` 只使用自定义中继
+* `OmitDefaultRegions` 只使用自定义中继
 
 ```json
 "derpMap": {

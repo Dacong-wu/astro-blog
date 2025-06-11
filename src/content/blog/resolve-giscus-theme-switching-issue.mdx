@@ -1,7 +1,7 @@
 ---
 publishDate: 2024-06-21
 title: 解决 giscus 主题切换问题
-excerpt: 在 Astro 中使用 giscus 并解决主题切换同步问题
+excerpt: 在 Astro 中使用 giscus 并解决主题切换同步问题 
 image: '~/assets/images/blog/rodrigo-silva-DQ7-ouISDNc-unsplash.jpg'
 category: client
 tags:
@@ -30,7 +30,7 @@ interface Props {
 const { category, categoryId } = Astro.props;
 ---
 
-<astro-giscus data-category="{category}" data-category-id="{categoryId}">
+<astro-giscus data-category={category} data-category-id={categoryId}>
   <div class="giscus mx-auto px-6 sm:px-6 max-w-3xl pt-8 md:pt-4 pb-12 md:pb-20"></div>
 </astro-giscus>
 
