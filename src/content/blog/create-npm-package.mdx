@@ -29,47 +29,47 @@ metadata:
 4. 创建 `index.js` 文件，此文件为入口文件
 
    ```javascript
-   const verifyToken = require('./verifytoken')
-   module.exports = { verifyToken }
+   const verifyToken = require('./verifytoken');
+   module.exports = { verifyToken };
    ```
 
 5. 创建 `verifytoken.js` 文件，此文件为主要功能文件
 
    ```javascript
-   const jwt = require('jsonwebtoken')
+   const jwt = require('jsonwebtoken');
    function setRouterOpts(opts) {
-     opts = opts || {} 
+     opts = opts || {};
      /*
      opts 是引用包时，传入的信息
      secret 为签名秘钥
      excludedPaths 为需要排除的路径
      NODE_ENV 为程序运行环境值
      */
-     let { secret = 'secret', excludedPaths = [], NODE_ENV = 'production' } = opts
+     let { secret = 'secret', excludedPaths = [], NODE_ENV = 'production' } = opts;
      return async (ctx, next) => {
        if (!excludedPaths.includes(ctx.path) && NODE_ENV === 'production') {
-         const token = ctx.request.headers.token
+         const token = ctx.request.headers.token;
          // 检查请求头中是否包含令牌
          if (!token) {
-           ctx.status = 401 // 缺失令牌，返回未经授权状态码
-           return
+           ctx.status = 401; // 缺失令牌，返回未经授权状态码
+           return;
          }
          try {
-           const info = jwt.verify(token, secret)
-           ctx.user_data = info.data // 此为用户信息，是创建 token 时设置的
+           const info = jwt.verify(token, secret);
+           ctx.user_data = info.data; // 此为用户信息，是创建 token 时设置的
          } catch (err) {
            if (err?.message === 'jwt expired') {
-             console.error(`Title:Token验证错误-token过期`)
+             console.error(`Title:Token验证错误-token过期`);
            } else {
-             console.error(`Title:Token验证错误\nErr_stack:${err.stack}\n`)
+             console.error(`Title:Token验证错误\nErr_stack:${err.stack}\n`);
            }
-           ctx.status = 401
+           ctx.status = 401;
          }
        }
-       await next()
-     }
+       await next();
+     };
    }
-   module.exports = setRouterOpts
+   module.exports = setRouterOpts;
    ```
 
 6. 添加 `.gitignore` 文件，添加需要忽略提交的文件
@@ -94,17 +94,12 @@ metadata:
      "scripts": {
        "test": "echo \"Error: no test specified\" && exit 1"
      },
-     "keywords": [
-       "token",
-       "verifytoken",
-       "koa-token",
-       "verify-jwt"
-     ],
+     "keywords": ["token", "verifytoken", "koa-token", "verify-jwt"],
      "author": "",
      "license": "ISC",
      "dependencies": {
        "jsonwebtoken": "^9.0.2",
-       "koa-router": "^12.0.0",
+       "koa-router": "^12.0.0"
      }
    }
    ```
@@ -113,29 +108,29 @@ metadata:
 
    ````markdown
    ### 安装
-   
+
    ```shell
    npm install koa-verifytoken@latest
    ```
-   
+
    ### 使用
-   
+
    ```javascript
    /* 🌰 /router.js
    secret:token秘钥 default:'secret'
    excludedPaths:需要排除验证的路由host完整地址 🌰 https://test.cn/api/8888 default:[]
    NODE_ENV:Node的环境，production环境才会执行验证，方便本地开发 default:'production'
    */
-   const router = require('koa-router')()
-   const { verifyToken } = require('koa-verifytoken')
-   
-   router.use(verifytoken({secret, excludedPaths, NODE_ENV}))
-   router.use('/other') // 其它需要验证的路由
-   module.exports = router
+   const router = require('koa-router')();
+   const { verifyToken } = require('koa-verifytoken');
+
+   router.use(verifytoken({ secret, excludedPaths, NODE_ENV }));
+   router.use('/other'); // 其它需要验证的路由
+   module.exports = router;
    ```
-   
+
    ### 注意事项
-   
+
    1. 这是 `Koa` 的插件
    2. `NODE_ENV` 为 `production` 时，才会生效
    3. `excludedPaths` 为一个 `host` 路径数组
@@ -152,4 +147,3 @@ metadata:
 1. 实际我已经发布的包名为 `dacong-koa-verifytoken` `koa-verifytoken` 只是一个用于教程的名字
 2. 这只是一个非常简单的示例，并没有打包
 3. 请注意教程中依赖包的版本信息，如果依赖包版本有大的变动，可能会不适用
-

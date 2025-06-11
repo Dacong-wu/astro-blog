@@ -22,50 +22,50 @@ Xterm 是一个浏览器终端工具，很多你见到的开源项目中都有�
 #### 1. 创建主文件，`main.js`
 
 ```javascript
-import { Terminal } from '@xterm/xterm'
-import { WebglAddon } from '@xterm/addon-webgl'
-import { FitAddon } from '@xterm/addon-fit'
-import { WebLinksAddon } from '@xterm/addon-web-links'
-import { baseTheme } from './theme'
-import { customData } from './data'
+import { Terminal } from '@xterm/xterm';
+import { WebglAddon } from '@xterm/addon-webgl';
+import { FitAddon } from '@xterm/addon-fit';
+import { WebLinksAddon } from '@xterm/addon-web-links';
+import { baseTheme } from './theme';
+import { customData } from './data';
 
-export const fitAddon = new FitAddon()
+export const fitAddon = new FitAddon();
 
 export const term = new Terminal({
   fontFamily: '"Cascadia Code", Menlo, monospace',
   theme: baseTheme,
   cursorBlink: true,
-  cursorStyle: 'bar'
-})
+  cursorStyle: 'bar',
+});
 
 export function runFakeTerminal() {
-  initializeXterm() //初始化 Xterm
+  initializeXterm(); //初始化 Xterm
   if (term._initialized) {
-    return
+    return;
   }
-  term._initialized = true
-  term.writeln('Hello, Welcome To QCOM!🎊')
-  customData(term)
+  term._initialized = true;
+  term.writeln('Hello, Welcome To QCOM!🎊');
+  customData(term);
 }
 
 function initializeXterm() {
-  term.loadAddon(fitAddon)
-  term.loadAddon(new WebLinksAddon())
-  term.open(document.getElementById('xterm-inner'))
+  term.loadAddon(fitAddon);
+  term.loadAddon(new WebLinksAddon());
+  term.open(document.getElementById('xterm-inner'));
   setTimeout(() => {
-    fitAddon.fit()
-  }, 60)
+    fitAddon.fit();
+  }, 60);
   try {
-    term.loadAddon(new WebglAddon())
+    term.loadAddon(new WebglAddon());
   } catch (e) {
-    console.warn('WebGL addon threw an exception during load', e)
+    console.warn('WebGL addon threw an exception during load', e);
   }
-  document.querySelector('.xterm').addEventListener('wheel', handleWheel)
+  document.querySelector('.xterm').addEventListener('wheel', handleWheel);
 }
 
 function handleWheel(e) {
   if (term.buffer.active.baseY > 0) {
-    e.preventDefault()
+    e.preventDefault();
   }
 }
 ```
@@ -92,8 +92,8 @@ export const baseTheme = {
   cyan: '#5DA5D5',
   brightCyan: '#72F0FF',
   white: '#F8F8F8',
-  brightWhite: '#FFFFFF'
-}
+  brightWhite: '#FFFFFF',
+};
 // vscode-snazzy https://github.com/Tyriar/vscode-snazzy
 export const otherTheme = {
   foreground: '#eff0eb',
@@ -114,17 +114,17 @@ export const otherTheme = {
   cyan: '#9aedfe',
   brightCyan: '#9aedfe',
   white: '#f1f1f0',
-  brightWhite: '#eff0eb'
-}
+  brightWhite: '#eff0eb',
+};
 ```
 
 #### 3. 创建处理数据文件，`data.js`
 
 ```javascript
 export function customData(term) {
-  term.onData(e => {
-    sendData(e)
-  })
+  term.onData((e) => {
+    sendData(e);
+  });
 }
 
 async function sendData(e) {
@@ -136,20 +136,20 @@ async function sendData(e) {
 
 ```vue
 <script setup>
-import { runFakeTerminal } from '@/utils/xterm/main'
-import '@xterm/xterm/css/xterm.css'
-import { fitAddon } from '@/utils/xterm/main'
+import { runFakeTerminal } from '@/utils/xterm/main';
+import '@xterm/xterm/css/xterm.css';
+import { fitAddon } from '@/utils/xterm/main';
 
 const resizeHandler = () => {
-  fitAddon.fit()
-}
+  fitAddon.fit();
+};
 onMounted(() => {
-  runFakeTerminal()
-  window.addEventListener('resize', resizeHandler)
-})
+  runFakeTerminal();
+  window.addEventListener('resize', resizeHandler);
+});
 onUnmounted(() => {
-  window.removeEventListener('resize', resizeHandler)
-})
+  window.removeEventListener('resize', resizeHandler);
+});
 </script>
 <template>
   <div id="xterm-body" class="rounded px-3 py-2 bg-[#2d2e2c] pr-1 h-full min-h-[300px]">
@@ -173,6 +173,6 @@ onUnmounted(() => {
 
 ## 注意事项
 
-  1. 请不要在 `xterm-inner ` 上设置 `padding` 等影响大小的样式
-  1. 如果遇到终端大小和父元素不一致的情况，请在 `xterm.open` 后延迟执行 `fitAddon.fit()`
-  1. 我之所以导出 `fitAddon` 方法，是因为我需要去监听其他组件大小的变化，然后让终端大小自适应。
+1. 请不要在 `xterm-inner ` 上设置 `padding` 等影响大小的样式
+1. 如果遇到终端大小和父元素不一致的情况，请在 `xterm.open` 后延迟执行 `fitAddon.fit()`
+1. 我之所以导出 `fitAddon` 方法，是因为我需要去监听其他组件大小的变化，然后让终端大小自适应。
