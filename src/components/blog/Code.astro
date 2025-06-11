@@ -35,10 +35,6 @@ import { Icon } from 'astro-icon/components';
         navigator.clipboard.writeText(pre.textContent?.trim() || '');
         check?.classList.remove('opacity-0');
         button?.classList.add('opacity-0');
-        setTimeout(() => {
-          check?.classList.add('opacity-0');
-          button?.classList.remove('opacity-0');
-        }, 2000);
       });
     });
   };
