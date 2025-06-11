@@ -1,1 +1,35 @@
 @import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+@import './search.css';
+@import './diy.css';
+
+/* 1) 基础主题令牌 ------------------------------------------------------- */
+@theme {
+  /* ——颜色—— */
+  --color-primary: var(--aw-color-primary);
+  --color-secondary: var(--aw-color-secondary);
+  --color-accent: var(--aw-color-accent);
+  --color-default: var(--aw-color-text-default);
+
+  /* 固定 HEX 颜色同样 OK */
+  --color-dark: #040404;
+  --color-light: #717171;
+  --color-border: #eaeaea;
+  --color-muted: var(--aw-color-text-muted);
+
+  --color-theme-light: #f6f6f6;
+  --color-theme-dark: transparent; /* 旧配置里是空字符串 */
+  --color-darkmode-text: #b4afb6;
+  --color-darkmode-body: #1c1c1c;
+  --color-darkmode-border: #3e3e3e;
+  --color-darkmode-primary: #ffffff;
+  --color-darkmode-dark: #ffffff;
+  --color-darkmode-light: #b4afb6;
+  --color-darkmode-theme-light: #222222;
+  --color-darkmode-theme-dark: #222222;
+  /* ——字体—— */
+  --font-code: 'Cascadia Code', Menlo, monospace;
+}
+
+/* 2) 声明 class-驱动暗色模式 ------------------------------------------- */
+@custom-variant dark (&:where(.dark, .dark *));  /* 让 dark:* 在有 .dark 时生效 */

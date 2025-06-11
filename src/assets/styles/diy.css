@@ -1,5 +1,3 @@
-@import './search.scss';
-
 @utility bg-page {
   background-color: var(--aw-color-bg-page);
 }
