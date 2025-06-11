@@ -108,8 +108,13 @@ span.line {
 }
 span.line::before {
   content: attr(data-index);
-  @apply text-zinc-400 absolute left-[20px] text-right w-[var(--aw-code-span-before-w)] pr-2;
+  @apply text-zinc-400 absolute left-[20px] text-right w-[var(--aw-code-span-before-w)] pr-2 bg-[#1f2937];
 }
+
+html.dark span.line::before {
+  background-color: #000;
+}
+
 #theme-switcher:checked + label span {
   @apply md:left-4 left-0;
 }
