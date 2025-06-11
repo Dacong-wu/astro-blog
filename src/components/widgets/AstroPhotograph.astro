@@ -10,9 +10,10 @@ const images = await Promise.all(
     getImage({
       src: image,
       format: 'webp',
-      widths: [360, 540, 1200],
-      sizes: '(max-width:540px) 360px, (max-width: 1200px) 540px, 1200px',
-      width: 1200,
+      widths: [360, 768, 1200, 1920, 3840],
+      sizes:
+        '(max-width:540px) 360px, (max-width: 768px) 768px,(max-width: 1200px) 1200px,(max-width: 1920px) 1920px,3840px',
+      width: 3840,
     })
   )
 );
