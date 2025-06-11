@@ -8,7 +8,7 @@ import Pagination from '~/components/blog/Pagination.astro';
 import ToTagsLink from '~/components/blog/ToTagsLink.astro';
 export const prerender = true;
 
-export async function getStaticPaths({ paginate }) {
+export async function getStaticPaths ({ paginate }) {
   return await getStaticPathsBlogTag({ paginate });
 }
 const { page, tag } = Astro.props;

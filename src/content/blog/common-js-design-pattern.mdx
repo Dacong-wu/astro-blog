@@ -10,6 +10,7 @@ metadata:
   image_author:
     link: https://unsplash.com/@iriser
     name: iriser
+
 ---
 
 ## 11 种常见的 JS 设计模式-上
@@ -52,30 +53,30 @@ metadata:
      property2: 'value2',
      method: function () {
        // do something
-     },
-   };
+     }
+   }
    ```
 
 2. **使用函数闭包创建单例：**
 
    ```javascript
    const Singleton = (function () {
-     let instance;
+     let instance
      function init() {
        // private methods and variables
        return {
          // public methods and variables
-       };
+       }
      }
      return {
        getInstance: function () {
          if (!instance) {
-           instance = init();
+           instance = init()
          }
-         return instance;
-       },
-     };
-   })();
+         return instance
+       }
+     }
+   })()
    ```
 
 3. **使用类创建单例：**
@@ -85,15 +86,16 @@ metadata:
      constructor() {
        if (!Singleton.instance) {
          // initialization code
-         Singleton.instance = this;
+         Singleton.instance = this
        }
-       return Singleton.instance;
+       return Singleton.instance
      }
      // methods
    }
    // 使用
-   const singletonInstance = new Singleton();
+   const singletonInstance = new Singleton()
    ```
+
 
 ### 2. 工厂模式
 
@@ -118,17 +120,17 @@ metadata:
    ```javascript
    function createCar(type) {
      if (type === 'SUV') {
-       return new SUV();
+       return new SUV()
      } else if (type === 'Sedan') {
-       return new Sedan();
+       return new Sedan()
      } else if (type === 'Hatchback') {
-       return new Hatchback();
+       return new Hatchback()
      } else {
-       throw new Error('Invalid car type');
+       throw new Error('Invalid car type')
      }
    }
-
-   const myCar = createCar('SUV');
+   
+   const myCar = createCar('SUV')
    ```
 
 2. **工厂方法模式：**
@@ -137,20 +139,20 @@ metadata:
    class CarFactory {
      createCar(type) {
        if (type === 'SUV') {
-         return new SUV();
+         return new SUV()
        } else if (type === 'Sedan') {
-         return new Sedan();
+         return new Sedan()
        } else if (type === 'Hatchback') {
-         return new Hatchback();
+         return new Hatchback()
        } else {
-         throw new Error('Invalid cat type');
+         throw new Error('Invalid cat type')
        }
      }
    }
-
+   
    // 使用
-   const factory = new CarFactory();
-   const myCar = factory.createCar('SUV');
+   const factory = new CarFactory()
+   const myCar = factory.createCar('SUV')
    ```
 
 3. **抽象工厂模式：**
@@ -158,21 +160,21 @@ metadata:
    ```javascript
    class CarFactory {
      createSUV() {
-       return new SUV();
+       return new SUV()
      }
      createSedan() {
-       return new Sedan();
+       return new Sedan()
      }
      createHatchback() {
-       return new Hatchback();
+       return new Hatchback()
      }
    }
-
+   
    // 使用
-   const factory = new CarFactory();
-   const mySUV = factory.createSUV();
-   const mySedan = factory.createSedan();
-   const myHatchback = factory.createHatchback();
+   const factory = new CarFactory()
+   const mySUV = factory.createSUV()
+   const mySedan = factory.createSedan()
+   const myHatchback = factory.createHatchback()
    ```
 
 ### 3. 构造函数模式
@@ -195,20 +197,20 @@ metadata:
 ```javascript
 // 构造函数模式的实现
 function Person(name, age) {
-  this.name = name;
-  this.age = age;
+  this.name = name
+  this.age = age
   this.sayHello = function () {
-    console.log('Hello my name is ' + this.name + ' and I am' + this.age + ' years old.');
-  };
+    console.log('Hello my name is ' + this.name + ' and I am' + this.age + ' years old.')
+  }
 }
 
 // 使用构造函数创建对象实例
-var person1 = new Person('Alice', 30);
-var parson2 = new Person('Bob', 25);
+var person1 = new Person('Alice', 30)
+var parson2 = new Person('Bob', 25)
 
 // 调用对象实例的方法
-person1.sayHello();
-person2.sayHello();
+person1.sayHello()
+person2.sayHello()
 ```
 
 它的实现非常简单，只需要定义一个构造函数，然后通过 `new` 关键字来创建对象实例。
@@ -237,24 +239,24 @@ person2.sayHello();
 ```javascript
 const Module = (function () {
   // 私有变量和函数
-  let privateVar = 0;
+  let privateVar = 0
 
   function privateFunction() {
-    console.log('Private Function');
+    console.log('Private Function')
   }
 
   // 公共接口
   return {
     publicVar: 1,
     publicFunction: function () {
-      console.log('Public Function');
-    },
-  };
-})();
+      console.log('Public Function')
+    }
+  }
+})()
 
 // 使用模块
-Module.publicFunction();
-console.log(Module.publicVar);
+Module.publicFunction()
+console.log(Module.publicVar)
 ```
 
 在上面的例子中，`Module` 是一个使用模块模式实现的模块，它包含了私有变量 `privateVar` 和私有函数 `privateFunction`，以及公共接口 `publicVar` 和 `publicFunction`。通过返回一个包含公共接口的对象，外部可以访问模块提供的公共方法和变量，但无法直接访问模块内部的私有吧部分。
@@ -287,27 +289,28 @@ class Observer {
 // 被观察者对象
 class Subject {
   constructor() {
-    this.observers = [];
+    this.observers = []
   }
   addObserver(observer) {
-    this.observers.push(observer);
+    this.observers.push(observer)
   }
   removeObserver(observer) {
-    this.observers = this.observers.filter((obs) => obs !== observer);
+    this.observers = this.observers.filter(obs => obs !== observer)
   }
   notifyObservers() {
-    this.observers.forEach((observer) => observer.update());
+    this.observers.forEach(observer => observer.update())
   }
 }
 
 // 使用示例
-const subject = new Subject();
-const observer1 = new Observer();
-const observer2 = new Observer();
+const subject = new Subject()
+const observer1 = new Observer()
+const observer2 = new Observer()
 
-subject.addObserver(observer1);
-subject.addObserver(observer2);
+subject.addObserver(observer1)
+subject.addObserver(observer2)
 
 // 被观察者状态发生变化，通知观察者
-subject.notifyObservers();
+subject.notifyObservers()
 ```
+

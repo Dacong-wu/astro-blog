@@ -49,46 +49,45 @@ metadata:
 2. 创建 `background.js` 文件，它是通信的关键
 
 ```javascript
-import { sendMessage, getMessage } from './utils/socket.js';
-const TEN_SECONDS_MS = 10 * 1000;
-let webSocket = null;
-let keepAliveIntervalId = null;
-connect();
+import { sendMessage, getMessage } from './utils/socket.js'
+const TEN_SECONDS_MS = 10 * 1000
+let webSocket = null
+let keepAliveIntervalId = null
+connect()
 
 chrome.runtime.onStartup.addListener(() => {
-  if (!webSocket) connect();
-});
+  if (!webSocket) connect()
+})
 
 function connect() {
-  if (keepAliveIntervalId) clearInterval(keepAliveIntervalId);
-  webSocket = new WebSocket('wss://api.ll1025.cn');
+  if (keepAliveIntervalId) clearInterval(keepAliveIntervalId)
+  webSocket = new WebSocket('wss://api.ll1025.cn')
 
-  keepAlive();
+  keepAlive()
 
   webSocket.onopen = () => {
-    chrome.action.setIcon({ path: 'assets/128-success.png' });
-  };
+    chrome.action.setIcon({ path: 'assets/128-success.png' })
+  }
 
-  webSocket.onmessage = (event) => {
-    getMessage(event.data);
-  };
+  webSocket.onmessage = event => {
+    getMessage(event.data)
+  }
 
   webSocket.onclose = () => {
-    chrome.action.setIcon({ path: 'assets/128-close.png' });
-    webSocket = null;
-    setTimeout(connect, 2000);
-  };
+    chrome.action.setIcon({ path: 'assets/128-close.png' })
+    webSocket = null
+    setTimeout(connect, 2000)
+  }
 }
 
-function keepAlive() {
-  // 这很重要，因为如果在后台没有通信，会被休眠
+function keepAlive() { // 这很重要，因为如果在后台没有通信，会被休眠
   keepAliveIntervalId = setInterval(() => {
     if (webSocket) {
-      sendMessage(webSocket, 'ping', '1');
+      sendMessage(webSocket, 'ping', '1')
     } else {
-      clearInterval(keepAliveIntervalId);
+      clearInterval(keepAliveIntervalId)
     }
-  }, TEN_SECONDS_MS);
+  }, TEN_SECONDS_MS)
 }
 ```
 
@@ -96,30 +95,30 @@ function keepAlive() {
 
 ```javascript
 export function sendMessage(webSocket, type, value) {
-  webSocket.send(JSON.stringify({ type, value }));
+  webSocket.send(JSON.stringify({ type, value }))
 }
 
 export function updateBadgeText() {
   chrome.action.getBadgeText({}, function (result) {
-    let newValue = parseInt(result ? result : 0) + 1;
-    chrome.action.setBadgeText({ text: newValue.toString() });
-  });
+    let newValue = parseInt(result ? result : 0) + 1
+    chrome.action.setBadgeText({ text: newValue.toString() })
+  })
 }
 
 export function getMessage(data) {
-  let { type, value } = JSON.parse(data);
+  let { type, value } = JSON.parse(data)
   switch (type) {
     case 'notification':
-      updateBadgeText();
+      updateBadgeText()
       const options = {
         type: 'basic',
         iconUrl: '/assets/128.png', // 通知图标
         title: '大葱给你发了消息',
-        message: value,
-      };
+        message: value
+      }
       // 发送通知
-      chrome.notifications.create(options);
-      break;
+      chrome.notifications.create(options)
+      break
   }
 }
 ```
@@ -132,3 +131,4 @@ export function getMessage(data) {
 2. 请不要 socket.io 测试无效。
 3. 发布到谷歌应用市场注册需要 5 美元，微软商店不需要费用，但是注册会报错，请将城市用大写英文表示，例如 北京-BJ
 4. 后端部分没有开源，有需要请用邮箱联系🤣
+

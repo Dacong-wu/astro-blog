@@ -27,26 +27,12 @@ const {
 <section class="relative not-prose" {...id ? { id } : {}}>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
     <div class="text-center max-w-5xl mx-auto py-20">
-      {
-        title && (
-          <h1
-            class="text-5xl md:text-6xl font-bold mb-4 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
-            set:html={title}
-          />
-        )
-      }
+      {title && <h1 class="text-5xl md:text-6xl font-bold mb-4" set:html={title} />}
       <div class="max-w-3xl mx-auto">
-        {
-          subtitle && (
-            <p
-              class="text-xl mb-5 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
-              set:html={subtitle}
-            />
-          )
-        }
+        {subtitle && <p class="text-xl mb-5" set:html={subtitle} />}
         {
           actions && (
-            <div class="max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+            <div class="max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4">
               {Array.isArray(actions) ? (
                 actions.map((action) => (
                   <div class="flex w-full sm:w-auto">
@@ -61,23 +47,21 @@ const {
         }
       </div>
       {content && <Fragment set:html={content} />}
-      <div class="intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
-        {
-          image && (
-            <div class="lg:h-96 md:h-80 h-60">
-              <Image
-                src={image}
-                alt="Hero Image"
-                class="h-full mx-auto rounded-md object-cover dark:opacity-70"
-                widths={[540, 1200]}
-                width={1200}
-                sizes="(max-width: 700px) 540px, 1200px"
-                loading="eager"
-              />
-            </div>
-          )
-        }
-      </div>
+      {
+        image && (
+          <div class="lg:h-96 md:h-80 h-60">
+            <Image
+              src={image}
+              alt="Hero Image"
+              class="h-full mx-auto rounded-md object-cover dark:opacity-70"
+              widths={[540, 1200]}
+              width={1200}
+              sizes="(max-width: 700px) 540px, 1200px"
+              loading="eager"
+            />
+          </div>
+        )
+      }
     </div>
   </div>
 </section>
