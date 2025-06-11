@@ -102,23 +102,6 @@ import { UI } from '~/utils/config';
         ticking = true;
       }
     });
-    attachEvent('[img-can-preview]', 'click', function (ele) {
-      var myHtml = document.querySelector('html');
-      myHtml.classList.toggle('overflow-hidden');
-      var divElement = document.createElement('div');
-      divElement.setAttribute('id', 'img-preview-body');
-      divElement.addEventListener('click', function () {
-        var imgPreviewBody = document.getElementById('img-preview-body');
-        document.body.removeChild(imgPreviewBody);
-        myHtml.classList.toggle('overflow-hidden');
-      });
-      var imgElement = document.createElement('img');
-      imgElement.setAttribute('src', ele.target.src);
-      imgElement.setAttribute('alt', ele.target.alt);
-      imgElement.classList.add('preview');
-      divElement.appendChild(imgElement);
-      document.body.appendChild(divElement);
-    });
   };
 
   window.onpageshow = function () {
@@ -134,95 +117,93 @@ import { UI } from '~/utils/config';
   };
 </script>
 
-<script is:inline>
-  /* Inspired by: https://github.com/heidkaemper/tailwindcss-intersect */
-  const Observer = {
-    observer: null,
-    delayBetweenAnimations: 100,
-    animationCounter: 0,
-
-    start() {
-      const selectors = [
-        '[class*=" intersect:"]',
-        '[class*=":intersect:"]',
-        '[class^="intersect:"]',
-        '[class="intersect"]',
-        '[class*=" intersect "]',
-        '[class^="intersect "]',
-        '[class$=" intersect"]',
-      ];
-
-      const elements = Array.from(document.querySelectorAll(selectors.join(',')));
-
-      const getThreshold = (element) => {
-        if (element.classList.contains('intersect-full')) return 0.99;
-        if (element.classList.contains('intersect-half')) return 0.5;
-        if (element.classList.contains('intersect-quarter')) return 0.25;
-        return 0;
-      };
-
-      elements.forEach((el) => {
-        el.setAttribute('no-intersect', '');
-        el._intersectionThreshold = getThreshold(el);
+<script>
+  import { gsap } from 'gsap';
+  function attachEvent(selector, event, fn) {
+    const matches = typeof selector === 'string' ? document.querySelectorAll(selector) : selector;
+    if (matches && matches.length) {
+      matches.forEach((elem) => {
+        elem.addEventListener(event, (e) => fn(e, elem), false);
       });
+    }
+  }
+  attachEvent('[img-can-preview]', 'click', function (ele) {
+    const myHtml = document.querySelector('html');
+    myHtml.classList.toggle('overflow-hidden');
 
-      const callback = (entries) => {
-        entries.forEach((entry) => {
-          requestAnimationFrame(() => {
-            const target = entry.target;
-            const intersectionRatio = entry.intersectionRatio;
-            const threshold = target._intersectionThreshold;
+    const divElement = document.createElement('div');
+    divElement.setAttribute('id', 'img-preview-body');
 
-            if (target.classList.contains('intersect-no-queue')) {
-              if (entry.isIntersecting) {
-                target.removeAttribute('no-intersect');
-                if (target.classList.contains('intersect-once')) {
-                  this.observer.unobserve(target);
-                }
-              } else {
-                target.setAttribute('no-intersect', '');
-              }
-              return;
-            }
+    const imgElement = document.createElement('img');
+    imgElement.setAttribute('src', ele.target.src);
+    imgElement.setAttribute('alt', ele.target.alt);
+    imgElement.classList.add('preview');
+    imgElement.style.transition = 'transform 0.1s ease-out';
 
-            if (intersectionRatio >= threshold) {
-              if (!target.hasAttribute('data-animated')) {
-                target.removeAttribute('no-intersect');
-                target.setAttribute('data-animated', 'true');
+    divElement.appendChild(imgElement);
+    document.body.appendChild(divElement);
 
-                const delay = this.animationCounter * this.delayBetweenAnimations;
-                this.animationCounter++;
+    let scale = 1;
+    let posX = 0;
+    let posY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
 
-                target.style.transitionDelay = `${delay}ms`;
-                target.style.animationDelay = `${delay}ms`;
+    // 初始动画
+    gsap.fromTo(imgElement, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.25, ease: 'power2.out' });
 
-                if (target.classList.contains('intersect-once')) {
-                  this.observer.unobserve(target);
-                }
-              }
-            } else {
-              target.setAttribute('no-intersect', '');
-              target.removeAttribute('data-animated');
-              target.style.transitionDelay = '';
-              target.style.animationDelay = '';
+    const updateTransform = () => {
+      imgElement.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+    };
 
-              this.animationCounter = 0;
-            }
-          });
-        });
-      };
+    // 拖拽功能
+    imgElement.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX - posX;
+      startY = e.clientY - posY;
+      e.preventDefault();
+    });
 
-      this.observer = new IntersectionObserver(callback.bind(this), { threshold: [0, 0.25, 0.5, 0.99] });
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      posX = e.clientX - startX;
+      posY = e.clientY - startY;
+      updateTransform();
+    });
 
-      elements.forEach((el) => {
-        this.observer.observe(el);
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    // 滚轮缩放
+    divElement.addEventListener(
+      'wheel',
+      (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        const newScale = Math.min(Math.max(0.5, scale + delta), 4);
+        scale = newScale;
+        updateTransform();
+      },
+      { passive: false }
+    );
+
+    // 点击关闭
+    divElement.addEventListener('click', function (e) {
+      // 退出动画
+      if(e.target === imgElement) return
+      gsap.to(imgElement, {
+        opacity: 0,
+        scale: 0.85,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: function () {
+          const imgPreviewBody = document.getElementById('img-preview-body');
+          if (imgPreviewBody) document.body.removeChild(imgPreviewBody);
+          myHtml.classList.toggle('overflow-hidden');
+        },
       });
-    },
-  };
-
-  Observer.start();
-
-  document.addEventListener('astro:after-swap', () => {
-    Observer.start();
+    });
   });
 </script>

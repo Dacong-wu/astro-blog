@@ -1,43 +1,33 @@
-@tailwind utilities;
-@tailwind base;
-@tailwind components;
-
-@layer utilities {
-  .bg-page {
-    background-color: var(--aw-color-bg-page);
-  }
-  .bg-dark {
-    background-color: var(--aw-color-bg-page-dark);
-  }
-  .bg-light {
-    background-color: var(--aw-color-bg-page);
-  }
-  .text-page {
-    color: var(--aw-color-text-page);
-  }
-  .text-muted {
-    color: var(--aw-color-text-muted);
-  }
+@utility bg-page {
+  background-color: var(--aw-color-bg-page);
+}
+@utility bg-dark {
+  background-color: var(--aw-color-bg-page-dark);
+}
+@utility bg-light {
+  background-color: var(--aw-color-bg-page);
+}
+@utility text-page {
+  color: var(--aw-color-text-page);
+}
+@utility text-muted {
+  color: var(--aw-color-text-muted);
 }
 
-@layer components {
-  .btn {
-    @apply inline-flex items-center justify-center rounded-full border-gray-400 border bg-transparent font-medium text-center text-base text-page leading-snug transition py-3.5 px-6 md:px-8 ease-in duration-200 focus:ring-blue-500 focus:ring-offset-blue-200 focus:ring-2 focus:ring-offset-2 hover:bg-gray-100 hover:border-gray-600 dark:text-slate-300 dark:border-slate-500 dark:hover:bg-slate-800 dark:hover:border-slate-800 cursor-pointer;
-  }
+@utility btn {
+  @apply inline-flex items-center justify-center rounded-full border-gray-400 border bg-transparent font-medium text-center text-base text-page leading-snug transition py-3.5 px-6 md:px-8 ease-in duration-200 focus:ring-blue-500 focus:ring-offset-blue-200 focus:ring-2 focus:ring-offset-2 hover:bg-gray-100 hover:border-gray-600 dark:text-slate-300 dark:border-slate-500 dark:hover:bg-slate-800 dark:hover:border-slate-800 cursor-pointer;
+}
 
-  .btn-primary {
-    @apply btn font-semibold bg-primary text-white border-primary hover:bg-secondary hover:border-secondary hover:text-white dark:text-white dark:bg-primary dark:border-primary dark:hover:border-secondary dark:hover:bg-secondary;
-  }
+@utility btn-primary {
+  @apply btn font-semibold bg-primary text-white border-primary hover:bg-secondary hover:border-secondary hover:text-white dark:text-white dark:bg-primary dark:border-primary dark:hover:border-secondary dark:hover:bg-secondary;
+}
 
-  .btn-secondary {
-    @apply btn;
-  }
+@utility btn-secondary {
+  @apply btn;
+}
 
-  .btn-tertiary {
-    @apply btn border-none shadow-none text-muted hover:text-gray-900 dark:text-gray-400 dark:hover:text-white;
-  }
-
-  @import 'search';
+@utility btn-tertiary {
+  @apply btn border-none shadow-none text-muted hover:text-gray-900 dark:text-gray-400 dark:hover:text-white;
 }
 
 #header.before-scroll {
@@ -102,15 +92,20 @@ img[img-can-preview] {
   @apply flex items-center justify-center top-0 left-0 w-full h-full fixed overflow-y-auto motion-safe:scroll-smooth z-50 bg-zinc-900;
 }
 #img-preview-body .preview {
-  @apply absolute w-full cursor-zoom-out;
+  @apply max-w-screen max-h-screen object-contain cursor-zoom-out relative;
 }
 span.line {
   @apply ml-[var(--aw-code-span-ml)];
 }
 span.line::before {
   content: attr(data-index);
-  @apply text-zinc-400 absolute left-[20px] text-right w-[var(--aw-code-span-before-w)] pr-2;
+  @apply text-zinc-400 absolute left-[20px] text-right w-[var(--aw-code-span-before-w)] pr-2 bg-[#1f2937];
 }
+
+html.dark span.line::before {
+  background-color: #000;
+}
+
 #theme-switcher:checked + label span {
   @apply md:left-4 left-0;
 }
