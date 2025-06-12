@@ -24,6 +24,10 @@ export const headerData = {
       href: getPermalink('/photography'),
       links: [
         {
+          text: '云南行',
+          href: getPermalink('photography/yunnan'),
+        },
+        {
           text: '武汉行',
           href: getPermalink('photography/wuhan'),
         },
