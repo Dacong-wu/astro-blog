@@ -21,11 +21,6 @@ jobs:
         with:
           submodules: true
           lfs: false
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Install package
-        run: pnpm install 
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
