@@ -8,7 +8,7 @@
     "preadd": "cd add && pnpm install && cd ..",
     "add": "node add/index.js",
     "start": "npm run generate-json && astro dev",
-    "build": "npm run generate-json && astro build",
+    "build": "pnpm install && npm run generate-json && astro build",
     "preview": "astro preview --host 0.0.0.0",
     "astro": "astro",
     "format": "prettier -w .",
