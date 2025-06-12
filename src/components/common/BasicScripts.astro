@@ -3,6 +3,7 @@ import { UI } from '~/utils/config';
 ---
 
 <script is:inline define:vars={{ defaultTheme: UI.theme }}>
+  // 统一的事件绑定工具函数
   function attachEvent(selector, event, fn) {
     const matches = typeof selector === 'string' ? document.querySelectorAll(selector) : selector;
     if (matches && matches.length) {
@@ -12,113 +13,143 @@ import { UI } from '~/utils/config';
     }
   }
 
+  // 页面加载完成后的初始化
   window.onload = function () {
+    initScrollHandler();
+    initMenuHandlers();
+    initThemeToggle();
+    initSocialShare();
+  };
+
+  // 滚动处理逻辑
+  function initScrollHandler() {
     let lastKnownScrollPosition = window.scrollY;
-    let ticking = true;
+    let ticking = false;
 
-    attachEvent('#header nav', 'click', function () {
-      document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
-      document.body.classList.remove('overflow-hidden');
-      document.getElementById('header')?.classList.remove('h-screen');
-      document.getElementById('header')?.classList.remove('expanded');
-      document.getElementById('header')?.classList.remove('bg-page');
-      document.querySelector('#header nav')?.classList.add('hidden');
-      document.querySelector('#header > div > div:last-child')?.classList.add('hidden');
-    });
+    function applyHeaderStylesOnScroll() {
+      const header = document.getElementById('header');
+      if (!header) return;
 
-    attachEvent('[data-aw-toggle-menu]', 'click', function (_, elem) {
-      elem.classList.toggle('expanded');
-      document.body.classList.toggle('overflow-hidden');
-      document.getElementById('header')?.classList.toggle('h-screen');
-      document.getElementById('header')?.classList.toggle('expanded');
-      document.getElementById('header')?.classList.toggle('bg-page');
-      document.querySelector('#header nav')?.classList.toggle('hidden');
-    });
-
-    attachEvent('[data-aw-toggle-color-scheme]', 'click', function () {
-      if (defaultTheme.endsWith(':only')) {
-        return;
+      if (lastKnownScrollPosition > 60 && !header.classList.contains('scroll')) {
+        header.classList.add('scroll');
+        header.classList.remove('before-scroll');
+      } else if (lastKnownScrollPosition <= 60 && header.classList.contains('scroll')) {
+        header.classList.add('before-scroll');
+        header.classList.remove('scroll');
       }
+      ticking = false;
+    }
+
+    // 初始应用样式
+    applyHeaderStylesOnScroll();
+
+    // 滚动事件监听
+    attachEvent([document], 'scroll', function () {
+      lastKnownScrollPosition = window.scrollY;
+      if (!ticking) {
+        window.requestAnimationFrame(applyHeaderStylesOnScroll);
+        ticking = true;
+      }
+    });
+  }
+
+  // 菜单相关处理
+  function initMenuHandlers() {
+    const headerElements = {
+      header: document.getElementById('header'),
+      nav: document.querySelector('#header nav'),
+      toggleButton: document.querySelector('[data-aw-toggle-menu]'),
+      lastChild: document.querySelector('#header > div > div:last-child'),
+    };
+
+    // 导航点击 - 关闭菜单
+    attachEvent('#header nav', 'click', function () {
+      closeMenu(headerElements);
+    });
+
+    // 菜单切换按钮
+    attachEvent('[data-aw-toggle-menu]', 'click', function (_, elem) {
+      toggleMenu(elem, headerElements);
+    });
+  }
+
+  function closeMenu({ header, nav, toggleButton, lastChild }) {
+    toggleButton?.classList.remove('expanded');
+    document.body.classList.remove('overflow-hidden');
+    if (header) {
+      header.classList.remove('h-screen', 'expanded', 'bg-page');
+    }
+    nav?.classList.add('hidden');
+    lastChild?.classList.add('hidden');
+  }
+
+  function toggleMenu(toggleButton, { header, nav }) {
+    toggleButton.classList.toggle('expanded');
+    document.body.classList.toggle('overflow-hidden');
+    if (header) {
+      header.classList.toggle('h-screen');
+      header.classList.toggle('expanded');
+      header.classList.toggle('bg-page');
+    }
+    nav?.classList.toggle('hidden');
+  }
+
+  // 主题切换
+  function initThemeToggle() {
+    attachEvent('[data-aw-toggle-color-scheme]', 'click', function () {
+      if (defaultTheme.endsWith(':only')) return;
+
       document.documentElement.classList.toggle('dark');
       localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
     });
+  }
+
+  // 社交分享
+  function initSocialShare() {
+    const shareUrls = {
+      facebook: (url) => `https://www.facebook.com/sharer.php?u=${url}`,
+      twitter: (url, text) => `https://twitter.com/intent/tweet?url=${url}&text=${text}`,
+      linkedin: (url, text) => `https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${text}`,
+      whatsapp: (url, text) => `https://wa.me/?text=${text}%20${url}`,
+      mail: (url, text) => `mailto:?subject=${text}&body=${text}%20${url}`,
+      'contact-mail': (url, text) => `mailto:?subject=${text}&to=dacong@ll1025.cn`,
+    };
 
     attachEvent('[data-aw-social-share]', 'click', function (_, elem) {
       const network = elem.getAttribute('data-aw-social-share');
       const url = encodeURIComponent(elem.getAttribute('data-aw-url'));
       const text = encodeURIComponent(elem.getAttribute('data-aw-text'));
 
-      let href;
-      switch (network) {
-        case 'facebook':
-          href = `https://www.facebook.com/sharer.php?u=${url}`;
-          break;
-        case 'twitter':
-          href = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
-          break;
-        case 'linkedin':
-          href = `https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${text}`;
-          break;
-        case 'whatsapp':
-          href = `https://wa.me/?text=${text}%20${url}`;
-          break;
-        case 'mail':
-          // href = `mailto:?subject=%22${text}%22&body=${text}%20${url}`;
-          href = `mailto:?subject=${text}&body=${text}%20${url}`;
-          break;
-        case 'contact-mail':
-          href = `mailto:?subject=${text}&to=dacong@ll1025.cn`;
-          break;
-        default:
-          return;
-      }
+      const shareFunction = shareUrls[network];
+      if (!shareFunction) return;
 
-      const newlink = document.createElement('a');
-      newlink.target = '_blank';
-      newlink.href = href;
-      newlink.click();
+      const href = shareFunction(url, text);
+      const newLink = document.createElement('a');
+      newLink.target = '_blank';
+      newLink.href = href;
+      newLink.click();
     });
+  }
 
-    function appyHeaderStylesOnScroll() {
-      const header = document.getElementById('header');
-      if (lastKnownScrollPosition > 60 && !header.classList.contains('scroll')) {
-        document.getElementById('header').classList.add('scroll');
-        document.getElementById('header').classList.remove('before-scroll');
-      } else if (lastKnownScrollPosition <= 60 && header.classList.contains('scroll')) {
-        document.getElementById('header').classList.add('before-scroll');
-        document.getElementById('header').classList.remove('scroll');
-      }
-      ticking = false;
-    }
-    appyHeaderStylesOnScroll();
-
-    attachEvent([document], 'scroll', function () {
-      lastKnownScrollPosition = window.scrollY;
-
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          appyHeaderStylesOnScroll();
-        });
-        ticking = true;
-      }
-    });
-  };
-
+  // 页面显示时重置状态
   window.onpageshow = function () {
     document.documentElement.classList.add('motion-safe:scroll-smooth');
-    const elem = document.querySelector('[data-aw-toggle-menu]');
-    if (elem) {
-      elem.classList.remove('expanded');
-    }
+
+    const toggleButton = document.querySelector('[data-aw-toggle-menu]');
+    const header = document.getElementById('header');
+    const nav = document.querySelector('#header nav');
+
+    toggleButton?.classList.remove('expanded');
     document.body.classList.remove('overflow-hidden');
-    document.getElementById('header')?.classList.remove('h-screen');
-    document.getElementById('header')?.classList.remove('expanded');
-    document.querySelector('#header nav')?.classList.add('hidden');
+    header?.classList.remove('h-screen', 'expanded');
+    nav?.classList.add('hidden');
   };
 </script>
 
 <script>
   import { gsap } from 'gsap';
+
+  // 统一的事件绑定工具函数
   function attachEvent(selector, event, fn) {
     const matches = typeof selector === 'string' ? document.querySelectorAll(selector) : selector;
     if (matches && matches.length) {
@@ -127,83 +158,227 @@ import { UI } from '~/utils/config';
       });
     }
   }
-  attachEvent('[img-can-preview]', 'click', function (ele) {
-    const myHtml = document.querySelector('html');
-    myHtml.classList.toggle('overflow-hidden');
 
-    const divElement = document.createElement('div');
-    divElement.setAttribute('id', 'img-preview-body');
+  // 滚动锁定工具
+  function setScrollLock(lock) {
+    const html = document.documentElement;
+    html.classList.toggle('overflow-hidden', lock);
+  }
 
-    const imgElement = document.createElement('img');
-    imgElement.setAttribute('src', ele.target.src);
-    imgElement.setAttribute('alt', ele.target.alt);
-    imgElement.classList.add('preview');
-    imgElement.style.transition = 'transform 0.1s ease-out';
+  // 图片预览功能
+  class ImagePreview {
+    constructor() {
+      this.initImagePreview();
+    }
 
-    divElement.appendChild(imgElement);
-    document.body.appendChild(divElement);
+    initImagePreview() {
+      attachEvent('[img-can-preview]', 'click', (e) => {
+        this.openPreview(e.target);
+      });
+    }
 
-    let scale = 1;
-    let posX = 0;
-    let posY = 0;
-    let isDragging = false;
-    let startX = 0;
-    let startY = 0;
+    openPreview(targetImg) {
+      setScrollLock(true);
 
-    // 初始动画
-    gsap.fromTo(imgElement, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.25, ease: 'power2.out' });
+      const previewContainer = this.createPreviewContainer();
+      const previewImg = this.createPreviewImage(targetImg);
 
-    const updateTransform = () => {
-      imgElement.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
-    };
+      previewContainer.appendChild(previewImg);
+      document.body.appendChild(previewContainer);
 
-    // 拖拽功能
-    imgElement.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      startX = e.clientX - posX;
-      startY = e.clientY - posY;
-      e.preventDefault();
-    });
+      this.setupPreviewInteractions(previewContainer, previewImg);
+      this.animateIn(previewImg);
+    }
 
-    window.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      posX = e.clientX - startX;
-      posY = e.clientY - startY;
-      updateTransform();
-    });
+    createPreviewContainer() {
+      const container = document.createElement('div');
+      container.setAttribute('id', 'img-preview-body');
+      return container;
+    }
 
-    window.addEventListener('mouseup', () => {
-      isDragging = false;
-    });
+    createPreviewImage(originalImg) {
+      const img = document.createElement('img');
+      img.setAttribute('src', originalImg.src);
+      img.setAttribute('alt', originalImg.alt);
+      img.classList.add('preview');
+      img.style.transition = 'transform 0.1s ease-out';
+      return img;
+    }
 
-    // 滚轮缩放
-    divElement.addEventListener(
-      'wheel',
-      (e) => {
+    setupPreviewInteractions(container, img) {
+      const state = {
+        scale: 1,
+        posX: 0,
+        posY: 0,
+        isDragging: false,
+        startX: 0,
+        startY: 0,
+      };
+
+      this.setupDragAndDrop(img, state);
+      this.setupWheelZoom(container, img, state);
+      this.setupPinchZoom(img);
+      this.setupCloseHandler(container, img);
+    }
+
+    setupDragAndDrop(img, state) {
+      const updateTransform = () => {
+        img.style.transform = `translate(${state.posX}px, ${state.posY}px) scale(${state.scale})`;
+      };
+
+      img.addEventListener('mousedown', (e) => {
+        state.isDragging = true;
+        state.startX = e.clientX - state.posX;
+        state.startY = e.clientY - state.posY;
         e.preventDefault();
-        const delta = e.deltaY > 0 ? -0.1 : 0.1;
-        const newScale = Math.min(Math.max(0.5, scale + delta), 4);
-        scale = newScale;
-        updateTransform();
-      },
-      { passive: false }
-    );
+      });
 
-    // 点击关闭
-    divElement.addEventListener('click', function (e) {
-      // 退出动画
-      if(e.target === imgElement) return
-      gsap.to(imgElement, {
+      window.addEventListener('mousemove', (e) => {
+        if (!state.isDragging) return;
+        state.posX = e.clientX - state.startX;
+        state.posY = e.clientY - state.startY;
+        updateTransform();
+      });
+
+      window.addEventListener('mouseup', () => {
+        state.isDragging = false;
+      });
+    }
+
+    setupWheelZoom(container, img, state) {
+      const updateTransform = () => {
+        img.style.transform = `translate(${state.posX}px, ${state.posY}px) scale(${state.scale})`;
+      };
+
+      container.addEventListener(
+        'wheel',
+        (e) => {
+          e.preventDefault();
+          const delta = e.deltaY > 0 ? -0.1 : 0.1;
+          state.scale = Math.min(Math.max(0.5, state.scale + delta), 4);
+          updateTransform();
+        },
+        { passive: false }
+      );
+    }
+
+    setupPinchZoom(img) {
+      this.enablePinchZoom(img, {
+        minScale: 0.5,
+        maxScale: 3,
+        initialScale: 1,
+      });
+    }
+
+    setupCloseHandler(container, img) {
+      container.addEventListener('click', (e) => {
+        if (e.target === img) return;
+        this.closePreview(container, img);
+      });
+    }
+
+    animateIn(img) {
+      gsap.fromTo(img, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.25, ease: 'power2.out' });
+    }
+
+    closePreview(container, img) {
+      gsap.to(img, {
         opacity: 0,
         scale: 0.85,
         duration: 0.2,
         ease: 'power2.in',
-        onComplete: function () {
-          const imgPreviewBody = document.getElementById('img-preview-body');
-          if (imgPreviewBody) document.body.removeChild(imgPreviewBody);
-          myHtml.classList.toggle('overflow-hidden');
+        onComplete: () => {
+          const previewBody = document.getElementById('img-preview-body');
+          if (previewBody) {
+            document.body.removeChild(previewBody);
+          }
+          setScrollLock(false);
         },
       });
-    });
-  });
+    }
+
+    enablePinchZoom(target, options = {}) {
+      const config = {
+        minScale: 0.5,
+        maxScale: 4,
+        initialScale: 1,
+        doubleTapScale: 2,
+        onZoom: null,
+        ...options,
+      };
+
+      let scale = config.initialScale;
+      let initialDistance = null;
+      let initialScale = scale;
+      let lastTapTime = 0;
+
+      const setTransform = () => {
+        target.style.transform = `scale(${scale})`;
+        if (typeof config.onZoom === 'function') {
+          config.onZoom(scale);
+        }
+      };
+
+      const onTouchStart = (e) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          initialDistance = Math.hypot(dx, dy);
+          initialScale = scale;
+        }
+      };
+
+      const onTouchMove = (e) => {
+        if (e.touches.length === 2 && initialDistance !== null) {
+          e.preventDefault();
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const currentDistance = Math.hypot(dx, dy);
+          const pinchRatio = currentDistance / initialDistance;
+          scale = Math.min(Math.max(config.minScale, initialScale * pinchRatio), config.maxScale);
+          setTransform();
+        }
+      };
+
+      const onTouchEnd = (e) => {
+        if (e.touches.length < 2) {
+          initialDistance = null;
+        }
+
+        // 双击检测
+        const now = Date.now();
+        if (e.touches.length === 0 && now - lastTapTime < 300) {
+          scale = scale > config.initialScale ? config.initialScale : config.doubleTapScale;
+          setTransform();
+          lastTapTime = 0;
+        } else {
+          lastTapTime = now;
+        }
+      };
+
+      // 添加事件监听器
+      target.addEventListener('touchstart', onTouchStart, { passive: false });
+      target.addEventListener('touchmove', onTouchMove, { passive: false });
+      target.addEventListener('touchend', onTouchEnd);
+      target.addEventListener('touchcancel', onTouchEnd);
+
+      return {
+        destroy() {
+          target.removeEventListener('touchstart', onTouchStart);
+          target.removeEventListener('touchmove', onTouchMove);
+          target.removeEventListener('touchend', onTouchEnd);
+          target.removeEventListener('touchcancel', onTouchEnd);
+        },
+        getScale: () => scale,
+        setScale(newScale) {
+          scale = Math.min(Math.max(config.minScale, newScale), config.maxScale);
+          setTransform();
+        },
+      };
+    }
+  }
+
+  // 初始化图片预览功能
+  new ImagePreview();
 </script>
