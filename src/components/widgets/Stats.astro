@@ -22,18 +22,26 @@ const {
   <div class="flex flex-wrap justify-center -m-4 text-center">
     {
       stats &&
-        stats.map(({ amount, title, icon }) => (
-          <div class="p-4 md:w-1/4 sm:w-1/2 w-full min-w-[220px] text-center md:border-r md:last:border-none dark:md:border-slate-500">
+        stats.map(({ amount, title, icon }, index) => (
+          <div
+            class="p-4 md:w-1/4 sm:w-1/2 w-full min-w-[220px] text-center transition-transform duration-300 ease-out hover:scale-105 stat-item"
+            data-stat-index={index}
+          >
             {icon && (
-              <div class="flex items-center justify-center mx-auto mb-4 text-primary">
-                <Icon name={icon} class="w-10 h-10" />
+              <div class="flex items-center justify-center mx-auto mb-4 text-primary opacity-0 translate-y-5 drop-shadow-sm stat-icon">
+                <Icon name={icon} class="w-10 h-10 transition-all duration-300 ease-out" />
               </div>
             )}
             {amount && (
-              <div class="font-heading text-green-700 text-[2.6rem] font-bold lg:text-5xl xl:text-6xl">{amount}</div>
+              <div
+                class="font-heading bg-gradient-to-br from-green-600 to-green-700 dark:from-green-400 dark:to-green-500 bg-clip-text text-transparent text-[2.6rem] font-bold lg:text-5xl xl:text-6xl opacity-0 translate-y-8 drop-shadow-sm transition-all duration-300 ease-out stat-number md:text-4xl"
+                data-target={amount}
+              >
+                0
+              </div>
             )}
             {title && (
-              <div class="text-sm font-medium tracking-widest text-gray-800 dark:text-slate-400 lg:text-base">
+              <div class="text-sm font-medium tracking-widest text-gray-800 dark:text-slate-400 lg:text-base opacity-0 translate-y-5 stat-title">
                 {title}
               </div>
             )}
@@ -42,3 +50,231 @@ const {
     }
   </div>
 </WidgetWrapper>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  // 注册 ScrollTrigger 插件
+  gsap.registerPlugin(ScrollTrigger);
+
+  /**
+   * 统计数字动画类
+   * 负责处理统计组件的动画效果，包括数字递增和元素进入动画
+   */
+  class StatsAnimator {
+    constructor() {
+      this.animatedStats = new Set(); // 记录已经动画过的统计项，避免重复触发
+      this.init();
+    }
+
+    /**
+     * 初始化动画
+     * 设置 ScrollTrigger 监听，当统计组件进入视口时触发动画
+     */
+    init() {
+      const statItems = document.querySelectorAll('.stat-item');
+
+      if (statItems.length === 0) return;
+
+      // 为每个统计项设置滚动触发器
+      statItems.forEach((item, index) => {
+        ScrollTrigger.create({
+          trigger: item,
+          start: 'top 80%', // 当元素顶部距离视口底部80%时触发
+          end: 'bottom 20%', // 当元素底部距离视口顶部20%时结束
+          onEnter: () => this.animateStatItem(item, index),
+          once: true, // 只触发一次
+        });
+      });
+    }
+
+    /**
+     * 动画单个统计项
+     * @param {Element} item - 统计项DOM元素
+     * @param {number} index - 统计项索引
+     */
+    animateStatItem(item, index) {
+      const statIndex = item.dataset.statIndex;
+
+      // 防止重复动画
+      if (this.animatedStats.has(statIndex)) return;
+      this.animatedStats.add(statIndex);
+
+      // 创建动画时间线，确保动画按顺序执行
+      const tl = gsap.timeline();
+
+      // 1. 图标动画 - 从下方淡入
+      const icon = item.querySelector('.stat-icon');
+      if (icon) {
+        tl.to(icon, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'back.out(1.7)', // 回弹效果
+        });
+      }
+
+      // 2. 数字动画 - 递增 + 淡入
+      const numberElement = item.querySelector('.stat-number');
+      if (numberElement) {
+        const targetValue = this.parseTargetValue(numberElement.dataset.target);
+
+        tl.to(
+          numberElement,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out',
+          },
+          '-=0.3'
+        ) // 与图标动画重叠0.3秒
+          .to(
+            {},
+            {
+              duration: 1.5,
+              ease: 'power2.out',
+              onUpdate: () => {
+                // 实时更新数字显示
+                const progress = tl.progress();
+                const currentValue = Math.round(targetValue.numeric * progress);
+                numberElement.textContent = this.formatNumber(currentValue, targetValue.suffix);
+              },
+            },
+            '-=0.5'
+          ); // 与透明度动画重叠0.5秒
+      }
+
+      // 3. 标题动画 - 从下方淡入
+      const title = item.querySelector('.stat-title');
+      if (title) {
+        tl.to(
+          title,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+          },
+          '-=0.8'
+        ); // 与数字动画重叠0.8秒
+      }
+
+      // 4. 添加悬停效果
+      this.addHoverEffects(item);
+    }
+
+    /**
+     * 解析目标值，支持带单位的数字（如 "1000+" "50%" "2.5K" 等）
+     * @param {string} target - 目标值字符串
+     * @returns {Object} 解析后的数值和后缀
+     */
+    parseTargetValue(target) {
+      if (!target) return { numeric: 0, suffix: '' };
+
+      // 匹配数字和可能的后缀
+      const match = target.match(/^([\d.]+)(.*)$/);
+      if (!match) return { numeric: 0, suffix: target };
+
+      let numeric = parseFloat(match[1]);
+      const suffix = match[2];
+
+      // 处理常见的数字缩写
+      if (suffix.toLowerCase().includes('k')) {
+        numeric *= 1000;
+      } else if (suffix.toLowerCase().includes('m')) {
+        numeric *= 1000000;
+      }
+
+      return { numeric, suffix: suffix };
+    }
+
+    /**
+     * 格式化数字显示
+     * @param {number} value - 当前数值
+     * @param {string} suffix - 后缀
+     * @returns {string} 格式化后的字符串
+     */
+    formatNumber(value, suffix) {
+      // 如果后缀包含K或M，需要转换回缩写形式
+      if (suffix.toLowerCase().includes('k') && value >= 1000) {
+        return (value / 1000).toFixed(1).replace(/\.0$/, '') + suffix;
+      } else if (suffix.toLowerCase().includes('m') && value >= 1000000) {
+        return (value / 1000000).toFixed(1).replace(/\.0$/, '') + suffix;
+      }
+
+      // 添加千位分隔符
+      return value.toLocaleString() + suffix;
+    }
+
+    /**
+     * 添加悬停效果
+     * 使用 GSAP 增强 Tailwind 的 hover 效果
+     * @param {Element} item - 统计项DOM元素
+     */
+    addHoverEffects(item) {
+      const numberElement = item.querySelector('.stat-number');
+      const iconElement = item.querySelector('.stat-icon Icon');
+
+      if (!numberElement) return;
+
+      // 鼠标进入时的数字脉冲效果
+      item.addEventListener('mouseenter', () => {
+        gsap.to(numberElement, {
+          scale: 1.05,
+          duration: 0.2,
+          ease: 'power2.out',
+        });
+
+        // 图标轻微旋转和缩放
+        if (iconElement) {
+          gsap.to(iconElement, {
+            scale: 1.1,
+            rotation: 3,
+            duration: 0.2,
+            ease: 'power2.out',
+          });
+        }
+      });
+
+      // 鼠标离开时恢复
+      item.addEventListener('mouseleave', () => {
+        gsap.to(numberElement, {
+          scale: 1,
+          duration: 0.2,
+          ease: 'power2.out',
+        });
+
+        if (iconElement) {
+          gsap.to(iconElement, {
+            scale: 1,
+            rotation: 0,
+            duration: 0.2,
+            ease: 'power2.out',
+          });
+        }
+      });
+    }
+
+    /**
+     * 销毁动画器，清理资源
+     */
+    destroy() {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      this.animatedStats.clear();
+    }
+  }
+
+  // 页面加载完成后初始化统计动画
+  document.addEventListener('DOMContentLoaded', () => {
+    new StatsAnimator();
+  });
+
+  // 如果是单页应用，可能需要在路由变化时重新初始化
+  // 这里提供一个全局方法供外部调用
+  window.reinitStatsAnimator = () => {
+    ScrollTrigger.refresh();
+    new StatsAnimator();
+  };
+</script>

@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import Button from '~/components/ui/Button.astro';
+import HeroImage from '~/components/widgets/HeroImage.astro';
 import type { ImageMetadata } from 'astro';
 import type { CallToAction } from '~/types';
 
@@ -47,21 +48,7 @@ const {
         }
       </div>
       {content && <Fragment set:html={content} />}
-      {
-        image && (
-          <div class="lg:h-96 md:h-80 h-60">
-            <Image
-              src={image}
-              alt="Hero Image"
-              class="h-full mx-auto rounded-md object-cover dark:opacity-70"
-              widths={[540, 1200]}
-              width={1200}
-              sizes="(max-width: 700px) 540px, 1200px"
-              loading="eager"
-            />
-          </div>
-        )
-      }
+      {image && <HeroImage image={image} />}
     </div>
   </div>
 </section>
