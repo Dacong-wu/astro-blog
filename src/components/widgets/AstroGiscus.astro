@@ -12,7 +12,7 @@ const { category, categoryId } = Astro.props;
 
 <script>
   function getCurrentTheme() {
-    let currentTheme: string | null = localStorage.getItem('theme');
+    let currentTheme = localStorage.getItem('theme');
     if (!currentTheme) {
       const matchMedia = window.matchMedia('(prefers-color-scheme: dark)');
       currentTheme = matchMedia.matches ? 'dark' : 'light';
@@ -47,7 +47,7 @@ const { category, categoryId } = Astro.props;
     }
 
     static setGiscusTheme(theme) {
-      const iframe = document.querySelector('iframe.giscus-frame') as HTMLIFrameElement;
+      const iframe = document.querySelector('iframe.giscus-frame');
       if (!iframe) return;
       iframe.contentWindow?.postMessage({ giscus: { setConfig: { theme } } }, 'https://giscus.app');
     }

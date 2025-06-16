@@ -29,3 +29,67 @@ const { label = 'Toggle Menu', class: className = '' } = Astro.props;
     ></span>
   </slot>
 </button>
+
+<script>
+  /**
+   * 通用事件绑定函数
+   * @param {string|NodeList} selector - CSS选择器或DOM元素集合
+   * @param {string} event - 事件类型
+   * @param {Function} fn - 回调函数
+   */
+  function attachEvent(selector, event, fn) {
+    const matches = typeof selector === 'string' ? document.querySelectorAll(selector) : selector;
+    if (matches && matches.length) {
+      matches.forEach((elem) => {
+        elem.addEventListener(event, (e) => fn(e, elem), false);
+      });
+    }
+  }
+  // 菜单相关处理
+  function initMenuHandlers() {
+    const headerElements = {
+      header: document.getElementById('header'),
+      nav: document.querySelector('#header nav'),
+      toggleButton: document.querySelector('[data-aw-toggle-menu]'),
+    };
+
+    // 导航点击 - 关闭菜单
+    attachEvent('#header nav', 'click', function () {
+      closeMenu(headerElements);
+    });
+
+    // 菜单切换按钮
+    attachEvent('[data-aw-toggle-menu]', 'click', function (_, elem) {
+      toggleMenu(elem, headerElements);
+    });
+  }
+  /**
+   * 关闭移动菜单
+   */
+  function closeMenu({ header, nav, toggleButton }) {
+    console.log('eded');
+    toggleButton?.classList.remove('expanded');
+    document.body.classList.remove('overflow-hidden');
+    if (header) {
+      header.classList.remove('h-screen', 'expanded', 'bg-page');
+    }
+    nav?.classList.add('hidden');
+  }
+  /**
+   * 切换菜单状态
+   */
+  function toggleMenu(toggleButton, { header, nav }) {
+    toggleButton.classList.toggle('expanded');
+    document.body.classList.toggle('overflow-hidden');
+    if (header) {
+      header.classList.toggle('h-screen');
+      header.classList.toggle('expanded');
+      header.classList.toggle('bg-page');
+    }
+    nav?.classList.toggle('hidden');
+  }
+  /**
+   * 初始化菜单事件处理
+   */
+  initMenuHandlers();
+</script>

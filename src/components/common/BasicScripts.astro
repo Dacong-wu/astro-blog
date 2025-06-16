@@ -16,7 +16,6 @@ import { UI } from '~/utils/config';
   // 页面加载完成后的初始化
   window.onload = function () {
     initScrollHandler();
-    initMenuHandlers();
     initThemeToggle();
     initSocialShare();
   };
@@ -51,47 +50,6 @@ import { UI } from '~/utils/config';
         ticking = true;
       }
     });
-  }
-
-  // 菜单相关处理
-  function initMenuHandlers() {
-    const headerElements = {
-      header: document.getElementById('header'),
-      nav: document.querySelector('#header nav'),
-      toggleButton: document.querySelector('[data-aw-toggle-menu]'),
-      lastChild: document.querySelector('#header > div > div:last-child'),
-    };
-
-    // 导航点击 - 关闭菜单
-    attachEvent('#header nav', 'click', function () {
-      closeMenu(headerElements);
-    });
-
-    // 菜单切换按钮
-    attachEvent('[data-aw-toggle-menu]', 'click', function (_, elem) {
-      toggleMenu(elem, headerElements);
-    });
-  }
-
-  function closeMenu({ header, nav, toggleButton, lastChild }) {
-    toggleButton?.classList.remove('expanded');
-    document.body.classList.remove('overflow-hidden');
-    if (header) {
-      header.classList.remove('h-screen', 'expanded', 'bg-page');
-    }
-    nav?.classList.add('hidden');
-    lastChild?.classList.add('hidden');
-  }
-
-  function toggleMenu(toggleButton, { header, nav }) {
-    toggleButton.classList.toggle('expanded');
-    document.body.classList.toggle('overflow-hidden');
-    if (header) {
-      header.classList.toggle('h-screen');
-      header.classList.toggle('expanded');
-      header.classList.toggle('bg-page');
-    }
-    nav?.classList.toggle('hidden');
   }
 
   // 主题切换
