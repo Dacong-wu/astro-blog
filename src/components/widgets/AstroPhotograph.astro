@@ -28,6 +28,16 @@ const images = await Promise.all(
 </astro-photograph>
 
 <script>
+  import PhotoSwipeLightbox from 'photoswipe/lightbox';
+  import 'photoswipe/style.css';
+
+  const lightbox = new PhotoSwipeLightbox({
+    gallery: '#waterfall-container',
+    children: 'a',
+    pswpModule: () => import('photoswipe'),
+  });
+  lightbox.init();
+
   class AstroPhotograph extends HTMLElement {
     connectedCallback() {
       // 从 data（数据）属性中读取消息。
@@ -53,7 +63,6 @@ const images = await Promise.all(
           const img = document.createElement('img');
           img.src = src;
           img.alt = `${alt}-${index}`;
-          img.setAttribute('img-can-preview', 'true');
           img.setAttribute('loading', 'lazy');
           img.setAttribute('decoding', 'async');
           img.classList.add('rounded-lg', 'sm:rounded-md');
@@ -65,6 +74,13 @@ const images = await Promise.all(
           // const aspectRatio = height / width;
           // const displayHeight = (container.clientWidth / columnsCount) * aspectRatio;
 
+          // 适配 waterfall-container
+          const link = document.createElement('a');
+          link.href = src; // 原图地址
+          link.setAttribute('data-pswp-width', attributes.width);
+          link.setAttribute('data-pswp-height', attributes.height);
+          link.appendChild(img);
+
           // 找到当前高度最小的列
           const minHeightColumn = columns.reduce((minColumn, currentColumn) =>
             currentColumn.offsetHeight < minColumn.offsetHeight ? currentColumn : minColumn
@@ -72,7 +88,7 @@ const images = await Promise.all(
 
           // 设置图片的占位高度并添加到列中
           // img.style.height = `${displayHeight}px`;
-          minHeightColumn.appendChild(img);
+          minHeightColumn.appendChild(link);
         });
       }
 
