@@ -59,9 +59,9 @@ const { Content } = post;
             <Image
               src={post.image}
               alt={post.title}
-              widths={[360, 540, 1200]}
               width={1200}
-              sizes={`(max-width:540px) 360px, (max-width: 1200px) 540px, 1200px`}
+              widths={[640, 1200]}
+              sizes={`(max-width:768px) 640px, 1200px`}
               class="max-w-3xl h-60 md:h-96 w-11/12 md:w-full rounded-lg sm:rounded-md mx-auto object-cover"
             />
             <p class="text-center">

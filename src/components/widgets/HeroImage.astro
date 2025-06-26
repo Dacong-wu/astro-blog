@@ -14,9 +14,9 @@ const { image } = Astro.props;
     src={image}
     alt="Hero Image"
     class="h-full mx-auto rounded-md object-cover dark:opacity-70 hero-image"
-    widths={[540, 1920]}
-    width={1920}
-    sizes="(max-width: 700px) 540px, 1920px"
+    width={1200}
+    widths={[640, 1200]}
+    sizes={`(max-width:768px) 640px, 1200px`}
     loading="eager"
   />
 </div>

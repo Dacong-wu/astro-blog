@@ -1,21 +1,29 @@
 ---
 import type { Photography } from '~/types';
+import type { GetImageResult } from 'astro';
 import { getImage } from 'astro:assets';
 interface Props {
   photography: Photography;
 }
 const { photography } = Astro.props;
 const images = await Promise.all(
-  photography.images.map((image) =>
-    getImage({
+  photography.images.map(async (image) => {
+    const maxWidth = image.width > 3840 ? 3840 : image.width;
+    const data: GetImageResult = await getImage({
       src: image,
-      format: 'webp',
-      widths: [360, 768, 1200, 1920, 3840],
-      sizes:
-        '(max-width:540px) 360px, (max-width: 768px) 768px,(max-width: 1200px) 1200px,(max-width: 1920px) 1920px,3840px',
-      width: 3840,
-    })
-  )
+      widths: [640, 1200, maxWidth],
+      sizes: `(max-width: 768px) 640px, (max-width: 1440px) 1200px, ${maxWidth}px`,
+      width: maxWidth,
+    });
+    return {
+      src: data.src,
+      srcSet: data.srcSet.attribute,
+      sizes: data.attributes.sizes,
+      height: data.attributes.height,
+      width: data.attributes.width,
+      maxWidth: maxWidth,
+    };
+  })
 );
 ---
 
@@ -30,6 +38,7 @@ const images = await Promise.all(
 <script>
   import PhotoSwipeLightbox from 'photoswipe/lightbox';
   import 'photoswipe/style.css';
+  import { Image } from 'astro:assets';
 
   const lightbox = new PhotoSwipeLightbox({
     gallery: '#waterfall-container',
@@ -59,17 +68,17 @@ const images = await Promise.all(
         });
 
         // 分配图片到高度最小的列中
-        images.forEach(({ src, srcSet, attributes }, index) => {
+        images.forEach(({ src, srcSet, sizes, height, width, maxWidth }, index) => {
           const img = document.createElement('img');
           img.src = src;
           img.alt = `${alt}-${index}`;
           img.setAttribute('loading', 'lazy');
           img.setAttribute('decoding', 'async');
           img.classList.add('rounded-lg', 'sm:rounded-md');
-          img.width = 3840; // 图片填充列宽度
-          img.height = attributes.height;
-          img.srcset = srcSet.attribute;
-          img.sizes = attributes.sizes;
+          img.width = maxWidth; // 图片填充列宽度
+          img.height = height;
+          img.srcset = srcSet;
+          img.sizes = sizes;
           // 计算图片的占位高度
           // const aspectRatio = height / width;
           // const displayHeight = (container.clientWidth / columnsCount) * aspectRatio;
@@ -77,8 +86,8 @@ const images = await Promise.all(
           // 适配 waterfall-container
           const link = document.createElement('a');
           link.href = src; // 原图地址
-          link.setAttribute('data-pswp-width', attributes.width);
-          link.setAttribute('data-pswp-height', attributes.height);
+          link.setAttribute('data-pswp-width', width);
+          link.setAttribute('data-pswp-height', height);
           link.appendChild(img);
 
           // 找到当前高度最小的列

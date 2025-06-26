@@ -18,9 +18,9 @@ const { post } = Astro.props;
         <a href={getPermalink(post.permalink, 'post')}>
           <Image
             src={post.image}
-            width={360}
-            widths={[360, 540]}
-            sizes={`(max-width:540px) 360px, 540px`}
+            width={1200}
+            widths={[640, 1200]}
+            sizes={`(max-width:768px) 640px, 1200px`}
             class="h-full w-full rounded-lg sm:rounded-md object-cover"
             alt={post.title}
           />
