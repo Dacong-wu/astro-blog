@@ -71,11 +71,6 @@ apps:
       robots:
         index: true
 
-analytics:
-  vendors:
-    googleAnalytics:
-      id: 'G-9QFBDVR6KS'
-
 ui:
   theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"
 

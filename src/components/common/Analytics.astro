@@ -1,10 +1,9 @@
 ---
-import { GoogleAnalytics } from '@astrolib/analytics';
-import { ANALYTICS } from '~/utils/config';
+
 ---
 
-{
-  ANALYTICS?.vendors?.googleAnalytics?.id ? (
-    <GoogleAnalytics id={String(ANALYTICS.vendors.googleAnalytics.id)} partytown={ANALYTICS?.vendors?.googleAnalytics?.partytown} />
-  ) : null
-}
+<script
+  defer
+  src="https://umami.ll1025.cn/script.js"
+  data-website-id="3848ae02-15d8-49d5-a17f-f5df5344f49e"
+  type="text/partytown"></script>
