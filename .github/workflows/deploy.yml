@@ -14,15 +14,22 @@ jobs:
 
     steps:
       - name: 检出代码
-        uses: actions/checkout@v3 # git 克隆到当前机器上
+        uses: actions/checkout@v4 # git 克隆到当前机器上
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10
+          run_install: false
 
       - name: Node环境
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20.x
+          cache: 'pnpm'
 
       - name: 安装依赖
-        run: npm install
+        run: pnpm install
 
       - name: 打包构建
         run: npm run build
