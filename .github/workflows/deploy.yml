@@ -1,0 +1,36 @@
+name: AutoDeploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    if: >
+      github.event_name == 'push' &&
+      contains(github.event.head_commit.message, 'publish')
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3 # git 克隆到当前机器上
+
+      - name: Node环境
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+      - name: 安装依赖
+        run: npm install
+
+      - name: 打包构建
+        run: npm run build
+
+      - name: 执行部署
+        uses: Dacong-wu/sftp-deploy-action@main
+        with:
+          SFTP_HOST: ${{ secrets.USER_HOST }}
+          SFTP_USERNAME: ${{ secrets.USER_NAME }}
+          SFTP_PRIVATEKEY: ${{ secrets.USER_PRIVATEKEY }}
+          SFTP_REMOTE: ${{secrets.USER_TARGET}}
