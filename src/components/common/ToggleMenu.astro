@@ -67,7 +67,6 @@ const { label = 'Toggle Menu', class: className = '' } = Astro.props;
    * 关闭移动菜单
    */
   function closeMenu({ header, nav, toggleButton }) {
-    console.log('eded');
     toggleButton?.classList.remove('expanded');
     document.body.classList.remove('overflow-hidden');
     if (header) {
@@ -75,11 +74,17 @@ const { label = 'Toggle Menu', class: className = '' } = Astro.props;
     }
     nav?.classList.add('hidden');
   }
+
+  // 方法2：禁止页面滚动
+  function preventScroll(e) {
+    e.preventDefault();
+  }
+
   /**
    * 切换菜单状态
    */
   function toggleMenu(toggleButton, { header, nav }) {
-    toggleButton.classList.toggle('expanded');
+    const expanded = toggleButton.classList.toggle('expanded');
     document.body.classList.toggle('overflow-hidden');
     if (header) {
       header.classList.toggle('h-screen');
@@ -87,6 +92,12 @@ const { label = 'Toggle Menu', class: className = '' } = Astro.props;
       header.classList.toggle('bg-page');
     }
     nav?.classList.toggle('hidden');
+    // 👉 添加/移除 touchmove 禁止滚动逻辑
+    if (expanded) {
+      document.addEventListener('touchmove', preventScroll, { passive: false });
+    } else {
+      document.removeEventListener('touchmove', preventScroll);
+    }
   }
   /**
    * 初始化菜单事件处理
