@@ -10,15 +10,19 @@ const { image } = Astro.props;
 ---
 
 <div class="lg:h-96 md:h-80 h-60 hero-image-container overflow-hidden rounded-md">
-  <Image
-    src={image}
-    alt="Hero Image"
-    class="h-full mx-auto rounded-md object-cover dark:opacity-70 hero-image"
-    width={1200}
-    widths={[640, 1200]}
-    sizes={`(max-width:768px) 640px, 1200px`}
-    loading="eager"
-  />
+  {
+    image && (
+      <Image
+        src={image}
+        alt="Hero Image"
+        class="h-full mx-auto rounded-md object-cover dark:opacity-70 hero-image"
+        width={1200}
+        widths={[640, 1200]}
+        sizes={`(max-width:768px) 640px, 1200px`}
+        loading="eager"
+      />
+    )
+  }
 </div>
 
 <script>
