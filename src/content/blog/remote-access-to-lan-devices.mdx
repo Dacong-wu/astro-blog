@@ -1,0 +1,37 @@
+---
+publishDate: 2025-01-01
+title: 远程访问局域网设备
+excerpt: 通过 tailscale 实现远程访问局域网内设备
+image: '~/assets/images/blog/daniel-j-schwarz-NRSqHq7gLbM-unsplash.jpg'
+category: ops
+tags: 
+  - tailscale
+metadata:
+  image_author:
+    link: https://unsplash.com/@danieljschwarz
+    name: danieljschwarz
+---
+
+## 通过 tailscale 远程访问局域网内设备
+
+### 问题场景
+
+设备 A 和 B 处于统一局域网内，假设他们的内网 IP 分别为 192.168.20.2（A） 和 192.168.20.3。现在有一个设备 C（在另一局域网内，与 A 所在局域网不通），他需要访问 A 的服务，假设为 192.168.20.2:8080，之前的方案是通过在 A 和 C 上同时安装 tailscale 实现通信。但现在 A 无法安装 tailscale，所以需要一个解决方案。
+
+### 解决方案
+
+计划仍然使用 tailscale，因为我需要他确保一定的网络安全。tailscale 有一个子路由的功能，就是可以通过在某一个设备上启用，让处于统一 vpn 网络下的设备可以直接通过内网地址访问内网设备。
+
+1. 在设备 B 上启用 IP 转发
+
+   ```bash
+   echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.conf
+   sysctl -p
+   ```
+
+2. 设备 B 上启动子网路由
+
+   `sudo tailscale up --advertise-route=192.168.20.0/24`
+   
+3. 登录 tailscale 控制台，然后找到设备 B，并编辑他的设置 `Edit route settings`，手动允许刚刚的网段设置
+4. 现在在 C 上测试 192.168.20.2:8080，就可以正常访问了
