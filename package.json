@@ -5,8 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run generate-json && astro dev --host 0.0.0.0",
-    "preadd": "cd add && pnpm install && cd ..",
-    "add": "node add/index.js",
+    "add": "node scripts/addContent.js",
     "start": "npm run generate-json && astro dev",
     "build": "pnpm install && npm run generate-json && astro build",
     "preview": "astro preview --host 0.0.0.0",
@@ -50,6 +49,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-astro": "^1.2.2",
     "eslint-plugin-jsx-a11y": "^6.8.0",
+    "inquirer": "^12.9.4",
     "js-yaml": "^4.1.0",
     "mdast-util-to-string": "^4.0.0",
     "prettier": "^3.1.1",
@@ -63,5 +63,6 @@
   "engines": {
     "node": ">=22.14.0",
     "npm": ">=11.4.1"
-  }
+  },
+  "type": "module"
 }
