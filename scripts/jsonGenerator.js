@@ -1,6 +1,6 @@
-const fs = require('fs').promises;
-const path = require('path');
-const matter = require('gray-matter');
+import fs from 'fs/promises';
+import path from 'path';
+import matter from 'gray-matter';
 
 const CONTENT_DEPTH = 3;
 const JSON_FOLDER = './json';
@@ -49,12 +49,12 @@ const getData = async (folder, groupDepth) => {
 const main = async () => {
   try {
     // 创建文件夹如果不存在
-    if (
-      !(await fs
-        .access(JSON_FOLDER)
-        .then(() => true)
-        .catch(() => false))
-    ) {
+    const exists = await fs
+      .access(JSON_FOLDER)
+      .then(() => true)
+      .catch(() => false);
+
+    if (!exists) {
       await fs.mkdir(JSON_FOLDER);
     }
 
