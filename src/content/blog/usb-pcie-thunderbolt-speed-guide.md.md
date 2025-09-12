@@ -5,7 +5,7 @@ excerpt: 各种接口标准（USB 3.x / USB4、PCIe 3.0/4.0/5.0、Thunderbolt 3/
 image: '~/assets/images/blog/thomas-crozier-Ngj2u4PHjBY-unsplash.jpg'
 category: notes
 tags:
-  - usb
+  - storage
   - pcie
   - thunderbolt
 metadata:
