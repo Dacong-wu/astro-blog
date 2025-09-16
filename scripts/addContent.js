@@ -5,6 +5,7 @@ import path from 'path';
 import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
 import https from 'https';
+import cliProgress from 'cli-progress';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,30 +60,59 @@ async function fetchUnsplashImage(url) {
             return;
           }
 
-          const imageUrl = photoInfo.urls.full;
+          // ✅ 选用合适的尺寸，避免 full 太大
+          const imageUrl = `${photoInfo.urls.raw}&w=1920&q=80`;
           const author = photoInfo.user.username;
           const imgName = `${photoId}.jpg`;
           const imgPath = path.join(assetsDir, imgName);
 
-          // 3. 下载图片
-          const file = fs.createWriteStream(imgPath);
+          // 3. 下载图片并显示进度条
           https
             .get(imageUrl, (imgRes) => {
               if (imgRes.statusCode !== 200) {
                 reject(new Error(`图片下载失败，状态码 ${imgRes.statusCode}`));
                 return;
               }
+
+              const totalBytes = parseInt(imgRes.headers['content-length'], 10);
+              let downloadedBytes = 0;
+
+              // 初始化进度条
+              const bar = new cliProgress.SingleBar(
+                {
+                  format: `下载中 [{bar}] {percentage}% | {downloaded}/{total} KB`,
+                },
+                cliProgress.Presets.shades_classic
+              );
+              bar.start(Math.ceil(totalBytes / 1024), 0);
+
+              const file = fs.createWriteStream(imgPath);
+
+              imgRes.on('data', (chunk) => {
+                downloadedBytes += chunk.length;
+                bar.update(Math.ceil(downloadedBytes / 1024), {
+                  downloaded: Math.ceil(downloadedBytes / 1024),
+                  total: Math.ceil(totalBytes / 1024),
+                });
+              });
+
               imgRes.pipe(file);
-              file.on('finish', () =>
+
+              file.on('finish', () => {
+                bar.stop();
                 file.close(() => {
                   resolve({
                     imgName,
                     imgPath,
                     imgAuthorName: author,
                   });
-                })
-              );
-              file.on('error', reject);
+                });
+              });
+
+              file.on('error', (err) => {
+                bar.stop();
+                reject(err);
+              });
             })
             .on('error', reject);
         });
@@ -130,7 +160,7 @@ async function main() {
     const today = getToday();
 
     // 下载图片
-    const { imgName, imgPath, imgAuthorName } = await fetchUnsplashImage(answers.imageUrl, imgPath);
+    const { imgName, imgPath, imgAuthorName } = await fetchUnsplashImage(answers.imageUrl);
 
     // 写模板
     const template = `---
