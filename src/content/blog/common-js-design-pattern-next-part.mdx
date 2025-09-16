@@ -10,7 +10,6 @@ metadata:
   image_author:
     link: https://unsplash.com/@iriser
     name: iriser
-
 ---
 
 ## 11 种常见的 JS 设计模式-下
@@ -50,52 +49,54 @@ metadata:
    ```javascript
    class Image {
      constructor(url) {
-       this.url = url
+       this.url = url;
      }
      display() {
-       console.log(`Displaying image from ${this.url}`)
+       console.log(`Displaying image from ${this.url}`);
      }
    }
-   
+
    class ProxyImage {
      constructor(url) {
-       this.url = url
-       this.Image = null
+       this.url = url;
+       this.Image = null;
      }
      display() {
        if (!this.image) {
-         this.image = new this.Image(this.url)
+         this.image = new this.Image(this.url);
        }
-       this.image.display()
+       this.image.display();
      }
    }
-   
+
    // 使用
-   const proxyImage = new ProxyImage('https://unsplash.com/photos/a-field-of-yellow-flowers-with-the-sun-setting-in-the-background-mg9gBeWR5_4')
-   proxyImage.display() // 实际的Image对象在第一次调用display时才被创建并显示
+   const proxyImage = new ProxyImage(
+     'https://unsplash.com/photos/a-field-of-yellow-flowers-with-the-sun-setting-in-the-background-mg9gBeWR5_4'
+   );
+   proxyImage.display(); // 实际的Image对象在第一次调用display时才被创建并显示
    ```
 
 2. **缓存代理：**
 
    ```javascript
    function fibonacci(n) {
-     if (n <= 1) return n
-     return fibonacci(n - 1) + fibonacci(n - 2)
+     if (n <= 1) return n;
+     return fibonacci(n - 1) + fibonacci(n - 2);
    }
-   
+
    function createProxy(func) {
-     const cache = {}
+     const cache = {};
      return function (n) {
        if (cache[n] === undefined) {
-         cache[n] = func(n)
+         cache[n] = func(n);
        }
-       return cache[n]
-     }
+       return cache[n];
+     };
    }
-   
-   const fibonacciProxy = createProxy(fibonacci)
-   console.log(fibonacciProxy(10)) // 计算结果被缓存
-   console.log(fibonacciProxy(10)) // 直接返回缓存结果
+
+   const fibonacciProxy = createProxy(fibonacci);
+   console.log(fibonacciProxy(10)); // 计算结果被缓存
+   console.log(fibonacciProxy(10)); // 直接返回缓存结果
    ```
 
 ### 7. 装饰器模式
@@ -120,34 +121,34 @@ metadata:
 // 原始对象
 class Component {
   operation() {
-    return 'Component operation'
+    return 'Component operation';
   }
 }
 
 // 装饰器基类
 class Decorator {
   constructor(component) {
-    this.component = component
+    this.component = component;
   }
   operation() {
-    return this.component.operation()
+    return this.component.operation();
   }
 }
 
 // 具体装饰器类
 class ConcreteDecorator extends Decorator {
   constructor(component) {
-    super(component)
+    super(component);
   }
   operation() {
-    return `${super.operation()} with extra behavior`
+    return `${super.operation()} with extra behavior`;
   }
 }
 
 // 使用
-const component = new Component()
-const decoratedComponent = new ConcreateDecorator(component)
-console.log(decoratedComponent.operation())
+const component = new Component();
+const decoratedComponent = new ConcreateDecorator(component);
+console.log(decoratedComponent.operation());
 ```
 
 ### 8. 适配器模式
@@ -171,24 +172,24 @@ console.log(decoratedComponent.operation())
 // 被适配者（Adaptee）
 class Adaptee {
   specificRequest() {
-    return "Adaptee's specific request"
+    return "Adaptee's specific request";
   }
 }
 
 // 适配器（Adapter）
 class Adapter {
   constructor(adaptee) {
-    this.adaptee = apaptee
+    this.adaptee = apaptee;
   }
   request() {
-    return this.adaptee.specificRequest()
+    return this.adaptee.specificRequest();
   }
 }
 
 // 客户端代码
-const adaptee = new Adaptee()
-const Adapter = new Adapter(adaptee)
-console.log(adapter.request())
+const adaptee = new Adaptee();
+const Adapter = new Adapter(adaptee);
+console.log(adapter.request());
 ```
 
 ### 9. 命令模式
@@ -219,41 +220,41 @@ class Command {
 // 具体命令类
 class ConcreteCommand extends Command {
   constructor(receiver) {
-    super()
-    this.receiver = receiver
+    super();
+    this.receiver = receiver;
   }
   execute() {
-    this.receiver.action()
+    this.receiver.action();
   }
 }
 
 // 接收者类
 class Receiver {
   action() {
-    console.log('Receiver action executed')
+    console.log('Receiver action executed');
   }
 }
 
 // 调用者类
 class Invoker {
   constructor() {
-    this.command = null
+    this.command = null;
   }
   setCommand(command) {
-    this.command = command
+    this.command = command;
   }
   executeCommand() {
-    this.command.execute()
+    this.command.execute();
   }
 }
 
 // 使用
-const receiver = new Receiver()
-const command = new ConcreteCommand(receiver)
-const invoker = new Invoker()
+const receiver = new Receiver();
+const command = new ConcreteCommand(receiver);
+const invoker = new Invoker();
 
-invoker.setCommand(command)
-invoker.executeCommand()
+invoker.setCommand(command);
+invoker.executeCommand();
 ```
 
 ### 10. 迭代器模式
@@ -276,26 +277,26 @@ invoker.executeCommand()
 ```javascript
 class Iterator {
   constructor(collection) {
-    this.collection = collection
-    this.index = 0
+    this.collection = collection;
+    this.index = 0;
   }
   hasNext() {
-    return this.index < this.collection.length
+    return this.index < this.collection.length;
   }
   next() {
     if (this.hasNext()) {
-      return this.collection[this.index++]
+      return this.collection[this.index++];
     }
-    return null
+    return null;
   }
 }
 
 // 使用示例
-const collection = [1, 2, 3, 4, 5]
-const iterator = new Iterator(collection)
+const collection = [1, 2, 3, 4, 5];
+const iterator = new Iterator(collection);
 
 while (iterator.hasNext()) {
-  console.log(iterator.next())
+  console.log(iterator.next());
 }
 ```
 
@@ -365,6 +366,3 @@ publisher.unsubscribe(subscriber2)
 
 publisher.publish('How are you?')
 ```
-
-
-

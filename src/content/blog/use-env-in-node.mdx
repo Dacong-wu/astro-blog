@@ -5,7 +5,7 @@ excerpt: 为 Node 添加一个 env 文件，以方便储存和修改环境变量
 image: '~/assets/images/blog/wai-yin-ng-22Lyeew8Aw8-unsplash.jpg'
 category: server
 tags:
-   - node
+  - node
 metadata:
   image_author:
     link: https://unsplash.com/@waiyinwy
@@ -15,11 +15,13 @@ metadata:
 ### 为什么要这么操作？
 
 其实，一开始我在写 Node 服务的时候，我也喜欢把一些重要的信息，比如数据库密码，直接写在代码中，因为这简单直白方便。但后面我意识到，有很多地方这么操作的话，后面要修改一处的值，就会非常的麻烦。首先要找到这个值在哪里，然后再修改，这样效率很低，而且一处遗漏就会埋下隐患。
+
 ### 解决方案
 
 创建一个配置文件，例如 `.env` 文件，将配置信息都存储在这个文件上，这样就能做到统一的管理
 
 ### 具体步骤
+
 1. node 版本在 v20.6.0 及以上的
 
    参考[官方文档](https://nodejs.org/en/blog/release/v20.6.0) Node 官方，在 v20.6.0 中支持了 `.env` 文件，我们只需要在项目的根目录下创建一个 `.env` 文件，然后在执行入口文件的时候，由以前的 `node server.js` 变为 `node --env-file=.env server.js` 其中 `--env-file=.env` 就是引入环境变量文件

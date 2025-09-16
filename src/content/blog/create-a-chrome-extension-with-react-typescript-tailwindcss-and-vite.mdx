@@ -7,7 +7,7 @@ category: client
 tags:
   - react
   - vite
-  - extension 
+  - extension
 metadata:
   image_author:
     link: https://unsplash.com/@danielsessler
@@ -66,28 +66,28 @@ export default App;
 
 ```json
 {
-    "compilerOptions":{
-        "target": "ES2020",
-        "useDefineForClassFields": true,
-        "lib": ["ES2020", "DOM0", "DOM.Iterable"],
-        "module": "ESNext",
-        "skipLibCheck": true,
-        
-        /* Bundler mode */
-        "moduleResolution": "bundler",
-        "allowImportingTsExtensions": true,
-        "isolatedModules": true,
-        "moduleDetection": "force",
-        "noEmit": true,
-        "jsx": "react-jsx",
-        
-        /* Linting */
-        "strict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
-    },
-    "include": ["src"]
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM0", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
 }
 ```
 
@@ -105,14 +105,11 @@ npx tailwindcss init -p
 
 ```javascript
 module.exports = {
-    content: [
-        './index.html',
-        './src/**/*.{js,ts,jsx,tsx}'
-    ],
-    theme: {
-        extend: {},
-    },
-    plugins: [],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
 };
 ```
 
@@ -131,30 +128,27 @@ module.exports = {
 更新 vite 的配置文件 `vite.config.ts`：
 
 ```tsx
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { crx } from './manifest.json'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { crx } from './manifest.json';
 
 export default defineConfig({
-    plugins: [
-        react(),
-        crx({ manifest }),
-    ],
-})
+  plugins: [react(), crx({ manifest })],
+});
 ```
 
 根目录下创建一个 `maifest.json` 文件，并输入一下内容：
 
 ```json
 {
-    "manifest_version": 3,
-    "name": "Test Chrome Extension",
-    "version": "1.0.0",
-    "description": "A Chrome extension built with Vite and React",
-    "action": {
-        "default_popup": "index.html"
-    },
-    "permissions": []
+  "manifest_version": 3,
+  "name": "Test Chrome Extension",
+  "version": "1.0.0",
+  "description": "A Chrome extension built with Vite and React",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": []
 }
 ```
 

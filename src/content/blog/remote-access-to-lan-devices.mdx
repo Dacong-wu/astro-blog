@@ -4,7 +4,7 @@ title: 远程访问局域网设备
 excerpt: 通过 tailscale 实现远程访问局域网内设备
 image: '~/assets/images/blog/daniel-j-schwarz-NRSqHq7gLbM-unsplash.jpg'
 category: ops
-tags: 
+tags:
   - tailscale
 metadata:
   image_author:
@@ -32,6 +32,6 @@ metadata:
 2. 设备 B 上启动子网路由
 
    `sudo tailscale up --advertise-route=192.168.20.0/24`
-   
+
 3. 登录 tailscale 控制台，然后找到设备 B，并编辑他的设置 `Edit route settings`，手动允许刚刚的网段设置
 4. 现在在 C 上测试 192.168.20.2:8080，就可以正常访问了

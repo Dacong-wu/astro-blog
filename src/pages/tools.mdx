@@ -8,8 +8,13 @@ layout: '~/layouts/MarkdownLayout.astro'
 import { Image } from 'astro:assets';
 import rocket from '~/assets/images/others/nasa-Q1p7bh3SHj8-unsplash.webp';
 
-<Image src={rocket} width={1200} widths={[640, 1200]} sizes={`(max-width:768px) 640px, 1200px`} class="w-full rounded-lg sm:rounded-md object-cover" alt="工具集首页头部图片" />
+<Image
+  src={rocket}
+  width={1200}
+  widths={[640, 1200]}
+  sizes={`(max-width:768px) 640px, 1200px`}
+  class="w-full rounded-lg sm:rounded-md object-cover"
+  alt="工具集首页头部图片"
+/>
 
 <h2 id="network-tools">网络工具</h2>
-
-

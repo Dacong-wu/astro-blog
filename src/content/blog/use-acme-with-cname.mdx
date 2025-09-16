@@ -4,7 +4,7 @@ title: 使用 acme.sh 通过 CNAME 申请域名证书
 excerpt: 通过 CNAME 方式申请域名证书，解决无更新 DNS 权限申请证书问题。
 image: '~/assets/images/blog/marek-piwnicki-Z0I2iGp4Fw4-unsplash.jpg'
 category: server
-tags: 
+tags:
   - letsencrypt
 metadata:
   image_author:
@@ -16,9 +16,9 @@ metadata:
 
 实现思路，利用 `CNAME` 间接验证域名，以便后期定期更新证书。只需要在 `DNS` 解析中添加对应的 `CNAME` 记录即可。
 
-| 主机记录                    | 记录类型 | 记录值                          |
-| :-------------------------- | :------- | :------------------------------ |
-| _acme-challenge.example.com | CNAME    | _acme-challenge.x1.example2.com |
+| 主机记录                     | 记录类型 | 记录值                           |
+| :--------------------------- | :------- | :------------------------------- |
+| \_acme-challenge.example.com | CNAME    | \_acme-challenge.x1.example2.com |
 
 说明如下：`example.com` 是你想要申请证书的域名，而 `example2.com` 是你拥有完整控制权的域名
 

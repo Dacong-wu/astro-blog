@@ -32,4 +32,4 @@
 }
 
 /* 2) 声明 class-驱动暗色模式 ------------------------------------------- */
-@custom-variant dark (&:where(.dark, .dark *));  /* 让 dark:* 在有 .dark 时生效 */
+@custom-variant dark (&:where(.dark, .dark *)); /* 让 dark:* 在有 .dark 时生效 */

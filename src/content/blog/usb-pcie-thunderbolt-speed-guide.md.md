@@ -31,9 +31,10 @@ USB 的命名非常混乱，以下是对应关系：
 | -            | USB 3.2 Gen2x2                | 20 Gbps      | ~2000 MB/s      | 双通道，较少见             |
 | -            | USB4                          | 20 / 40 Gbps | ~2000–4000 MB/s | 与雷雳3统一，支持 Alt Mode |
 
-**注意**：  
-- **Type-C** 只是接口外形，不代表速率。  
-- 如果标注 **Type-C 2.0**，那只是 **USB 2.0 协议（480 Mbps ≈ 60 MB/s）**。  
+**注意**：
+
+- **Type-C** 只是接口外形，不代表速率。
+- 如果标注 **Type-C 2.0**，那只是 **USB 2.0 协议（480 Mbps ≈ 60 MB/s）**。
 
 ---
 
@@ -67,10 +68,10 @@ Intel 推出的高速互联标准，从 3 代开始用 USB-C 接口：
 
 ## 四、USB4 与 Thunderbolt 的关系
 
-- **USB4 = 开放标准**，最高 40Gbps，融合了雷雳3 技术。  
-- **Thunderbolt 3/4 = Intel 认证标准**，同样 40Gbps，但兼容性、功能保障更好。  
-- 所有 Thunderbolt 3/4 设备兼容 USB4 接口。  
-- 但不是所有 USB4 设备都有完整的 Thunderbolt 功能。  
+- **USB4 = 开放标准**，最高 40Gbps，融合了雷雳3 技术。
+- **Thunderbolt 3/4 = Intel 认证标准**，同样 40Gbps，但兼容性、功能保障更好。
+- 所有 Thunderbolt 3/4 设备兼容 USB4 接口。
+- 但不是所有 USB4 设备都有完整的 Thunderbolt 功能。
 
 ---
 
@@ -78,29 +79,31 @@ Intel 推出的高速互联标准，从 3 代开始用 USB-C 接口：
 
 | 硬盘盒接口                      | 理论速率 | 实测速度   | 能否跑满 NVMe 3500 MB/s |
 | ------------------------------- | -------- | ---------- | ----------------------- |
-| USB 3.2 Gen2 (10Gbps)           | ~1 GB/s  | ~1000 MB/s | ❌ 浪费性能              |
-| USB 3.2 Gen2x2 (20Gbps)         | ~2 GB/s  | ~2000 MB/s | ⚠️ 一半性能              |
-| USB4 / Thunderbolt 3/4 (40Gbps) | ~4 GB/s  | ~3500 MB/s | ✅ 完美匹配              |
+| USB 3.2 Gen2 (10Gbps)           | ~1 GB/s  | ~1000 MB/s | ❌ 浪费性能             |
+| USB 3.2 Gen2x2 (20Gbps)         | ~2 GB/s  | ~2000 MB/s | ⚠️ 一半性能             |
+| USB4 / Thunderbolt 3/4 (40Gbps) | ~4 GB/s  | ~3500 MB/s | ✅ 完美匹配             |
 
 ---
 
 ## 六、USB-C 接口多功能复用
 
-USB-C 一根线可以同时传输：  
-- **数据**（USB 3.x/4 带宽，10–40Gbps）  
-- **视频**（DisplayPort / HDMI Alt Mode，独立针脚，不占 USB 带宽）  
-- **电力**（USB PD，最高 240W）  
+USB-C 一根线可以同时传输：
 
-👉 举例：拓展坞一个 10Gbps Type-C 接口：  
-- 3 个 USB 口共享这 10Gbps 带宽。  
-- HDMI 走独立视频通道（Alt Mode），不占 USB 带宽。  
-- 供电也独立传输。  
+- **数据**（USB 3.x/4 带宽，10–40Gbps）
+- **视频**（DisplayPort / HDMI Alt Mode，独立针脚，不占 USB 带宽）
+- **电力**（USB PD，最高 240W）
+
+👉 举例：拓展坞一个 10Gbps Type-C 接口：
+
+- 3 个 USB 口共享这 10Gbps 带宽。
+- HDMI 走独立视频通道（Alt Mode），不占 USB 带宽。
+- 供电也独立传输。
 
 ---
 
 # ✅ 总结
 
-- **USB 看协议版本，不要只看 Type-C 外形**。  
-- **PCIe 版本 + 通道数** 决定 NVMe SSD 的速度。  
-- **Thunderbolt 3/4 ≈ USB4 40Gbps**，但雷雳认证更有保障。  
-- 要让 NVMe SSD（PCIe 3.0 x4，3500 MB/s）跑满，必须选 **USB4/雷雳 3/4 硬盘盒**。  
+- **USB 看协议版本，不要只看 Type-C 外形**。
+- **PCIe 版本 + 通道数** 决定 NVMe SSD 的速度。
+- **Thunderbolt 3/4 ≈ USB4 40Gbps**，但雷雳认证更有保障。
+- 要让 NVMe SSD（PCIe 3.0 x4，3500 MB/s）跑满，必须选 **USB4/雷雳 3/4 硬盘盒**。

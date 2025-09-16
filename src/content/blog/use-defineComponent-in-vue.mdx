@@ -5,7 +5,7 @@ excerpt: 用 defineComponent 在单文件组件中创建局部组件。
 image: '~/assets/images/blog/perry-merrity-ii-5P0lI61BIj8-unsplash.webp'
 category: client
 tags:
-  - vue 
+  - vue
 metadata:
   image_author:
     link: https://unsplash.com/@prince_perry
@@ -18,16 +18,16 @@ metadata:
 
 ```vue
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
-import Icon from '@/components/custom/Icon.vue'
-import Popover from '@/components/custom/Popover.vue'
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+import Icon from '@/components/custom/Icon.vue';
+import Popover from '@/components/custom/Popover.vue';
 
 const SearchIcon = defineComponent({
   props: {
     name: { type: String, required: true },
     title: { type: String, required: true },
-    modelValue: { type: Boolean as PropType<Boolean | undefined>, default: undefined }
+    modelValue: { type: Boolean as PropType<Boolean | undefined>, default: undefined },
   },
   emits: ['update:modelValue', 'iconClick'],
   setup(props, { emit }) {
@@ -42,18 +42,17 @@ const SearchIcon = defineComponent({
             onClick: () => {
               // 如果 props.modelValue 存在，则更新 modelValue
               if (props.modelValue !== undefined) {
-                emit('update:modelValue', !props.modelValue)
+                emit('update:modelValue', !props.modelValue);
               } else {
-                emit('iconClick')
+                emit('iconClick');
               }
-            }
-          })
-      })
-    }
-  }
-})
+            },
+          }),
+      });
+    };
+  },
+});
 </script>
 ```
 
 这样就可以在单文件组件内部直接复用这个 `SearchIcon` 组件。
-

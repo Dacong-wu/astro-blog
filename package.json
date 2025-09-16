@@ -11,9 +11,15 @@
     "build": "pnpm install && npm run generate-json && astro build",
     "preview": "astro preview --host 0.0.0.0",
     "astro": "astro",
-    "format": "prettier -w .",
     "generate-json": "node scripts/jsonGenerator.js",
-    "lint:eslint": "eslint . --ext .js,.ts,.astro"
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx,astro}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
   "dependencies": {
     "@astrojs/react": "^4.3.0",
@@ -51,8 +57,10 @@
     "eslint": "^8.57.0",
     "eslint-plugin-astro": "^1.2.2",
     "eslint-plugin-jsx-a11y": "^6.8.0",
+    "husky": "^9.1.7",
     "inquirer": "^12.9.4",
     "js-yaml": "^4.1.0",
+    "lint-staged": "^16.1.6",
     "mdast-util-to-string": "^4.0.0",
     "prettier": "^3.1.1",
     "prettier-plugin-astro": "^0.12.2",
