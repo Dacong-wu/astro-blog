@@ -36,22 +36,37 @@ const SearchModal = () => {
   const endTime = performance.now();
   const totalTime = ((endTime - startTime) / 1000).toFixed(3);
 
+  useEffect(() => {
+    const searchModal = document.getElementById('searchModal');
+    const searchInput = document.getElementById('searchInput');
+    const searchModalTriggers = document.querySelectorAll('[data-search-trigger]');
+
+    // search modal open
+    searchModalTriggers.forEach((button) => {
+      const handleClick = () => {
+        const onTransitionEnd = () => {
+          searchInput!.focus();
+          searchModal!.removeEventListener('transitionend', onTransitionEnd);
+        };
+
+        searchModal!.addEventListener('transitionend', onTransitionEnd);
+        searchModal!.classList.add('show');
+      };
+      button.addEventListener('click', handleClick);
+
+      // 可选：清理函数，避免内存泄漏
+      return () => {
+        button.removeEventListener('click', handleClick);
+      };
+    });
+  }, []);
+
   // search dom manipulation
   useEffect(() => {
     const searchModal = document.getElementById('searchModal');
     const searchInput = document.getElementById('searchInput');
     const searchModalOverlay = document.getElementById('searchModalOverlay');
     const searchResultItems = document.querySelectorAll('#searchItem');
-    const searchModalTriggers = document.querySelectorAll('[data-search-trigger]');
-
-    // search modal open
-    searchModalTriggers.forEach((button) => {
-      button.addEventListener('click', function () {
-        const searchModal = document.getElementById('searchModal');
-        searchModal!.classList.add('show');
-        searchInput!.focus();
-      });
-    });
 
     // search modal close
     searchModalOverlay!.addEventListener('click', function () {
