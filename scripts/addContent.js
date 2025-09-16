@@ -61,11 +61,14 @@ async function fetchUnsplashImage(url) {
           }
 
           // ✅ 选用合适的尺寸，避免 full 太大
-          const imageUrl = `${photoInfo.urls.raw}&w=1920&q=80`;
+          let imageUrl = `${photoInfo.urls.raw}&w=1920&q=80`;
+
+          // 替换主机为 https://proxy.ll1025.cn/images/
+          imageUrl = imageUrl.replace(/^https:\/\/images\.unsplash\.com\//, 'https://proxy.ll1025.cn/images/');
+
           const author = photoInfo.user.username;
           const imgName = `${photoId}.jpg`;
           const imgPath = path.join(assetsDir, imgName);
-
           // 3. 下载图片并显示进度条
           https
             .get(imageUrl, (imgRes) => {
@@ -160,6 +163,7 @@ async function main() {
     const today = getToday();
 
     // 下载图片
+    console.log('⌛ 请求 API 中');
     const { imgName, imgPath, imgAuthorName } = await fetchUnsplashImage(answers.imageUrl);
 
     // 写模板
