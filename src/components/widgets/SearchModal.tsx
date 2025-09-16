@@ -37,46 +37,23 @@ const SearchModal = () => {
   const totalTime = ((endTime - startTime) / 1000).toFixed(3);
 
   useEffect(() => {
-    const searchModal = document.getElementById('searchModal');
-    const searchInput = document.getElementById('searchInput');
+    const searchModal = document.getElementById('searchModal') as HTMLElement | null;
+    const searchInput = document.getElementById('searchInput') as HTMLInputElement | null;
     const searchModalTriggers = document.querySelectorAll('[data-search-trigger]');
+    const searchModalOverlay = document.getElementById('searchModalOverlay') as HTMLElement | null;
 
-    // search modal open
-    searchModalTriggers.forEach((button) => {
-      const handleClick = () => {
-        const onTransitionEnd = () => {
-          searchInput!.focus();
-          searchModal!.removeEventListener('transitionend', onTransitionEnd);
-        };
+    // 检查必要元素是否存在
+    if (!searchModal || !searchInput || !searchModalOverlay || searchModalTriggers.length === 0) {
+      console.warn('Search modal elements not found');
+      return;
+    }
 
-        searchModal!.addEventListener('transitionend', onTransitionEnd);
-        searchModal!.classList.add('show');
-      };
-      button.addEventListener('click', handleClick);
-
-      // 可选：清理函数，避免内存泄漏
-      return () => {
-        button.removeEventListener('click', handleClick);
-      };
-    });
-  }, []);
-
-  // search dom manipulation
-  useEffect(() => {
-    const searchModal = document.getElementById('searchModal');
-    const searchInput = document.getElementById('searchInput');
-    const searchModalOverlay = document.getElementById('searchModalOverlay');
-    const searchResultItems = document.querySelectorAll('#searchItem');
-
-    // search modal close
-    searchModalOverlay!.addEventListener('click', function () {
-      searchModal!.classList.remove('show');
-    });
-
-    // keyboard navigation
     let selectedIndex = -1;
+    const cleanupFunctions: (() => void)[] = [];
 
+    // 更新选中状态
     const updateSelection = () => {
+      const searchResultItems = document.querySelectorAll('#searchItem') as NodeListOf<HTMLElement>;
       searchResultItems.forEach((item, index) => {
         if (index === selectedIndex) {
           item.classList.add('search-result-item-active');
@@ -85,41 +62,160 @@ const SearchModal = () => {
         }
       });
 
-      searchResultItems[selectedIndex]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-      });
+      // 滚动到选中项
+      if (selectedIndex >= 0 && searchResultItems[selectedIndex]) {
+        searchResultItems[selectedIndex].scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
+      }
     };
 
-    document.addEventListener('keydown', function (event) {
-      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-        searchModal!.classList.add('show');
-        searchInput!.focus();
-        updateSelection();
-      }
-
-      if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-        event.preventDefault();
-      }
-
-      if (event.key === 'Escape') {
-        searchModal!.classList.remove('show');
-      }
-
-      if (event.key === 'ArrowUp' && selectedIndex > 0) {
-        selectedIndex--;
-      } else if (event.key === 'ArrowDown' && selectedIndex < searchResultItems.length - 1) {
-        selectedIndex++;
-      } else if (event.key === 'Enter') {
-        const activeLink = document.querySelector('.search-result-item-active a') as HTMLAnchorElement;
-        if (activeLink) {
-          activeLink?.click();
-        }
-      }
-
+    // 重置选中状态
+    const resetSelection = () => {
+      selectedIndex = -1;
       updateSelection();
+    };
+
+    // 打开模态框
+    const openModal = () => {
+      const onTransitionEnd = () => {
+        searchInput.focus();
+        searchModal.removeEventListener('transitionend', onTransitionEnd);
+      };
+
+      searchModal.addEventListener('transitionend', onTransitionEnd);
+      searchModal.classList.add('show');
+      resetSelection(); // 重置选中状态
+    };
+
+    // 关闭模态框
+    const closeModal = () => {
+      searchModal.classList.remove('show');
+      resetSelection(); // 重置选中状态
+    };
+
+    // 绑定打开按钮事件
+    searchModalTriggers.forEach((button) => {
+      const handleClick = (e: Event) => {
+        e.preventDefault();
+        openModal();
+      };
+
+      button.addEventListener('click', handleClick);
+
+      // 存储清理函数
+      cleanupFunctions.push(() => {
+        button.removeEventListener('click', handleClick);
+      });
     });
-  }, [searchString]);
+
+    // 绑定覆盖层点击事件
+    const handleOverlayClick = (e: Event) => {
+      // 只有点击覆盖层本身时才关闭，避免事件冒泡
+      if (e.target === searchModalOverlay) {
+        closeModal();
+      }
+    };
+    searchModalOverlay.addEventListener('click', handleOverlayClick);
+    cleanupFunctions.push(() => {
+      searchModalOverlay.removeEventListener('click', handleOverlayClick);
+    });
+
+    // 键盘导航
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // 只在模态框显示时处理键盘事件
+      if (!searchModal.classList.contains('show')) {
+        return;
+      }
+
+      const searchResultItems = document.querySelectorAll('#searchItem') as NodeListOf<HTMLElement>;
+      const itemCount = searchResultItems.length;
+
+      switch (event.key) {
+        case 'Escape':
+          event.preventDefault();
+          closeModal();
+          break;
+
+        case 'ArrowUp':
+          event.preventDefault();
+          if (itemCount > 0) {
+            selectedIndex = selectedIndex <= 0 ? itemCount - 1 : selectedIndex - 1;
+            updateSelection();
+          }
+          break;
+
+        case 'ArrowDown':
+          event.preventDefault();
+          if (itemCount > 0) {
+            selectedIndex = selectedIndex >= itemCount - 1 ? 0 : selectedIndex + 1;
+            updateSelection();
+          }
+          break;
+
+        case 'Enter':
+          event.preventDefault();
+          if (itemCount > 0) {
+            let targetLink: HTMLAnchorElement | null = null;
+
+            if (selectedIndex >= 0 && selectedIndex < itemCount) {
+              // 有选中项，点击选中项的链接
+              targetLink = searchResultItems[selectedIndex].querySelector('a') as HTMLAnchorElement | null;
+            } else {
+              // 没有选中项，点击第一项的链接
+              targetLink = searchResultItems[0].querySelector('a') as HTMLAnchorElement | null;
+            }
+
+            if (targetLink) {
+              targetLink.click();
+              closeModal(); // 点击后关闭模态框
+            }
+          }
+          break;
+
+        default:
+          // 其他按键重置选中状态，让用户重新用方向键选择
+          if (event.key.length === 1) {
+            // 只对字符键重置
+            resetSelection();
+          }
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    cleanupFunctions.push(() => {
+      document.removeEventListener('keydown', handleKeyDown);
+    });
+
+    // 监听搜索结果变化，重置选中状态
+    const observeSearchResults = () => {
+      const searchResultsContainer = document.querySelector('#searchResults, .search-results');
+      if (searchResultsContainer) {
+        const observer = new MutationObserver(() => {
+          resetSelection(); // 搜索结果变化时重置选中状态
+        });
+
+        observer.observe(searchResultsContainer, {
+          childList: true,
+          subtree: true,
+        });
+
+        cleanupFunctions.push(() => {
+          observer.disconnect();
+        });
+      }
+    };
+
+    // 延迟观察搜索结果，确保 DOM 已渲染
+    setTimeout(observeSearchResults, 0);
+
+    // 返回清理函数
+    return () => {
+      cleanupFunctions.forEach((cleanup) => cleanup());
+    };
+  }, []);
 
   return (
     <div id="searchModal" className="search-modal">
