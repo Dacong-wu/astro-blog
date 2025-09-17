@@ -28,9 +28,9 @@ const generatePermalink = async ({ id, slug, publishDate }: { id: string; slug: 
 };
 export const photographyPostsPerPage = APP_PHTOTGRAPHY?.postsPerPage;
 const getNormalizedPhotography = async (photography: CollectionEntry<'photography'>): Promise<Photography> => {
-  const { id, slug: rawSlug = '', data } = photography;
+  const { id, data } = photography;
   const { publishDate: rawPublishDate = new Date(), title, excerpt, images } = data;
-  const slug = cleanSlug(rawSlug); // cleanSlug(rawSlug.split('/').pop());
+  const slug = cleanSlug(id); // cleanSlug(rawSlug.split('/').pop());
   const publishDate = new Date(rawPublishDate);
   return {
     id: id,
