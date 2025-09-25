@@ -20,61 +20,79 @@ metadata:
 
 ## 1. 一台拥有公网 IP 的主机
 
-我推荐使用 docker 部署服务，但是你也可以不这样做。主机防火墙需要放开 3478/UDP和80&443/TCP端口，或者你也可以使用一个自定义端口。
+我推荐使用 docker 部署服务，你也可以不这样做😃。主机防火墙需要放开 3478/UDP 和 80&443/TCP 端口，或者你也可以使用一个自定义端口（下面方案使用自定义端口完成）。
+
+<span style="color:red">注意：下面方案假设你使用的域名为 qq.com，端口为 8443。实际部署时，请替换为自己的信息。</span>
 
 ---
 
 ## 2. 创建容器镜像并运行容器
 
-1. 通过下面的 Dockerfile 文件，构建镜像 `docker build -t derper .`
+1. 配置 Dockerfile 文件
 
 ```dockerfile
+# 构建阶段
 FROM golang:latest AS builder
 WORKDIR /app
-# 使用国内的代理
-ENV GOPROXY=https://goproxy.cn
-RUN go install tailscale.com/cmd/derper@main
+ENV GOPROXY=https://goproxy.cn # 使用国内的代理
+RUN go install tailscale.com/cmd/derper@latest
 
-FROM ubuntu
+# 运行阶段
+FROM ubuntu:24.04
 WORKDIR /app
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends apt-utils && \
-    apt-get install -y ca-certificates && \
-    mkdir /app/certs
 
-# 自己的域名，例如 qq.com
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates && \
+    mkdir -p /app/certs
+
+# 默认值
 ENV DERP_DOMAIN qq.com
+ENV DERP_ADDR :8443
 ENV DERP_CERT_MODE manual
 ENV DERP_CERT_DIR /app/certs
-# 自定义端口，例如 8443 （注意:）
-ENV DERP_ADDR :8443
 ENV DERP_STUN true
-ENV DERP_HTTP_PORT 80
+ENV DERP_HTTP_PORT -1
 ENV DERP_VERIFY_CLIENTS false
 
 COPY --from=builder /go/bin/derper .
+
 # 具体的配置信息可以参考 https://github.com/tailscale/tailscale/blob/main/cmd/derper/derper.go
-CMD /app/derper --hostname=$DERP_DOMAIN \
-    --certmode=$DERP_CERT_MODE \
-    --certdir=$DERP_CERT_DIR \
-    --a=$DERP_ADDR \
-    --stun=$DERP_STUN  \
-    --http-port=$DERP_HTTP_PORT \
-    --verify-clients=$DERP_VERIFY_CLIENTS
+CMD /app/derper \
+--hostname=$DERP_DOMAIN \
+--certmode=$DERP_CERT_MODE \
+--certdir=$DERP_CERT_DIR \
+--a=$DERP_ADDR \
+--stun=$DERP_STUN  \
+--http-port=$DERP_HTTP_PORT \
+--verify-clients=$DERP_VERIFY_CLIENTS
 ```
 
-2. 通过下面的命令运行容器
+2. 配置 docker-compose.yml 文件
 
-这里需要注意 `8443` 为自定义端口，`/root/ssl/` 为证书存放地址，可以自定义，但是证书格式需要满足 `**.crt` 和 `**.key`，例如 `qq.com.crt` 和 `qq.com.key`。
+这里需要注意 `/opt/cert` 为宿主机证书存放地址，请以实际值替换。
 
-```shell
-docker run --restart always \
-  --name derper -p 8443:8443 -p 3478:3478/udp \
-  -v /root/ssl/:/app/certs \
-  -e DERP_CERT_MODE=manual \
-  -d derper:latest
+**注意**：证书格式需要满足 `**.crt` 和 `**.key`，例如 `qq.com.crt` 和 `qq.com.key`。
+
+```yaml
+services:
+  derper:
+    build: .
+    container_name: derper
+    network_mode: "host"
+    environment:
+      # 你可以自行修改对应的环境变量的值
+      # - hostname=cc.com
+    volumes:
+      - /opt/cert:/app/certs
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: always
 ```
+
+3. 启动容器
+
+   `docker compose up -d`
 
 ---
 
@@ -112,4 +130,28 @@ docker run --restart always \
 2. 在终端使用命令 `tailscale netcheck` 查看 Report 信息，验证 `DERP latency` 是否为你自定义的
 3. 将手机切换为移动数据模式，电脑终端使用 `tailscale ping ` 查看，应该会包括这些信息 `pong from iphone-14-pro (100.*.*.*) via DERP(qqDerp) in 49ms`
 
-到这里就证明，你已经成功的打通了自己的中继服务。
+🎊🎊 到这里，你已经顺利完成了中继服务的配置，恭喜！现在，你可以自由使用它了。
+
+---
+
+😑😑但是有些特殊的地方我还是需要告诉你，中继默认并不会检验客户端的流量，这就意味着任何人都可以使用你的中继。但是这有一个前提，就是他需要知道你的域名+端口（显然他不知道🤣）。
+
+如果你不想让其它人使用，你可以在你部署的主机上安装 tailscale 服务，然后登录你的账号。最后在启动容器的时候挂载宿主机的 `tailscaled`，下面是更新后的 `docker-compose.yml`
+
+```yaml
+services:
+  derper:
+    build: .
+    container_name: derper
+    network_mode: "host"
+    environment:
+      # 你可以自行修改对应的环境变量的值
+      - DERP_VERIFY_CLIENTS=true
+    volumes:
+      - /opt/cert:/app/certs
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      # 这是默认 linux 下的地址，请自己甄别
+      - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock
+    restart: always
+```
