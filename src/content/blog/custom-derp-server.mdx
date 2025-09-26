@@ -1,5 +1,6 @@
 ---
 publishDate: 2024-07-09
+updateDate: 2025-09-25
 title: 自定义 DERP 服务器（中继）
 excerpt: 自定义 DERP 中继，以解决使用 tailscale 延时问题
 image: '~/assets/images/blog/boliviainteligente-QN-8MkXgSQc-unsplash.jpg'
@@ -22,7 +23,8 @@ metadata:
 
 我推荐使用 docker 部署服务，你也可以不这样做😃。主机防火墙需要放开 3478/UDP 和 80&443/TCP 端口，或者你也可以使用一个自定义端口（下面方案使用自定义端口完成）。
 
-<span style="color:red">注意：下面方案假设你使用的域名为 qq.com，端口为 8443。实际部署时，请替换为自己的信息。</span>
+> **⚠️ 注意**  
+> 下面方案假设你使用的域名为 qq.com，端口为 8443。实际部署时，请替换为自己的信息。
 
 ---
 
@@ -72,7 +74,7 @@ CMD /app/derper \
 
 这里需要注意 `/opt/cert` 为宿主机证书存放地址，请以实际值替换。
 
-**注意**：证书格式需要满足 `**.crt` 和 `**.key`，例如 `qq.com.crt` 和 `qq.com.key`。
+> **⚠️ 注意**：证书格式需要满足 `**.crt` 和 `**.key`，例如 `qq.com.crt` 和 `qq.com.key`。
 
 ```yaml
 services:
