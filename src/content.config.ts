@@ -14,7 +14,7 @@ const metadataDefinition = () =>
     .optional();
 
 const blogCollection = defineCollection({
-  loader: glob({ pattern: '*.mdx', base: './src/content/blog' }),
+  loader: glob({ pattern: '*.{md,mdx}', base: './src/content/blog' }),
   schema: ({ image }) =>
     z.object({
       publishDate: z.date().optional(),
@@ -30,7 +30,7 @@ const blogCollection = defineCollection({
     })
 });
 const photographyCollection = defineCollection({
-  loader: glob({ pattern: '*.mdx', base: './src/content/photography' }),
+  loader: glob({ pattern: '*.{md,mdx}', base: './src/content/photography' }),
   schema: ({ image }) =>
     z.object({
       publishDate: z.date().optional(),
