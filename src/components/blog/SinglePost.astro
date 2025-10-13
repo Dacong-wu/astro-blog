@@ -27,7 +27,9 @@ const { Content } = post;
       <div class="flex justify-between flex-col sm:flex-row max-w-3xl mx-auto mt-0 mb-2 px-4 sm:px-6 sm:items-center">
         <p>
           <Icon name="tabler:clock" class="w-4 h-4 inline-block -mt-0.5 dark:text-gray-400" />
-          <time datetime={String(post.publishDate)} class="inline-block">{getFormattedDate(post.publishDate)}</time>
+          <time datetime={new Date(post.publishDate).toISOString()} class="inline-block">
+            {getFormattedDate(post.publishDate)}
+          </time>
           {
             post.category && (
               <>
@@ -40,6 +42,14 @@ const { Content } = post;
             )
           }
           {post.readingTime && <> · {post.readingTime} min 阅读</>}
+
+          {
+            post.updateDate && (
+              <span class="ml-2 text-gray-500 dark:text-gray-400 text-sm">
+                （更新于 <time datetime={post.updateDate.toISOString()}>{getFormattedDate(post.updateDate)}</time>）
+              </span>
+            )
+          }
         </p>
       </div>
       <h1
@@ -90,6 +100,7 @@ const { Content } = post;
       <PostTags tags={post.tags} class="mr-5 rtl:mr-0 rtl:ml-5" />
       <SocialShare url={url} text={post.title} class="mt-5 sm:mt-1 align-middle text-gray-500 dark:text-slate-600" />
     </div>
+    <p>{post.updateDate ? 1 : 2}</p>
   </article>
 </section>
 

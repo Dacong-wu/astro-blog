@@ -84,3 +84,51 @@ export const getAsset = (path: string): string =>
 
 /** */
 const definitivePermalink = (permalink: string): string => createPath(BASE_PATHNAME, permalink);
+
+/**
+ * 通用的永久链接生成器
+ * @param pattern 模板，例如 "%year%/%month%/%slug%"
+ * @param id 文档 id
+ * @param slug 文档 slug
+ * @param publishDate 发布时间
+ * @param extra 额外占位符，例如 { category: "tech" }
+ */
+export const generatePermalink = ({
+  pattern,
+  id,
+  slug,
+  publishDate,
+  extra = {}
+}: {
+  pattern: string;
+  id: string;
+  slug: string;
+  publishDate: Date;
+  extra?: Record<string, string | undefined>;
+}): string => {
+  const dateParts = {
+    year: publishDate.getFullYear().toString().padStart(4, '0'),
+    month: (publishDate.getMonth() + 1).toString().padStart(2, '0'),
+    day: publishDate.getDate().toString().padStart(2, '0'),
+    hour: publishDate.getHours().toString().padStart(2, '0'),
+    minute: publishDate.getMinutes().toString().padStart(2, '0'),
+    second: publishDate.getSeconds().toString().padStart(2, '0')
+  };
+
+  let permalink = pattern
+    .replace('%id%', id)
+    .replace('%slug%', slug)
+    .replace('%year%', dateParts.year)
+    .replace('%month%', dateParts.month)
+    .replace('%day%', dateParts.day)
+    .replace('%hour%', dateParts.hour)
+    .replace('%minute%', dateParts.minute)
+    .replace('%second%', dateParts.second);
+
+  // 替换额外参数（如果是 undefined/null 就替换为空字符串）
+  Object.entries(extra).forEach(([key, value]) => {
+    permalink = permalink.replace(new RegExp(`%${key}%`, 'g'), value != null ? String(value) : '');
+  });
+
+  return permalink.split('/').map(trimSlash).filter(Boolean).join('/');
+};

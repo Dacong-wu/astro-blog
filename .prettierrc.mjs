@@ -4,10 +4,8 @@ export default {
   semi: true,
   singleQuote: true,
   tabWidth: 2,
-  trailingComma: 'es5',
   useTabs: false,
-
+  trailingComma: 'none',
   plugins: ['prettier-plugin-astro'],
-
   overrides: [{ files: '*.astro', options: { parser: 'astro' } }],
 };
