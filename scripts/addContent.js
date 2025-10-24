@@ -83,7 +83,7 @@ async function fetchUnsplashImage(url) {
               // 初始化进度条
               const bar = new cliProgress.SingleBar(
                 {
-                  format: `下载中 [{bar}] {percentage}% | {downloaded}/{total} KB`,
+                  format: `下载中 [{bar}] {percentage}% | {downloaded}/{total} KB`
                 },
                 cliProgress.Presets.shades_classic
               );
@@ -95,7 +95,7 @@ async function fetchUnsplashImage(url) {
                 downloadedBytes += chunk.length;
                 bar.update(Math.ceil(downloadedBytes / 1024), {
                   downloaded: Math.ceil(downloadedBytes / 1024),
-                  total: Math.ceil(totalBytes / 1024),
+                  total: Math.ceil(totalBytes / 1024)
                 });
               });
 
@@ -107,7 +107,7 @@ async function fetchUnsplashImage(url) {
                   resolve({
                     imgName,
                     imgPath,
-                    imgAuthorName: author,
+                    imgAuthorName: author
                   });
                 });
               });
@@ -136,21 +136,21 @@ async function main() {
           if (!value.endsWith('.mdx')) return '文件名必须以 .mdx结尾';
           if (value.lastIndexOf('.') === 0) return '文件名不能只有扩展名';
           return true;
-        },
+        }
       },
       {
         type: 'list',
         name: 'category',
         message: '请选择文章分类',
         choices: categories,
-        default: 'ops',
+        default: 'ops'
       },
       {
         type: 'input',
         name: 'imageUrl',
         message: '请输入图片 Unsplash 分享链接',
-        validate: (value) => (value ? true : '请输入图片 URL'),
-      },
+        validate: (value) => (value ? true : '请输入图片 URL')
+      }
     ]);
 
     const targetPath = path.join(targetDir, answers.fileName);
@@ -190,8 +190,8 @@ metadata:
           type: 'confirm',
           name: 'overwrite',
           message: `文件 ${answers.fileName} 已存在，是否覆盖？`,
-          default: false,
-        },
+          default: false
+        }
       ]);
       if (!overwrite) {
         console.log('操作已取消。');

@@ -24,31 +24,31 @@ export default defineConfig({
     icon({
       include: {
         tabler: ['*'],
-        logos: ['*'],
-      },
+        logos: ['*']
+      }
     }),
     partytown({
       config: {
-        forward: ['dataLayer.push'],
-      },
+        forward: ['dataLayer.push']
+      }
     }),
     tasks(),
-    react(),
+    react()
   ],
   markdown: {
     remarkPlugins: [readingTimeRemarkPlugin],
-    rehypePlugins: [responsiveTablesRehypePlugin],
+    rehypePlugins: [responsiveTablesRehypePlugin]
   },
   vite: {
     resolve: {
       alias: {
-        '~': path.resolve(__dirname, './src'),
-      },
+        '~': path.resolve(__dirname, './src')
+      }
     },
 
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss()]
   },
   image: {
-    domains: ['cnb.cool'],
-  },
+    domains: ['cnb.cool']
+  }
 });

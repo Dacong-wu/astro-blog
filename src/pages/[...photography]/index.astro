@@ -17,7 +17,7 @@ const { photography } = Astro.props;
 const url = getCanonical(getPermalink(photography.permalink, 'photography'));
 const metadata = merge({
   title: photography.title,
-  description: photography.excerpt,
+  description: photography.excerpt
 });
 ---
 

@@ -23,7 +23,7 @@ metadata:
    ```javascript
    import { SearchAddon } from '@xterm/addon-search';
    export const term = new Terminal({
-     allowProposedApi: true, // 请开启
+     allowProposedApi: true // 请开启
    });
    export const searchAddon = new SearchAddon();
    term.loadAddon(searchAddon);
@@ -63,14 +63,14 @@ metadata:
      activeMatchBorder: '#FF6347', // 西红柿色，进一步强调当前匹配
 
      // 当前激活匹配项在概览标尺中的颜色
-     activeMatchColorOverviewRuler: '#FF4500', // 与激活背景相同，便于识别
+     activeMatchColorOverviewRuler: '#FF4500' // 与激活背景相同，便于识别
    };
    const searchOptions = computed(() => ({
      caseSensitive: matchCase.value,
      wholeWord: matchWord.value,
      regex: regularExpression.value,
      incremental: true,
-     decorations: searchDecorationOptions, // 这非常重要，不然无效
+     decorations: searchDecorationOptions // 这非常重要，不然无效
    }));
 
    onMounted(() => {
@@ -102,7 +102,7 @@ metadata:
      props: {
        name: { type: String, required: true },
        title: { type: String, required: true },
-       modelValue: { type: Boolean as PropType<Boolean | undefined>, default: undefined },
+       modelValue: { type: Boolean as PropType<Boolean | undefined>, default: undefined }
      },
      emits: ['update:modelValue', 'iconClick'],
      setup(props, { emit }) {
@@ -121,11 +121,11 @@ metadata:
                  } else {
                    emit('iconClick');
                  }
-               },
-             }),
+               }
+             })
          });
        };
-     },
+     }
    });
    </script>
    <template>

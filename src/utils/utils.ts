@@ -6,7 +6,7 @@ const formatter: Intl.DateTimeFormat =
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-    timeZone: 'UTC',
+    timeZone: 'UTC'
   });
 
 export const getFormattedDate = (date: Date): string => (date ? formatter.format(date) : '');

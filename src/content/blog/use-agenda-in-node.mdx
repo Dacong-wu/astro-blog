@@ -90,7 +90,7 @@ metadata:
    async function removeAgenda({ _id }) {
      const numRemoved = await agenda.cancel({
        name: 'sendEmail',
-       _id: mongoose.Types.ObjectId.createFromHexString(_id),
+       _id: mongoose.Types.ObjectId.createFromHexString(_id)
      }); // 将 String 转为 ObjectId 格式，不然查询会失败
      return numRemoved;
    }

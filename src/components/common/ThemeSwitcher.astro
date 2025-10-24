@@ -63,7 +63,7 @@ import { Icon } from 'astro-icon/components';
     );
     const clipPath = [
       `circle(0px at ${clientX}px ${clientY}px)`,
-      `circle(${maxRadius}px at ${clientX}px ${clientY}px)`,
+      `circle(${maxRadius}px at ${clientX}px ${clientY}px)`
     ];
 
     await document.startViewTransition(handler).ready;
@@ -74,7 +74,7 @@ import { Icon } from 'astro-icon/components';
       {
         duration: 400,
         easing: 'ease-in',
-        pseudoElement: `::view-transition-${isDarkTheme() ? 'old' : 'new'}(root)`,
+        pseudoElement: `::view-transition-${isDarkTheme() ? 'old' : 'new'}(root)`
       }
     );
   }

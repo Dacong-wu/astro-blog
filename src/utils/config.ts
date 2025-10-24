@@ -99,7 +99,7 @@ const getSite = () => {
     base: '/',
     trailingSlash: false,
     baiduSiteVerificationId: '',
-    googleSiteVerificationId: '',
+    googleSiteVerificationId: ''
   };
 
   return merge({}, _default, config?.site ?? {}) as SiteConfig;
@@ -111,16 +111,16 @@ const getMetadata = () => {
   const _default = {
     title: {
       default: siteConfig?.name || DEFAULT_SITE_NAME,
-      template: '%s',
+      template: '%s'
     },
     description: '',
     robots: {
       index: false,
-      follow: false,
+      follow: false
     },
     openGraph: {
-      type: 'website',
-    },
+      type: 'website'
+    }
   };
 
   return merge({}, _default, config?.metadata ?? {}) as MetaDataConfig;
@@ -129,7 +129,7 @@ const getMetadata = () => {
 const getI18N = () => {
   const _default = {
     language: 'zh-cn',
-    textDirection: 'ltr',
+    textDirection: 'ltr'
   };
 
   const value = merge({}, _default, config?.i18n ?? {});
@@ -139,8 +139,8 @@ const getI18N = () => {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
-      timeZone: 'UTC',
-    }),
+      timeZone: 'UTC'
+    })
   }) as I18NConfig;
 };
 
@@ -153,33 +153,33 @@ const getAppBlog = () => {
       permalink: '/blog/%slug%',
       robots: {
         index: true,
-        follow: true,
-      },
+        follow: true
+      }
     },
     list: {
       isEnabled: true,
       pathname: 'blog',
       robots: {
         index: true,
-        follow: true,
-      },
+        follow: true
+      }
     },
     category: {
       isEnabled: true,
       pathname: 'category',
       robots: {
         index: true,
-        follow: true,
-      },
+        follow: true
+      }
     },
     tag: {
       isEnabled: true,
       pathname: 'tag',
       robots: {
         index: false,
-        follow: true,
-      },
-    },
+        follow: true
+      }
+    }
   };
   return merge({}, _default, config?.apps?.blog ?? {}) as AppBlogConfig;
 };
@@ -192,17 +192,17 @@ const getAppPhotography = () => {
       permalink: '/photography/%slug%',
       robots: {
         index: true,
-        follow: true,
-      },
+        follow: true
+      }
     },
     list: {
       isEnabled: true,
       pathname: 'photography',
       robots: {
         index: true,
-        follow: true,
-      },
-    },
+        follow: true
+      }
+    }
   };
   return merge({}, _default, config?.apps?.photography ?? {}) as AppPhotographyConfig;
 };
@@ -211,7 +211,7 @@ const getUI = () => {
   const _default = {
     theme: 'system',
     classes: {},
-    tokens: {},
+    tokens: {}
   };
 
   return merge({}, _default, config?.ui ?? {});

@@ -33,20 +33,20 @@ const tasksIntegration = () => {
             if (!pattern.test(robotsTxt)) {
               fs.appendFileSync(robotsTxtFileInOut, `${os.EOL}${os.EOL}Sitemap: ${sitemapUrl}`, {
                 encoding: 'utf8',
-                flags: 'w',
+                flags: 'w'
               });
             } else {
               fs.writeFileSync(robotsTxtFileInOut, robotsTxt.replace(pattern, `Sitemap: ${sitemapUrl}`), {
                 encoding: 'utf8',
-                flags: 'w',
+                flags: 'w'
               });
             }
           }
         } catch (err) {
           /* empty */
         }
-      },
-    },
+      }
+    }
   };
 };
 

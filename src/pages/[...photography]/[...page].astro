@@ -24,7 +24,7 @@ interface Page {
 const { page }: { page: Page } = Astro.props;
 const currentPage = page.currentPage ?? 1;
 const metadata = {
-  title: `摄影展示${currentPage > 1 ? ` - 第${currentPage}页` : ''}`,
+  title: `摄影展示${currentPage > 1 ? ` - 第${currentPage}页` : ''}`
 };
 ---
 

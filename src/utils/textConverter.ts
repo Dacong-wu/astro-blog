@@ -48,7 +48,7 @@ const htmlEntityDecoder = (htmlWithEntities: string) => {
     '&gt;': '>',
     '&amp;': '&',
     '&quot;': '"',
-    '&#39;': "'",
+    '&#39;': "'"
   };
   const htmlWithoutEntities: string = htmlWithEntities.replace(
     /(&amp;|&lt;|&gt;|&quot;|&#39;)/g,

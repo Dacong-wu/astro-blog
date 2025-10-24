@@ -19,7 +19,7 @@ const {
   robots = {},
   description,
   openGraph = {},
-  twitter = {},
+  twitter = {}
 } = Astro.props;
 
 const seoProps: AstroSeoProps = merge(
@@ -35,11 +35,11 @@ const seoProps: AstroSeoProps = merge(
       site_name: SITE?.name,
       images: [],
       locale: I18N?.language || 'en',
-      type: 'website',
+      type: 'website'
     },
     twitter: {
-      cardType: openGraph?.images?.length ? 'summary_large_image' : 'summary',
-    },
+      cardType: openGraph?.images?.length ? 'summary_large_image' : 'summary'
+    }
   },
   {
     title: METADATA?.title?.default,
@@ -48,7 +48,7 @@ const seoProps: AstroSeoProps = merge(
     nofollow: typeof METADATA?.robots?.follow !== 'undefined' ? !METADATA.robots.follow : undefined,
     description: METADATA?.description,
     openGraph: METADATA?.openGraph,
-    twitter: METADATA?.twitter,
+    twitter: METADATA?.twitter
   },
   {
     title: title,
@@ -58,7 +58,7 @@ const seoProps: AstroSeoProps = merge(
     nofollow: typeof robots?.follow !== 'undefined' ? !robots.follow : undefined,
     description: description,
     openGraph: { url: canonical, ...openGraph },
-    twitter: twitter,
+    twitter: twitter
   }
 );
 ---

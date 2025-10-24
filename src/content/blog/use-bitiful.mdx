@@ -30,14 +30,14 @@ const s3Client = new S3Client({
   endpoint: '******', //桶信息中的服务端点
   credentials: {
     accessKeyId: '******', //AccessKeyId
-    secretAccessKey: '******', //AccessKey
-  },
+    secretAccessKey: '******' //AccessKey
+  }
 });
 
 router.get('/put-signedurl', async (ctx) => {
   const putCmd = new PutObjectCommand({
     Bucket: '******', //桶名称
-    Key: 'avatar/******.png', //图片的key，avatar/ 就是把它放到avatar文件夹下
+    Key: 'avatar/******.png' //图片的key，avatar/ 就是把它放到avatar文件夹下
   });
   //获取预签名链接
   await getSignedUrl(s3Client, putCmd, { expiresIn: 3600 }).then((url) => {
@@ -48,7 +48,7 @@ router.get('/put-signedurl', async (ctx) => {
 router.get('/get-signedurl', async (ctx) => {
   const putCmd = new GetObjectCommand({
     Bucket: '******',
-    Key: 'avatar/******.png',
+    Key: 'avatar/******.png'
   });
   //获取访问签名链接
   await getSignedUrl(s3Client, putCmd, { expiresIn: 3600 }).then((url) => {
@@ -75,7 +75,7 @@ Page({
           url: url,
           method: 'put',
           header: {
-            'content-type': null, // 小程序 content-type 默认为 application/json， 这里强制为 null
+            'content-type': null // 小程序 content-type 默认为 application/json， 这里强制为 null
           },
           data: fs.readFileSync(res.tempFiles[0].tempFilePath),
           success: function (res) {
@@ -85,10 +85,10 @@ Page({
           error: function (err) {
             console.log('上传失败');
             console.log(err);
-          },
+          }
         });
-      },
+      }
     });
-  },
+  }
 });
 ```
