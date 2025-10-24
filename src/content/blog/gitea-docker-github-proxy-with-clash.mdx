@@ -1,0 +1,218 @@
+---
+publishDate: 2025-10-22
+title: 在 Docker Gitea 中使用 Clash 代理解决 GitHub 仓库迁移失败问题
+excerpt: 在国内网络环境中，Gitea 运行在 Docker 容器中时往往无法直接从 GitHub 迁移仓库。本文详细介绍了如何通过配置 Clash 代理、Docker 网络和 Gitea 的迁移策略，让 Gitea 成功走代理访问 GitHub，实现稳定的代码迁移与同步。
+image: '~/assets/images/blog/snowy-mountains-rise-from-the-ocean-at-sunrise-IHfbPJYsnsI.jpg'
+category: ops
+tags: [Gitea, Clash, Docker, GitHub]
+metadata:
+  image_author:
+    link: https://unsplash.com/@supergios
+    name: supergios
+---
+
+# 在 Docker Gitea 中使用 Clash 代理解决 GitHub 仓库迁移失败问题
+
+在国内网络环境下，通过 Gitea 迁移 GitHub 仓库时，经常会因为网络限制导致克隆失败。即便宿主机可以正常访问 GitHub，运行在 Docker 容器中的 Gitea 仍可能无法连接到远程仓库。
+
+本文记录了我在实际操作中，通过配置 **Clash 代理 + Docker 环境变量 + Gitea 迁移设置**，成功解决该问题的完整过程。
+
+---
+
+## 一、问题背景
+
+Gitea 是一个轻量级的自托管 Git 服务，非常适合团队私有部署。然而，当 Gitea 运行在 Docker 容器中时，直接从 GitHub 迁移仓库往往会失败，报错如下：
+
+```
+migration failed: clone error: exit status 128 - fatal: unable to access 'https://github.com/Dacong-wu/astro-blog.git/': OpenSSL SSL_read: OpenSSL/3.5.4: error:0A000126:SSL routines::unexpected eof while reading, errno 0
+```
+
+分析后发现主要有以下几个问题：
+
+1. 宿主机可以访问 GitHub，但容器网络与宿主机隔离，无法复用宿主机的代理；
+2. Gitea 默认禁止迁移任务访问内网地址（如 `192.168.x.x`）；
+3. 即使在容器中配置了 git 代理，Gitea Web 界面的迁移进程也未继承相应环境变量。
+
+---
+
+## 二、配置 Clash 代理
+
+Clash 是一款流行的代理工具，既支持规则分流，也支持 LAN 局域网访问。  
+编辑配置文件 `/opt/clash/config.yaml`：
+
+```yaml
+port: 7890
+socks-port: 7891
+allow-lan: true
+mode: Rule
+log-level: info
+external-controller: 0.0.0.0:9090
+unified-delay: true
+```
+
+确保 `allow-lan: true`，这样局域网设备（包括 Docker 容器）就能访问代理端口。
+
+启动 Clash 后验证：
+
+```bash
+ss -tulnp | grep 7890
+```
+
+若输出如下表示代理监听成功：
+
+```
+tcp   LISTEN 0      4096      *:7890     *:*    users:(("clash",pid=501046,fd=8))
+```
+
+---
+
+## 三、让 Gitea 容器使用宿主机代理
+
+Docker 默认使用独立网络（如 bridge 模式），无法直接访问宿主机的 127.0.0.1。  
+我们可以通过 `host.docker.internal` 或 `--add-host` 让容器访问宿主机。
+
+运行容器时添加以下环境变量：
+
+```bash
+docker run -d \
+  --name=gitea \
+  -p 3000:3000 \
+  -p 222:22 \
+  -v /etc/gitea:/data \
+  -e HTTP_PROXY=http://host.docker.internal:7890 \
+  -e HTTPS_PROXY=http://host.docker.internal:7890 \
+  -e GIT_HTTP_PROXY=http://host.docker.internal:7890 \
+  --add-host=host.docker.internal:host-gateway \
+  gitea/gitea:latest
+```
+
+验证代理是否生效：
+
+```bash
+docker exec -it gitea bash
+env | grep -i proxy
+```
+
+正常情况下应输出：
+
+```
+HTTP_PROXY=http://host.docker.internal:7890
+HTTPS_PROXY=http://host.docker.internal:7890
+GIT_HTTP_PROXY=http://host.docker.internal:7890
+```
+
+---
+
+## 四、修改 Gitea 配置以允许迁移内网地址
+
+编辑 Gitea 配置文件 `/data/gitea/conf/app.ini`，在 `[migrations]` 段中添加：
+
+```ini
+[migrations]
+ALLOW_LOCALNETWORKS = true
+
+[proxy]
+PROXY_ENABLED = true
+PROXY_URL =
+PROXY_HOSTS = *.github.com
+```
+
+这一步非常关键。因为 Gitea 出于安全考虑，默认禁止访问内网 IP 地址（例如 192.168.x.x），而 Clash 代理正好是通过宿主机内网访问的。
+
+修改完成后重启 Gitea：
+
+```bash
+docker restart gitea
+```
+
+---
+
+## 五、设置 Git 全局代理（容器内）
+
+有时 Gitea 的迁移任务仍然不会继承系统代理配置，此时需要为 Git 单独设置代理。
+
+进入容器后执行：
+
+```bash
+git config --global http.proxy http://host.docker.internal:7890
+git config --global https.proxy http://host.docker.internal:7890
+git config --global http.version HTTP/1.1
+```
+
+`HTTP/1.1` 可以避免部分 SSL 握手异常问题。
+
+验证代理是否生效：
+
+```bash
+git ls-remote https://github.com/Dacong-wu/astro-blog.git
+```
+
+如果能列出分支与标签，说明代理已经生效。
+
+---
+
+## 六、测试 Clash 日志确认流量走代理
+
+此时，Clash 日志应出现类似记录：
+
+```
+[TCP] connected lAddr=172.18.0.8:41200 rAddr=github.com:443 mode=rule rule=DomainKeyword(github) proxy=🔰 选择节点[🇭🇰 香港Y01]
+```
+
+说明 Docker 容器的访问请求确实通过 Clash 转发。
+
+---
+
+## 七、在 Gitea Web 界面测试迁移
+
+现在可以返回 Gitea 界面尝试迁移：
+
+1. 打开 **Gitea → New Migration**
+2. 填写 GitHub 仓库地址，例如 `https://github.com/Dacong-wu/astro-blog.git`
+3. 点击开始迁移
+4. 观察 Clash Dashboard，如果出现 GitHub 相关请求，即表示代理已生效
+
+迁移成功后日志示例：
+
+```
+[TCP] connected lAddr=172.18.0.8:33420 rAddr=www.google.com:443 mode=rule rule=DomainKeyword(github) proxy=🔰 选择节点[🇭🇰 香港Y01]
+```
+
+---
+
+## 八、总结
+
+问题根源在于：
+
+- 容器默认无法访问宿主机的 127.0.0.1；
+- Gitea 默认禁止迁移任务访问内网；
+- Git 进程未继承全局代理环境。
+
+解决方案总结如下：
+
+| 步骤 | 操作                                                       | 说明                     |
+| ---- | ---------------------------------------------------------- | ------------------------ |
+| 1    | Clash 启用 `allow-lan: true`                               | 允许局域网访问代理端口   |
+| 2    | Docker 添加 `--add-host=host.docker.internal:host-gateway` | 让容器可访问宿主机       |
+| 3    | 设置 `HTTP_PROXY/HTTPS_PROXY/GIT_HTTP_PROXY` 环境变量      | 让 Gitea 和 Git 使用代理 |
+| 4    | 修改 Gitea `[migrations]` 配置                             | 允许访问内网 IP          |
+| 5    | 验证 Git、Clash 日志                                       | 确认迁移流量走代理       |
+
+通过以上步骤，Gitea 在 Docker 中即可顺利通过 Clash 代理访问 GitHub，实现仓库迁移和同步。
+
+---
+
+**参考命令：**
+
+```bash
+# 查看代理是否监听
+ss -tulnp | grep 7890
+
+# 查看 Clash 日志
+tail -f /opt/clash/clash.log
+
+# 查看 Git 全局代理配置
+git config --global --list | grep proxy
+```
+
+配置完成后，你的 Gitea 将具备完整的代理访问能力，无论是迁移、Webhook、还是自动更新子模块，都能顺利连接到 GitHub。

@@ -20,7 +20,7 @@ const {
   id,
   isDark = false,
   classes = {},
-  bg = await Astro.slots.render('bg'),
+  bg = await Astro.slots.render('bg')
 } = Astro.props as Content;
 ---
 
@@ -37,7 +37,7 @@ const {
     classes={{
       container: 'max-w-xl sm:mx-auto lg:max-w-2xl',
       title: 'text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-4 font-heading',
-      subtitle: 'max-w-3xl mx-auto sm:text-center text-xl text-muted dark:text-slate-400',
+      subtitle: 'max-w-3xl mx-auto sm:text-center text-xl text-muted dark:text-slate-400'
     }}
   />
   <div class="mx-auto max-w-7xl p-4 md:px-8">
@@ -63,7 +63,7 @@ const {
             title: 'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
             description: 'text-muted dark:text-slate-400 ml-2 rtl:ml-0 rtl:mr-2',
             icon: 'flex h-7 w-7 items-center justify-center text-gray-50 p-1',
-            action: 'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
+            action: 'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2'
           }}
         />
       </div>

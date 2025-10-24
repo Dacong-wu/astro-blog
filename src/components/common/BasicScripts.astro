@@ -70,7 +70,7 @@ import { UI } from '~/utils/config';
       linkedin: (url, text) => `https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${text}`,
       whatsapp: (url, text) => `https://wa.me/?text=${text}%20${url}`,
       mail: (url, text) => `mailto:?subject=${text}&body=${text}%20${url}`,
-      'contact-mail': (url, text) => `mailto:?subject=${text}&to=dacong@ll1025.cn`,
+      'contact-mail': (url, text) => `mailto:?subject=${text}&to=dacong@ll1025.cn`
     };
 
     attachEvent('[data-aw-social-share]', 'click', function (_, elem) {

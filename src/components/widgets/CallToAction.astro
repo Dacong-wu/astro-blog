@@ -21,7 +21,7 @@ const {
   id,
   isDark = false,
   classes = {},
-  bg = await Astro.slots.render('bg'),
+  bg = await Astro.slots.render('bg')
 } = Astro.props as Props;
 ---
 
@@ -36,7 +36,7 @@ const {
       classes={{
         container: 'mb-0 md:mb-0',
         title: 'text-4xl md:text-4xl font-bold leading-tighter tracking-tighter mb-4 font-heading',
-        subtitle: 'text-xl text-muted dark:text-slate-400',
+        subtitle: 'text-xl text-muted dark:text-slate-400'
       }}
     />
     {

@@ -33,7 +33,7 @@ const getData = async (folder, groupDepth) => {
         return {
           group: group,
           slug: slug,
-          frontmatter: data,
+          frontmatter: data
         };
       } else {
         return [];

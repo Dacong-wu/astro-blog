@@ -22,9 +22,9 @@ export function responsiveTablesRehypePlugin() {
           type: 'element',
           tagName: 'div',
           properties: {
-            style: 'overflow:auto',
+            style: 'overflow:auto'
           },
-          children: [child],
+          children: [child]
         };
         tree.children[i] = wrapper;
         i++;

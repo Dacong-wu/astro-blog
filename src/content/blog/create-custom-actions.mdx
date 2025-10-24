@@ -73,7 +73,7 @@ async function deploy() {
       host: core.getInput('SFTP_HOST'),
       port: 22,
       username: core.getInput('SFTP_USERNAME'),
-      password: core.getInput('SFTP_PASSWORD'),
+      password: core.getInput('SFTP_PASSWORD')
     })
     .then(async () => {
       let fromPath = remote + '/dist';

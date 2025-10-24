@@ -48,7 +48,7 @@ export async function selectPort() {
         stopBits: portInfoStore.stopBitsSelect,
         parity: portInfoStore.paritySelect,
         bufferSize: 255,
-        flowControl: portInfoStore.flowControlSelect,
+        flowControl: portInfoStore.flowControlSelect
       });
       portInfoStore.portOpen = true;
       portInfoStore.keepReading = true;

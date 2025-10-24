@@ -13,7 +13,7 @@ const {
   id,
   isDark = false,
   classes = {},
-  bg = await Astro.slots.render('bg'),
+  bg = await Astro.slots.render('bg')
 } = Astro.props;
 ---
 
@@ -84,7 +84,7 @@ const {
           start: 'top 80%', // 当元素顶部距离视口底部80%时触发
           end: 'bottom 20%', // 当元素底部距离视口顶部20%时结束
           onEnter: () => this.animateStatItem(item, index),
-          once: true, // 只触发一次
+          once: true // 只触发一次
         });
       });
     }
@@ -110,7 +110,7 @@ const {
           opacity: 1,
           y: 0,
           duration: 0.6,
-          ease: 'back.out(1.7)', // 回弹效果
+          ease: 'back.out(1.7)' // 回弹效果
         });
       }
 
@@ -125,7 +125,7 @@ const {
             opacity: 1,
             y: 0,
             duration: 0.8,
-            ease: 'power2.out',
+            ease: 'power2.out'
           },
           '-=0.3'
         ) // 与图标动画重叠0.3秒
@@ -139,7 +139,7 @@ const {
                 const progress = tl.progress();
                 const currentValue = Math.round(targetValue.numeric * progress);
                 numberElement.textContent = this.formatNumber(currentValue, targetValue.suffix);
-              },
+              }
             },
             '-=0.5'
           ); // 与透明度动画重叠0.5秒
@@ -154,7 +154,7 @@ const {
             opacity: 1,
             y: 0,
             duration: 0.6,
-            ease: 'power2.out',
+            ease: 'power2.out'
           },
           '-=0.8'
         ); // 与数字动画重叠0.8秒
@@ -223,7 +223,7 @@ const {
         gsap.to(numberElement, {
           scale: 1.05,
           duration: 0.2,
-          ease: 'power2.out',
+          ease: 'power2.out'
         });
 
         // 图标轻微旋转和缩放
@@ -232,7 +232,7 @@ const {
             scale: 1.1,
             rotation: 3,
             duration: 0.2,
-            ease: 'power2.out',
+            ease: 'power2.out'
           });
         }
       });
@@ -242,7 +242,7 @@ const {
         gsap.to(numberElement, {
           scale: 1,
           duration: 0.2,
-          ease: 'power2.out',
+          ease: 'power2.out'
         });
 
         if (iconElement) {
@@ -250,7 +250,7 @@ const {
             scale: 1,
             rotation: 0,
             duration: 0.2,
-            ease: 'power2.out',
+            ease: 'power2.out'
           });
         }
       });

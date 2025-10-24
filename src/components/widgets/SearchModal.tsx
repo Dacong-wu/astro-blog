@@ -66,7 +66,7 @@ const SearchModal = () => {
       if (selectedIndex >= 0 && searchResultItems[selectedIndex]) {
         searchResultItems[selectedIndex].scrollIntoView({
           behavior: 'smooth',
-          block: 'nearest',
+          block: 'nearest'
         });
       }
     };
@@ -199,7 +199,7 @@ const SearchModal = () => {
 
         observer.observe(searchResultsContainer, {
           childList: true,
-          subtree: true,
+          subtree: true
         });
 
         cleanupFunctions.push(() => {

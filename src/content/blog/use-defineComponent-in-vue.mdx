@@ -27,7 +27,7 @@ const SearchIcon = defineComponent({
   props: {
     name: { type: String, required: true },
     title: { type: String, required: true },
-    modelValue: { type: Boolean as PropType<Boolean | undefined>, default: undefined },
+    modelValue: { type: Boolean as PropType<Boolean | undefined>, default: undefined }
   },
   emits: ['update:modelValue', 'iconClick'],
   setup(props, { emit }) {
@@ -46,11 +46,11 @@ const SearchIcon = defineComponent({
               } else {
                 emit('iconClick');
               }
-            },
-          }),
+            }
+          })
       });
     };
-  },
+  }
 });
 </script>
 ```

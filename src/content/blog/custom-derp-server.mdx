@@ -81,7 +81,7 @@ services:
   derper:
     build: .
     container_name: derper
-    network_mode: "host"
+    network_mode: 'host'
     environment:
       # 你可以自行修改对应的环境变量的值
       # - hostname=cc.com
@@ -145,7 +145,7 @@ services:
   derper:
     build: .
     container_name: derper
-    network_mode: "host"
+    network_mode: 'host'
     environment:
       # 你可以自行修改对应的环境变量的值
       - DERP_VERIFY_CLIENTS=true

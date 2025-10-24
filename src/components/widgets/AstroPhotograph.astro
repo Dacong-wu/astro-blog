@@ -13,7 +13,7 @@ const images = await Promise.all(
       src: image,
       widths: [640, 1200, maxWidth],
       sizes: `(max-width: 768px) 640px, (max-width: 1440px) 1200px, ${maxWidth}px`,
-      width: maxWidth,
+      width: maxWidth
     });
     return {
       src: data.src,
@@ -21,7 +21,7 @@ const images = await Promise.all(
       sizes: data.attributes.sizes,
       height: data.attributes.height,
       width: data.attributes.width,
-      maxWidth: maxWidth,
+      maxWidth: maxWidth
     };
   })
 );
@@ -42,7 +42,7 @@ const images = await Promise.all(
   const lightbox = new PhotoSwipeLightbox({
     gallery: '#waterfall-container',
     children: 'a',
-    pswpModule: () => import('photoswipe'),
+    pswpModule: () => import('photoswipe')
   });
   lightbox.init();
 

@@ -24,7 +24,7 @@ const metadata = merge(
     description: post.excerpt,
     robots: {
       index: blogPostRobots?.index,
-      follow: blogPostRobots?.follow,
+      follow: blogPostRobots?.follow
     },
     openGraph: {
       type: 'article',
@@ -34,12 +34,12 @@ const metadata = merge(
               {
                 url: `${Astro.url.origin}${openGraphImg.src}`,
                 width: openGraphImg.attributes.width,
-                height: openGraphImg.attributes.height,
-              },
-            ],
+                height: openGraphImg.attributes.height
+              }
+            ]
           }
-        : {}),
-    },
+        : {})
+    }
   },
   { ...(post?.metadata ? { ...post.metadata, canonical: post.metadata?.canonical || (url as string) } : {}) }
 );

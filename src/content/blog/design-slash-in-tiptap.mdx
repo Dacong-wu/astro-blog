@@ -37,8 +37,8 @@ metadata:
            char: '/',
            command: ({ editor, range, props }) => {
              props.command({ editor, range });
-           },
-         },
+           }
+         }
        };
      },
 
@@ -46,10 +46,10 @@ metadata:
        return [
          suggestion({
            editor: this.editor,
-           ...this.options.suggestion,
-         }),
+           ...this.options.suggestion
+         })
        ];
-     },
+     }
    });
    ```
 
@@ -72,8 +72,8 @@ metadata:
                  icon: 'mdi:format-header-1',
                  command: ({ editor, range }) => {
                    editor.chain().focus().deleteRange(range).setNode('heading', { level: 1 }).run();
-                 },
-               },
+                 }
+               }
              ];
        },
        render: () => {
@@ -84,7 +84,7 @@ metadata:
            onStart: (props) => {
              component = new VueRenderer(CommandsList, {
                props,
-               editor: props.editor,
+               editor: props.editor
              });
              const { $cursor } = props.editor.view.state.selection;
              const selection = props.editor.state.selection;
@@ -103,7 +103,7 @@ metadata:
                showOnCreate: true,
                interactive: true,
                trigger: 'manual',
-               placement: 'bottom-start',
+               placement: 'bottom-start'
              });
            },
 
@@ -117,7 +117,7 @@ metadata:
                popup[0].show();
              }
              popup[0].setProps({
-               getReferenceClientRect: props.clientRect,
+               getReferenceClientRect: props.clientRect
              });
            },
 
@@ -134,9 +134,9 @@ metadata:
            onExit() {
              popup[0].destroy();
              component.destroy();
-           },
+           }
          };
-       },
+       }
      };
    }
    ```
@@ -173,24 +173,24 @@ metadata:
    import Icon from './Icon.vue';
    export default {
      components: {
-       Icon,
+       Icon
      },
      props: {
        items: {
          type: Array,
-         required: true,
+         required: true
        },
 
        command: {
          type: Function,
-         required: true,
-       },
+         required: true
+       }
      },
 
      data() {
        return {
          selectedIndex: 0,
-         scrollingDiv: null,
+         scrollingDiv: null
        };
      },
      mounted() {
@@ -199,7 +199,7 @@ metadata:
      watch: {
        items() {
          this.selectedIndex = 0;
-       },
+       }
      },
 
      methods: {
@@ -242,8 +242,8 @@ metadata:
          if (item) {
            this.command(item);
          }
-       },
-     },
+       }
+     }
    };
    </script>
    ```
@@ -280,9 +280,9 @@ const editor = useEditor({
   content: props.content,
   extensions: [
     Slash.configure({
-      suggestion: suggestion(props.slash),
-    }),
-  ],
+      suggestion: suggestion(props.slash)
+    })
+  ]
 });
 </script>
 <template>
@@ -301,50 +301,50 @@ const slash = [
     icon: 'mdi:format-paragraph',
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).setNode('paragraph').run();
-    },
+    }
   },
   {
     title: '一级标题',
     icon: 'mdi:format-header-1',
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).setNode('heading', { level: 1 }).run();
-    },
+    }
   },
   {
     title: '二级标题',
     icon: 'mdi:format-header-2',
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).setNode('heading', { level: 2 }).run();
-    },
+    }
   },
   {
     title: '三级标题',
     icon: 'mdi:format-header-3',
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).setNode('heading', { level: 3 }).run();
-    },
+    }
   },
   {
     title: '代码块',
     icon: 'mdi:code-braces-box',
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).setNode('codeBlock').run();
-    },
+    }
   },
   {
     title: '无序列表',
     icon: 'mdi:format-list-bulleted',
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleBulletList().run();
-    },
+    }
   },
   {
     title: '有序列表',
     icon: 'mdi:format-list-numbered',
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleOrderedList().run();
-    },
-  },
+    }
+  }
 ];
 ```
 

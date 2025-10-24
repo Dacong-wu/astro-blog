@@ -40,15 +40,15 @@ const SearchResult = ({ searchResult, searchString }: { searchResult: ISearchIte
             {
               frontmatter: { ...item.frontmatter },
               slug: item.slug,
-              content: item.content,
-            },
-          ],
+              content: item.content
+            }
+          ]
         });
       } else {
         groupItems[groupIndex].groupItems.push({
           frontmatter: { ...item.frontmatter },
           slug: item.slug,
-          content: item.content,
+          content: item.content
         });
       }
 

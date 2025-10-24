@@ -16,9 +16,9 @@ const { image } = Astro.props;
         src={image}
         alt="Hero Image"
         class="h-full mx-auto rounded-md object-cover dark:opacity-70 hero-image"
-        width={1200}
-        widths={[640, 1200]}
-        sizes={`(max-width:768px) 640px, 1200px`}
+        width={1800}
+        widths={[640, 1800]}
+        sizes={`(max-width:768px) 640px, 1800px`}
         loading="eager"
       />
     )
@@ -53,10 +53,10 @@ const { image } = Astro.props;
             // 应用宽度变换
             gsap.set(image, {
               scale,
-              transformOrigin: 'center center',
+              transformOrigin: 'center center'
             });
-          },
-        },
+          }
+        }
       });
 
       // 额外的轻微视差效果
@@ -65,10 +65,10 @@ const { image } = Astro.props;
           trigger: imageContainer,
           start: 'top bottom',
           end: 'bottom top',
-          scrub: 2,
+          scrub: 2
         },
         y: -30, // 轻微的视差移动
-        ease: 'none',
+        ease: 'none'
       });
     }
   });

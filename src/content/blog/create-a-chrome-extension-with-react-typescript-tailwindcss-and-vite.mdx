@@ -107,9 +107,9 @@ npx tailwindcss init -p
 module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {}
   },
-  plugins: [],
+  plugins: []
 };
 ```
 
@@ -133,7 +133,7 @@ import react from '@vitejs/plugin-react';
 import { crx } from './manifest.json';
 
 export default defineConfig({
-  plugins: [react(), crx({ manifest })],
+  plugins: [react(), crx({ manifest })]
 });
 ```
 
